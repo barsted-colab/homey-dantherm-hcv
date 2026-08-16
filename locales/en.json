@@ -1,0 +1,8 @@
+{
+  "error": {
+    "no_ip": "No IP address configured. Open device settings and enter the unit's IP address.",
+    "not_connected": "Not connected to the ventilation unit.",
+    "command_failed": "The ventilation unit did not accept the command.",
+    "setting_rejected": "The unit rejected these settings: __keys__"
+  }
+}

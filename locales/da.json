@@ -1,0 +1,8 @@
+{
+  "error": {
+    "no_ip": "Ingen IP-adresse konfigureret. Åbn enhedens indstillinger og indtast anlæggets IP-adresse.",
+    "not_connected": "Ingen forbindelse til ventilationsanlægget.",
+    "command_failed": "Ventilationsanlægget accepterede ikke kommandoen.",
+    "setting_rejected": "Anlægget afviste disse indstillinger: __keys__"
+  }
+}

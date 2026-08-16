@@ -1,0 +1,14 @@
+{
+  "name": "dk.fredskilde.dantherm",
+  "version": "1.0.0",
+  "description": "Dantherm HCV ventilation for Homey",
+  "main": "app.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "homey": "^3.0.0"
+  }
+}

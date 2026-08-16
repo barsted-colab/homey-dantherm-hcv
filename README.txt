@@ -1,0 +1,5 @@
+Your ventilation unit runs quietly in the background all year, but it rarely knows what is going on in the rest of your home. This app brings it into your Flows. Read supply, extract, outdoor and exhaust temperatures, humidity, fan speeds, bypass damper position and remaining filter life, and set the operating mode or fan level from any automation. Boost ventilation when the bathroom humidity spikes, drop to a low level while nobody is home, or get a notification the day the filter actually needs replacing instead of six months late.
+
+Everything runs locally over Modbus TCP on your own network, so it keeps working when the internet does not, and no data leaves your home. Requires Homey Pro.
+
+Supported units: Dantherm HCV300 ALU, HCV400 P1, HCV400 P2, HCV400 E1, HCV400 P1-E1, HCV460 P2, HCV460 E1, HCV500 ALU, HCV700 ALU, HCC 2, HCC 2 ALU, HCC 2 E1, RCV320 P1, RCV320 P2, RCC220 P2, HCH 5 MKII, WG200, WG300 and WG500. The unit reports its own model, so it is recognised automatically during pairing.

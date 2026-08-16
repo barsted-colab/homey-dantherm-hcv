@@ -1,0 +1,841 @@
+{
+  "id": "dk.fredskilde.dantherm",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": ["local"],
+  "name": {
+    "en": "Dantherm HCV",
+    "da": "Dantherm HCV"
+  },
+  "description": {
+    "en": "Fresh air on autopilot — temperatures, humidity, bypass and fan levels in every Flow",
+    "da": "Frisk luft på autopilot — temperaturer, fugt, bypass og ventilationstrin i alle dine Flows"
+  },
+  "tags": {
+    "en": ["ventilation", "HRV", "MVHR", "heat recovery", "air quality", "Dantherm",
+      "HCV", "HCV400", "HCC", "RCV", "bypass", "filter", "Modbus"],
+    "da": ["ventilation", "varmegenvinding", "ventilationsanlæg", "indeklima", "Dantherm",
+      "HCV", "HCV400", "HCC", "RCV", "bypass", "filter", "genvinding"]
+  },
+  "category": ["climate"],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Mike Fredskilde",
+    "email": "mike.fredskilde@gmail.com"
+  },
+  "contributors": {
+    "developers": [
+      { "name": "Mike Fredskilde" }
+    ]
+  },
+  "support": "mailto:mike.fredskilde@gmail.com",
+  "brandColor": "#0091D4",
+  "capabilities": {
+    "dantherm_mode": {
+      "type": "enum",
+      "title": { "en": "Operating mode", "da": "Driftstilstand" },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker",
+      "icon": "/assets/mode.svg",
+      "values": [
+        { "id": "standby", "title": { "en": "Standby", "da": "Standby" } },
+        { "id": "automatic", "title": { "en": "Automatic", "da": "Automatisk" } },
+        { "id": "manual", "title": { "en": "Manual", "da": "Manuel" } },
+        { "id": "week_program", "title": { "en": "Week program", "da": "Ugeprogram" } },
+        { "id": "away", "title": { "en": "Away", "da": "Ferie" } },
+        { "id": "summer", "title": { "en": "Summer", "da": "Sommer" } },
+        { "id": "fireplace", "title": { "en": "Fireplace", "da": "Pejs" } },
+        { "id": "night", "title": { "en": "Night", "da": "Natsænkning" } }
+      ]
+    },
+    "dantherm_fan_level": {
+      "type": "enum",
+      "title": { "en": "Fan level", "da": "Ventilationstrin" },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker",
+      "icon": "/assets/fan.svg",
+      "values": [
+        { "id": "0", "title": { "en": "Off", "da": "Slukket" } },
+        { "id": "1", "title": { "en": "Level 1", "da": "Trin 1" } },
+        { "id": "2", "title": { "en": "Level 2", "da": "Trin 2" } },
+        { "id": "3", "title": { "en": "Level 3", "da": "Trin 3" } },
+        { "id": "4", "title": { "en": "Level 4", "da": "Trin 4" } }
+      ]
+    },
+    "dantherm_bypass": {
+      "type": "enum",
+      "title": { "en": "Bypass damper", "da": "Bypass-spjæld" },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/bypass.svg",
+      "values": [
+        { "id": "closed", "title": { "en": "Closed", "da": "Lukket" } },
+        { "id": "in_progress", "title": { "en": "In progress", "da": "I gang" } },
+        { "id": "closing", "title": { "en": "Closing", "da": "Lukker" } },
+        { "id": "opening", "title": { "en": "Opening", "da": "Åbner" } },
+        { "id": "opened", "title": { "en": "Open", "da": "Åben" } },
+        { "id": "unknown", "title": { "en": "Unknown", "da": "Ukendt" } }
+      ]
+    },
+    "measure_filter_remain": {
+      "type": "number",
+      "title": { "en": "Filter remaining", "da": "Filter tilbage" },
+      "getable": true,
+      "setable": false,
+      "units": { "en": "days", "da": "dage" },
+      "decimals": 0,
+      "uiComponent": "sensor",
+      "icon": "/assets/filter.svg",
+      "insights": true
+    },
+    "measure_rpm": {
+      "type": "number",
+      "title": { "en": "Fan speed", "da": "Ventilatorhastighed" },
+      "getable": true,
+      "setable": false,
+      "units": { "en": "rpm", "da": "o/min" },
+      "decimals": 0,
+      "uiComponent": "sensor",
+      "icon": "/assets/fan.svg",
+      "insights": true
+    },
+    "measure_air_quality": {
+      "type": "number",
+      "title": { "en": "Air quality", "da": "Luftkvalitet" },
+      "getable": true,
+      "setable": false,
+      "units": { "en": "ppm", "da": "ppm" },
+      "decimals": 0,
+      "uiComponent": "sensor",
+      "icon": "/assets/air.svg",
+      "insights": true
+    }
+  },
+  "drivers": [
+    {
+      "id": "hcv",
+      "name": {
+        "en": "Dantherm HCV",
+        "da": "Dantherm HCV"
+      },
+      "class": "fan",
+      "capabilities": [
+        "onoff",
+        "dantherm_mode",
+        "dantherm_fan_level",
+        "measure_temperature.outdoor",
+        "measure_temperature.supply",
+        "measure_temperature.extract",
+        "measure_temperature.exhaust",
+        "measure_temperature.room",
+        "measure_humidity",
+        "measure_air_quality",
+        "dantherm_bypass",
+        "measure_filter_remain",
+        "measure_rpm.fan1",
+        "measure_rpm.fan2",
+        "alarm_generic"
+      ],
+      "capabilitiesOptions": {
+        "measure_temperature.outdoor": {
+          "title": { "en": "Outdoor (T1)", "da": "Udeluft (T1)" },
+          "insights": true
+        },
+        "measure_temperature.supply": {
+          "title": { "en": "Supply (T2)", "da": "Tilluft (T2)" },
+          "insights": true
+        },
+        "measure_temperature.extract": {
+          "title": { "en": "Extract (T3)", "da": "Fraluft (T3)" },
+          "insights": true
+        },
+        "measure_temperature.exhaust": {
+          "title": { "en": "Exhaust (T4)", "da": "Afkast (T4)" },
+          "insights": true
+        },
+        "measure_temperature.room": {
+          "title": { "en": "Room", "da": "Rum" },
+          "insights": true
+        },
+        "measure_rpm.fan1": {
+          "title": { "en": "Fan 1 speed", "da": "Ventilator 1" }
+        },
+        "measure_rpm.fan2": {
+          "title": { "en": "Fan 2 speed", "da": "Ventilator 2" }
+        },
+        "alarm_generic": {
+          "title": { "en": "Alarm", "da": "Alarm" }
+        }
+      },
+      "platforms": ["local"],
+      "connectivity": ["lan"],
+      "images": {
+        "small": "/drivers/hcv/assets/images/small.png",
+        "large": "/drivers/hcv/assets/images/large.png",
+        "xlarge": "/drivers/hcv/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": { "next": "add_devices" },
+          "options": { "singular": true }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": { "en": "Connection", "da": "Forbindelse" },
+          "children": [
+            {
+              "id": "host",
+              "type": "text",
+              "label": { "en": "IP address", "da": "IP-adresse" },
+              "value": "",
+              "hint": {
+                "en": "The local IP address of the unit. Updated automatically if it changes.",
+                "da": "Anlæggets lokale IP-adresse. Opdateres automatisk hvis den ændrer sig."
+              }
+            },
+            {
+              "id": "port",
+              "type": "number",
+              "label": { "en": "Modbus TCP port", "da": "Modbus TCP-port" },
+              "value": 502,
+              "min": 1,
+              "max": 65535,
+              "hint": { "en": "Default is 502.", "da": "Standard er 502." }
+            },
+            {
+              "id": "polling_interval",
+              "type": "number",
+              "label": { "en": "Polling interval", "da": "Poll-interval" },
+              "value": 30,
+              "min": 10,
+              "max": 300,
+              "units": { "en": "seconds", "da": "sekunder" },
+              "hint": {
+                "en": "How often to read values from the unit.",
+                "da": "Hvor ofte der læses værdier fra anlægget."
+              }
+            },
+            {
+              "id": "auto_rediscover",
+              "type": "checkbox",
+              "label": { "en": "Recover from IP changes", "da": "Genfind ved IP-skift" },
+              "value": true,
+              "hint": {
+                "en": "If the unit stops responding, search the network for it by serial number and update the address.",
+                "da": "Hvis anlægget ikke svarer, søges der efter det på netværket ud fra serienummeret, og adressen opdateres."
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": { "en": "Bypass and free cooling", "da": "Bypass og fri køling" },
+          "children": [
+            {
+              "id": "bypass_min_temp",
+              "type": "number",
+              "label": { "en": "Bypass minimum temperature", "da": "Bypass minimumstemperatur" },
+              "value": 12,
+              "min": 12,
+              "max": 15,
+              "step": 0.5,
+              "units": { "en": "°C", "da": "°C" },
+              "hint": {
+                "en": "Outdoor temperature below which the bypass stays closed. Requires firmware 2.70 or newer.",
+                "da": "Udetemperatur hvorunder bypass forbliver lukket. Kræver firmware 2.70 eller nyere."
+              }
+            },
+            {
+              "id": "bypass_max_temp",
+              "type": "number",
+              "label": { "en": "Bypass maximum temperature", "da": "Bypass maksimumstemperatur" },
+              "value": 24,
+              "min": 21,
+              "max": 27,
+              "step": 0.5,
+              "units": { "en": "°C", "da": "°C" },
+              "hint": {
+                "en": "Room temperature above which free cooling opens the bypass. Requires firmware 2.70 or newer.",
+                "da": "Rumtemperatur hvorover fri køling åbner bypass. Kræver firmware 2.70 eller nyere."
+              }
+            },
+            {
+              "id": "bypass_min_temp_summer",
+              "type": "number",
+              "label": { "en": "Summer bypass minimum", "da": "Sommer bypass minimum" },
+              "value": 12,
+              "min": 12,
+              "max": 17,
+              "step": 0.5,
+              "units": { "en": "°C", "da": "°C" },
+              "hint": {
+                "en": "Only used in summer mode. Requires firmware 3.08 or newer.",
+                "da": "Bruges kun i sommerdrift. Kræver firmware 3.08 eller nyere."
+              }
+            },
+            {
+              "id": "bypass_max_temp_summer",
+              "type": "number",
+              "label": { "en": "Summer bypass maximum", "da": "Sommer bypass maksimum" },
+              "value": 24,
+              "min": 21,
+              "max": 30,
+              "step": 0.5,
+              "units": { "en": "°C", "da": "°C" },
+              "hint": {
+                "en": "Only used in summer mode. Requires firmware 3.08 or newer.",
+                "da": "Bruges kun i sommerdrift. Kræver firmware 3.08 eller nyere."
+              }
+            },
+            {
+              "id": "manual_bypass_duration",
+              "type": "number",
+              "label": { "en": "Manual bypass duration", "da": "Manuel bypass varighed" },
+              "value": 180,
+              "min": 60,
+              "max": 480,
+              "step": 15,
+              "units": { "en": "minutes", "da": "minutter" },
+              "hint": {
+                "en": "How long manual bypass stays selected before the unit reverts.",
+                "da": "Hvor længe manuel bypass forbliver valgt, før anlægget skifter tilbage."
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": { "en": "Humidity and filter", "da": "Fugt og filter" },
+          "children": [
+            {
+              "id": "humidity_setpoint",
+              "type": "number",
+              "label": { "en": "Humidity setpoint", "da": "Fugtighedssætpunkt" },
+              "value": 45,
+              "min": 35,
+              "max": 65,
+              "units": { "en": "%", "da": "%" },
+              "hint": {
+                "en": "Humidity above which the unit increases ventilation. Requires firmware 2.70 or newer.",
+                "da": "Fugtighed hvorover anlægget øger ventilationen. Kræver firmware 2.70 eller nyere."
+              }
+            },
+            {
+              "id": "filter_lifetime",
+              "type": "number",
+              "label": { "en": "Filter lifetime", "da": "Filterlevetid" },
+              "value": 180,
+              "min": 0,
+              "max": 360,
+              "units": { "en": "days", "da": "dage" },
+              "hint": {
+                "en": "Days between filter changes. Reset the timer from a Flow after replacing the filter.",
+                "da": "Dage mellem filterskift. Nulstil timeren fra et Flow når filteret er skiftet."
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": { "en": "Night mode", "da": "Natsænkning" },
+          "children": [
+            {
+              "id": "night_mode_start_hour",
+              "type": "number",
+              "label": { "en": "Start hour", "da": "Starttime" },
+              "value": 22,
+              "min": 0,
+              "max": 23
+            },
+            {
+              "id": "night_mode_start_minute",
+              "type": "number",
+              "label": { "en": "Start minute", "da": "Startminut" },
+              "value": 0,
+              "min": 0,
+              "max": 59
+            },
+            {
+              "id": "night_mode_end_hour",
+              "type": "number",
+              "label": { "en": "End hour", "da": "Sluttime" },
+              "value": 6,
+              "min": 0,
+              "max": 23
+            },
+            {
+              "id": "night_mode_end_minute",
+              "type": "number",
+              "label": { "en": "End minute", "da": "Slutminut" },
+              "value": 0,
+              "min": 0,
+              "max": 59
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "flow": {
+    "triggers": [
+      {
+        "id": "bypass_changed",
+        "title": {
+          "en": "Bypass damper changed",
+          "da": "Bypass-spjæld ændret"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "state",
+            "type": "string",
+            "title": { "en": "State", "da": "Tilstand" }
+          }
+        ]
+      },
+      {
+        "id": "alarm_raised",
+        "title": {
+          "en": "An alarm occurred",
+          "da": "Der opstod en alarm"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "code",
+            "type": "number",
+            "title": { "en": "Alarm code", "da": "Alarmkode" }
+          }
+        ]
+      },
+      {
+        "id": "filter_needs_replacement",
+        "title": {
+          "en": "Filter needs replacement",
+          "da": "Filter skal skiftes"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          }
+        ]
+      },
+      {
+        "id": "mode_changed",
+        "title": {
+          "en": "Operating mode changed",
+          "da": "Driftstilstand ændret"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "mode",
+            "type": "string",
+            "title": { "en": "Mode", "da": "Tilstand" }
+          }
+        ]
+      },
+      {
+        "id": "fan_level_changed",
+        "title": {
+          "en": "Fan level changed",
+          "da": "Ventilationstrin ændret"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "level",
+            "type": "number",
+            "title": { "en": "Level", "da": "Trin" }
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "mode_is",
+        "title": {
+          "en": "Operating mode !{{is|is not}}",
+          "da": "Driftstilstand !{{er|er ikke}}"
+        },
+        "titleFormatted": {
+          "en": "Operating mode !{{is|is not}} [[mode]]",
+          "da": "Driftstilstand !{{er|er ikke}} [[mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "values": [
+              { "id": "standby", "title": { "en": "Standby", "da": "Standby" } },
+              { "id": "automatic", "title": { "en": "Automatic", "da": "Automatisk" } },
+              { "id": "manual", "title": { "en": "Manual", "da": "Manuel" } },
+              { "id": "week_program", "title": { "en": "Week program", "da": "Ugeprogram" } },
+              { "id": "away", "title": { "en": "Away", "da": "Ferie" } },
+              { "id": "summer", "title": { "en": "Summer", "da": "Sommer" } },
+              { "id": "fireplace", "title": { "en": "Fireplace", "da": "Pejs" } },
+              { "id": "night", "title": { "en": "Night", "da": "Natsænkning" } }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "bypass_is_open",
+        "title": {
+          "en": "Bypass !{{is|is not}} open",
+          "da": "Bypass !{{er|er ikke}} åben"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          }
+        ]
+      },
+      {
+        "id": "fan_level_is",
+        "title": {
+          "en": "Fan level !{{is|is not}}",
+          "da": "Ventilationstrin !{{er|er ikke}}"
+        },
+        "titleFormatted": {
+          "en": "Fan level !{{is|is not}} [[level]]",
+          "da": "Ventilationstrin !{{er|er ikke}} [[level]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "type": "dropdown",
+            "name": "level",
+            "values": [
+              { "id": "0", "title": { "en": "Off", "da": "Slukket" } },
+              { "id": "1", "title": { "en": "Level 1", "da": "Trin 1" } },
+              { "id": "2", "title": { "en": "Level 2", "da": "Trin 2" } },
+              { "id": "3", "title": { "en": "Level 3", "da": "Trin 3" } },
+              { "id": "4", "title": { "en": "Level 4", "da": "Trin 4" } }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "filter_days_below",
+        "title": {
+          "en": "Filter days remaining !{{is|is not}} below",
+          "da": "Filterdage tilbage !{{er|er ikke}} under"
+        },
+        "titleFormatted": {
+          "en": "Filter days remaining !{{is|is not}} below [[days]]",
+          "da": "Filterdage tilbage !{{er|er ikke}} under [[days]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "type": "number",
+            "name": "days",
+            "min": 0,
+            "max": 360,
+            "step": 1,
+            "placeholder": { "en": "14", "da": "14" }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "set_mode",
+        "title": {
+          "en": "Set operating mode",
+          "da": "Sæt driftstilstand"
+        },
+        "titleFormatted": {
+          "en": "Set operating mode to [[mode]]",
+          "da": "Sæt driftstilstand til [[mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "values": [
+              { "id": "standby", "title": { "en": "Standby", "da": "Standby" } },
+              { "id": "automatic", "title": { "en": "Automatic", "da": "Automatisk" } },
+              { "id": "manual", "title": { "en": "Manual", "da": "Manuel" } },
+              { "id": "week_program", "title": { "en": "Week program", "da": "Ugeprogram" } },
+              { "id": "away", "title": { "en": "Away", "da": "Ferie" } },
+              { "id": "summer", "title": { "en": "Summer", "da": "Sommer" } },
+              { "id": "fireplace", "title": { "en": "Fireplace", "da": "Pejs" } }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_fan_level",
+        "title": {
+          "en": "Set fan level",
+          "da": "Sæt ventilationstrin"
+        },
+        "titleFormatted": {
+          "en": "Set fan level to [[level]]",
+          "da": "Sæt ventilationstrin til [[level]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "type": "dropdown",
+            "name": "level",
+            "values": [
+              { "id": "0", "title": { "en": "Off", "da": "Slukket" } },
+              { "id": "1", "title": { "en": "Level 1", "da": "Trin 1" } },
+              { "id": "2", "title": { "en": "Level 2", "da": "Trin 2" } },
+              { "id": "3", "title": { "en": "Level 3", "da": "Trin 3" } },
+              { "id": "4", "title": { "en": "Level 4", "da": "Trin 4" } }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_bypass",
+        "title": {
+          "en": "Set manual bypass",
+          "da": "Sæt manuel bypass"
+        },
+        "titleFormatted": {
+          "en": "[[state]] manual bypass",
+          "da": "[[state]] manuel bypass"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "type": "dropdown",
+            "name": "state",
+            "values": [
+              { "id": "on", "title": { "en": "Select", "da": "Vælg" } },
+              { "id": "off", "title": { "en": "Deselect", "da": "Fravælg" } }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "reset_filter",
+        "title": {
+          "en": "Reset filter timer",
+          "da": "Nulstil filtertimer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          }
+        ]
+      },
+      {
+        "id": "reset_alarm",
+        "title": {
+          "en": "Reset alarm",
+          "da": "Nulstil alarm"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          }
+        ]
+      },
+      {
+        "id": "set_away_mode",
+        "title": {
+          "en": "Away mode",
+          "da": "Ferietilstand"
+        },
+        "titleFormatted": {
+          "en": "Turn away mode [[state]]",
+          "da": "Sæt ferietilstand [[state]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "type": "dropdown",
+            "name": "state",
+            "values": [
+              { "id": "on", "title": { "en": "on", "da": "til" } },
+              { "id": "off", "title": { "en": "off", "da": "fra" } }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_night_mode",
+        "title": {
+          "en": "Night mode",
+          "da": "Natsænkning"
+        },
+        "titleFormatted": {
+          "en": "Turn night mode [[state]]",
+          "da": "Sæt natsænkning [[state]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "type": "dropdown",
+            "name": "state",
+            "values": [
+              { "id": "on", "title": { "en": "on", "da": "til" } },
+              { "id": "off", "title": { "en": "off", "da": "fra" } }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_week_program",
+        "title": {
+          "en": "Select week program",
+          "da": "Vælg ugeprogram"
+        },
+        "titleFormatted": {
+          "en": "Select week program [[program]]",
+          "da": "Vælg ugeprogram [[program]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "type": "number",
+            "name": "program",
+            "min": 0,
+            "max": 10,
+            "step": 1,
+            "placeholder": { "en": "1", "da": "1" }
+          }
+        ]
+      },
+      {
+        "id": "set_bypass_temperatures",
+        "title": {
+          "en": "Set bypass temperatures",
+          "da": "Sæt bypass-temperaturer"
+        },
+        "titleFormatted": {
+          "en": "Set [[season]] bypass to open between [[min]] and [[max]] °C",
+          "da": "Sæt [[season]] bypass til at åbne mellem [[min]] og [[max]] °C"
+        },
+        "hint": {
+          "en": "Overrides the free cooling thresholds, so a Flow can widen them on a hot day and narrow them again afterwards.",
+          "da": "Overstyrer grænserne for fri køling, så et Flow kan udvide dem på en varm dag og snævre dem ind igen bagefter."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "type": "number",
+            "name": "min",
+            "min": 12,
+            "max": 17,
+            "step": 0.5,
+            "placeholder": { "en": "12", "da": "12" }
+          },
+          {
+            "type": "number",
+            "name": "max",
+            "min": 21,
+            "max": 30,
+            "step": 0.5,
+            "placeholder": { "en": "24", "da": "24" }
+          },
+          {
+            "type": "dropdown",
+            "name": "season",
+            "values": [
+              { "id": "normal", "title": { "en": "Normal", "da": "Normal" } },
+              { "id": "summer", "title": { "en": "Summer mode", "da": "Sommerdrift" } }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

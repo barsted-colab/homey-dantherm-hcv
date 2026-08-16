@@ -1,0 +1,5 @@
+Dit ventilationsanlæg kører stille i baggrunden året rundt, men det ved sjældent noget om, hvad der ellers foregår i huset. Denne app henter det ind i dine Flows. Aflæs tilluft, fraluft, udeluft og afkast, luftfugtighed, ventilatorhastigheder, bypass-spjældets stilling og filterets resterende levetid, og sæt driftstilstand eller ventilationstrin fra en hvilken som helst automatisering. Skru op når fugten stiger i badeværelset, ned når ingen er hjemme, og få besked den dag filteret rent faktisk skal skiftes i stedet for et halvt år for sent.
+
+Al kommunikation foregår lokalt over Modbus TCP på dit eget netværk. Det virker altså også når internettet ikke gør, og ingen data forlader hjemmet. Kræver Homey Pro.
+
+Understøttede anlæg: Dantherm HCV300 ALU, HCV400 P1, HCV400 P2, HCV400 E1, HCV400 P1-E1, HCV460 P2, HCV460 E1, HCV500 ALU, HCV700 ALU, HCC 2, HCC 2 ALU, HCC 2 E1, RCV320 P1, RCV320 P2, RCC220 P2, HCH 5 MKII, WG200, WG300 og WG500. Anlægget oplyser selv sin model, så det genkendes automatisk under parring.
