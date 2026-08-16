@@ -1,0 +1,445 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ventilation status</title>
+    <style>
+      /*
+        Everything sizes off Homey's own tokens so the widget tracks the
+        dashboard's light/dark theme instead of carrying its own palette.
+        Only the warm/cool air colours are ours, and those stay constant
+        across themes on purpose — a temperature reading should not change
+        meaning when the sun goes down.
+      */
+      :root {
+        --cold: #4aa3e0;
+        --cool: #7bbfe8;
+        --neutral: #9aa7b4;
+        --warm: #eaa14b;
+        --hot: #e2703a;
+        --flow-track: color-mix(in srgb, var(--homey-line-color, #cfd6dd) 70%, transparent);
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+
+      .wrap {
+        display: flex;
+        flex-direction: column;
+        gap: var(--homey-su-2, 8px);
+        height: 100%;
+      }
+
+      /* --- header --- */
+
+      .head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--homey-su-2, 8px);
+      }
+
+      .title {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .chip {
+        flex: none;
+        padding: 2px var(--homey-su-2, 8px);
+        border-radius: var(--homey-border-radius-small, 4px);
+        background: color-mix(in srgb, var(--homey-color-blue, #2b8ede) 14%, transparent);
+        color: var(--homey-text-color-blue, #2b8ede);
+        white-space: nowrap;
+      }
+
+      .chip.alarm {
+        background: color-mix(in srgb, var(--homey-color-red, #e5484d) 16%, transparent);
+        color: var(--homey-text-color-danger, #e5484d);
+      }
+
+      /* --- heat exchange diagram --- */
+
+      .exchange {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        row-gap: var(--homey-su-2, 8px);
+        column-gap: var(--homey-su-2, 8px);
+        flex: 1;
+      }
+
+      .temp {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.15;
+      }
+
+      .temp.right {
+        align-items: flex-end;
+        text-align: right;
+      }
+
+      .temp .label {
+        color: var(--homey-text-color-light, #7a828b);
+        font-size: 11px;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      .temp .value {
+        font-size: 19px;
+        font-weight: var(--homey-font-weight-bold, 700);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Direction of travel is carried by the gradient, not by an arrowhead —
+         at this size a glyph turns to mush, a fading bar does not. */
+      .flow {
+        position: relative;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--flow-track);
+        overflow: hidden;
+      }
+
+      .flow::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(var(--dir, 90deg), var(--from, var(--cold)), var(--to, var(--warm)));
+        opacity: 0.9;
+      }
+
+      .flow.idle::after {
+        opacity: 0.25;
+      }
+
+      .core {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1px;
+        min-width: 62px;
+        padding: var(--homey-su-1, 4px) var(--homey-su-2, 8px);
+        border-radius: var(--homey-border-radius-default, 8px);
+        background: color-mix(in srgb, var(--homey-text-color, #16191d) 6%, transparent);
+        grid-row: span 2;
+      }
+
+      .core .pct {
+        font-size: 18px;
+        font-weight: var(--homey-font-weight-bold, 700);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .core .cap {
+        font-size: 10px;
+        color: var(--homey-text-color-light, #7a828b);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      /* --- footer --- */
+
+      .foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--homey-su-2, 8px);
+      }
+
+      .levels {
+        display: flex;
+        gap: 3px;
+      }
+
+      .level {
+        width: 26px;
+        height: 24px;
+        border: 0;
+        padding: 0;
+        border-radius: var(--homey-border-radius-small, 4px);
+        background: color-mix(in srgb, var(--homey-text-color, #16191d) 8%, transparent);
+        color: var(--homey-text-color-light, #7a828b);
+        font: inherit;
+        font-size: 12px;
+        font-weight: var(--homey-font-weight-medium, 500);
+        cursor: pointer;
+      }
+
+      .level[disabled] {
+        cursor: default;
+      }
+
+      .level.on {
+        background: var(--homey-color-blue, #2b8ede);
+        color: var(--homey-text-color-white, #fff);
+      }
+
+      .level.busy {
+        opacity: 0.5;
+      }
+
+      .stats {
+        display: flex;
+        gap: var(--homey-su-2, 8px);
+        color: var(--homey-text-color-light, #7a828b);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .stats b {
+        color: var(--homey-text-color, #16191d);
+        font-weight: var(--homey-font-weight-medium, 500);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .msg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        text-align: center;
+        color: var(--homey-text-color-light, #7a828b);
+        padding: 0 var(--homey-su-3, 12px);
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+
+  <body class="homey-widget">
+    <div class="wrap" id="wrap" hidden>
+      <div class="head">
+        <span class="title homey-text-small-bold" id="name">&nbsp;</span>
+        <span class="chip homey-text-small" id="mode">&nbsp;</span>
+      </div>
+
+      <div class="exchange">
+        <div class="temp">
+          <span class="label" id="l-outdoor">Outdoor</span>
+          <span class="value" id="t-outdoor">–</span>
+        </div>
+        <div class="core" id="core">
+          <span class="pct" id="eff">–</span>
+          <span class="cap" id="l-eff">recovery</span>
+        </div>
+        <div class="temp right">
+          <span class="label" id="l-supply">Supply</span>
+          <span class="value" id="t-supply">–</span>
+        </div>
+
+        <div class="flow" id="flow-in"></div>
+        <div class="flow" id="flow-out"></div>
+
+        <div class="temp">
+          <span class="label" id="l-exhaust">Exhaust</span>
+          <span class="value" id="t-exhaust">–</span>
+        </div>
+        <div class="temp right">
+          <span class="label" id="l-extract">Extract</span>
+          <span class="value" id="t-extract">–</span>
+        </div>
+      </div>
+
+      <div class="foot">
+        <div class="levels" id="levels"></div>
+        <div class="stats">
+          <span id="s-humidity" hidden><b id="v-humidity">–</b>%</span>
+          <span id="s-bypass" hidden>· <b id="v-bypass">–</b></span>
+          <span id="s-filter" hidden>· <b id="v-filter">–</b><span id="u-filter">d</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="msg homey-text-small" id="msg">…</div>
+
+    <script type="text/javascript">
+      function onHomeyReady(Homey) {
+        const settings = Homey.getSettings() || {};
+        const deviceIds = Homey.getDeviceIds() || [];
+        const deviceId = deviceIds[0] || null;
+
+        const allowControl = settings.allow_control !== false;
+        const showEfficiency = settings.show_efficiency !== false;
+        const refreshMs = Math.max(5, Number(settings.refresh_seconds) || 15) * 1000;
+
+        const el = (id) => document.getElementById(id);
+        const t = (key, fallback) => {
+          const value = Homey.__(key);
+          // Homey returns the key itself when a translation is missing.
+          return !value || value === key ? fallback : value;
+        };
+
+        // --- static labels ---
+        el('l-outdoor').textContent = t('widget.outdoor', 'Outdoor');
+        el('l-supply').textContent = t('widget.supply', 'Supply');
+        el('l-exhaust').textContent = t('widget.exhaust', 'Exhaust');
+        el('l-extract').textContent = t('widget.extract', 'Extract');
+        el('l-eff').textContent = t('widget.recovery', 'recovery');
+
+        // --- fan level buttons ---
+        const levels = [];
+        for (let i = 0; i <= 4; i++) {
+          const button = document.createElement('button');
+          button.className = 'level';
+          button.textContent = String(i);
+          button.type = 'button';
+          if (allowControl) {
+            button.addEventListener('click', () => setLevel(i));
+          } else {
+            button.disabled = true;
+          }
+          el('levels').appendChild(button);
+          levels.push(button);
+        }
+
+        let busy = false;
+
+        function setLevel(level) {
+          if (busy) return;
+          busy = true;
+          levels.forEach((b) => b.classList.add('busy'));
+          if (Homey.hapticFeedback) Homey.hapticFeedback();
+
+          Homey.api('POST', '/fan-level', { deviceId, level })
+            .then(() => {
+              // The controller needs a moment before a read reflects the write.
+              markLevel(level);
+              setTimeout(refresh, 3500);
+            })
+            .catch((err) => console.error(err))
+            .finally(() => {
+              busy = false;
+              levels.forEach((b) => b.classList.remove('busy'));
+            });
+        }
+
+        function markLevel(active) {
+          levels.forEach((b, i) => b.classList.toggle('on', i === active));
+        }
+
+        // --- rendering ---
+
+        function colourFor(celsius) {
+          if (celsius === null || celsius === undefined) return 'var(--neutral)';
+          if (celsius <= 0) return 'var(--cold)';
+          if (celsius <= 12) return 'var(--cool)';
+          if (celsius <= 19) return 'var(--neutral)';
+          if (celsius <= 24) return 'var(--warm)';
+          return 'var(--hot)';
+        }
+
+        function temperature(id, value) {
+          const node = el(id);
+          if (value === null || value === undefined) {
+            node.textContent = '–';
+            node.style.color = 'var(--neutral)';
+            return;
+          }
+          node.textContent = `${value.toFixed(1).replace('.', ',')}°`;
+          node.style.color = colourFor(value);
+        }
+
+        function flow(id, from, to, running, reverse) {
+          const node = el(id);
+          node.style.setProperty('--from', colourFor(reverse ? to : from));
+          node.style.setProperty('--to', colourFor(reverse ? from : to));
+          node.style.setProperty('--dir', reverse ? '270deg' : '90deg');
+          node.classList.toggle('idle', !running);
+        }
+
+        function show(id, visible) {
+          el(id).hidden = !visible;
+        }
+
+        function render(state) {
+          if (!state || !state.available) {
+            el('wrap').hidden = true;
+            el('msg').hidden = false;
+            el('msg').textContent = state && state.reason === 'unavailable'
+              ? (state.message || t('widget.unavailable', 'Unit not responding'))
+              : t('widget.no_device', 'Select a ventilation unit in the widget settings');
+            return;
+          }
+
+          el('msg').hidden = true;
+          el('wrap').hidden = false;
+
+          el('name').textContent = state.model || state.name || 'Dantherm';
+
+          const mode = el('mode');
+          mode.textContent = state.alarm
+            ? t('widget.alarm', 'Alarm')
+            : t(`widget.mode.${state.mode}`, state.mode || '–');
+          mode.classList.toggle('alarm', !!state.alarm);
+
+          const temps = state.temperatures || {};
+          temperature('t-outdoor', temps.outdoor);
+          temperature('t-supply', temps.supply);
+          temperature('t-extract', temps.extract);
+          temperature('t-exhaust', temps.exhaust);
+
+          const running = state.fanLevel > 0;
+          // Intake travels left to right, extract right to left — the two
+          // streams cross in the exchanger, which is the whole point of it.
+          flow('flow-in', temps.outdoor, temps.supply, running, false);
+          flow('flow-out', temps.extract, temps.exhaust, running, true);
+
+          const core = el('core');
+          if (showEfficiency && state.efficiency !== null && state.efficiency !== undefined) {
+            core.hidden = false;
+            el('eff').textContent = `${state.efficiency}%`;
+          } else if (showEfficiency) {
+            core.hidden = false;
+            el('eff').textContent = '–';
+          } else {
+            core.hidden = true;
+          }
+
+          markLevel(state.fanLevel);
+
+          show('s-humidity', state.humidity !== null && state.humidity !== undefined);
+          if (state.humidity !== null) el('v-humidity').textContent = state.humidity;
+
+          const bypassOpen = state.bypass === 'opened' || state.bypass === 'opening';
+          show('s-bypass', bypassOpen);
+          el('v-bypass').textContent = t('widget.bypass', 'bypass');
+
+          show('s-filter', state.filterDays !== null && state.filterDays !== undefined);
+          if (state.filterDays !== null) {
+            el('v-filter').textContent = state.filterDays;
+            el('u-filter').textContent = t('widget.days_short', 'd');
+          }
+        }
+
+        function refresh() {
+          // GET carries no body, so the device has to travel in the query
+          // string — api.js reads it off `query`.
+          const path = deviceId
+            ? `/state?deviceId=${encodeURIComponent(deviceId)}`
+            : '/state';
+
+          Homey.api('GET', path, {})
+            .then(render)
+            .catch((err) => {
+              console.error(err);
+              render(null);
+            });
+        }
+
+        refresh();
+        setInterval(refresh, refreshMs);
+
+        Homey.ready();
+      }
+    </script>
+  </body>
+</html>

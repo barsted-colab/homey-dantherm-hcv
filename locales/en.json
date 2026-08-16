@@ -4,5 +4,27 @@
     "not_connected": "Not connected to the ventilation unit.",
     "command_failed": "The ventilation unit did not accept the command.",
     "setting_rejected": "The unit rejected these settings: __keys__"
+  },
+  "widget": {
+    "outdoor": "Outdoor",
+    "supply": "Supply",
+    "extract": "Extract",
+    "exhaust": "Exhaust",
+    "recovery": "recovery",
+    "bypass": "bypass",
+    "alarm": "Alarm",
+    "days_short": "d",
+    "no_device": "Select a ventilation unit in the widget settings",
+    "unavailable": "Unit not responding",
+    "mode": {
+      "standby": "Standby",
+      "automatic": "Automatic",
+      "manual": "Manual",
+      "week_program": "Week program",
+      "away": "Away",
+      "summer": "Summer",
+      "fireplace": "Fireplace",
+      "night": "Night"
+    }
   }
 }

@@ -36,6 +36,30 @@ Operating mode and fan level are settable. Flow cards cover mode and fan level
 changes, manual bypass, filter and alarm resets, plus triggers for bypass
 changes, alarms and filter replacement.
 
+### Dashboard widget
+
+A widget showing the heat exchange as it happens: outdoor air entering and
+leaving as supply, extract air leaving as exhaust, with the recovery efficiency
+between them and a fan level control underneath.
+
+Efficiency is the temperature ratio `(supply − outdoor) / (extract − outdoor)`,
+which the unit does not report itself. It is suppressed when the bypass is open,
+because the exchanger is out of the loop then, and when the extract-to-outdoor
+difference is under 2 °C, where sensor tolerance dominates the result.
+
+The widget reads capability values from the paired device rather than polling
+the unit, so a dashboard refreshing every few seconds cannot exhaust the
+controller's three-socket limit.
+
+**Note on the manifest.** This app uses a flat `app.json` rather than
+`.homeycompose/`, and `App.hasHomeyCompose()` only returns true when that folder
+exists. A `widget.compose.json` would therefore be silently ignored, so the
+widget is declared under the `widgets` key in `app.json` directly — including
+the `id` field, which Compose would otherwise derive from the folder name.
+
+Widgets require `"compatibility": ">=12.3.0"`, which is why the app no longer
+declares `>=5.0.0`.
+
 ### Self-configuring capability set
 
 The unit is asked what it is fitted with, and the tiles follow. Two signals are

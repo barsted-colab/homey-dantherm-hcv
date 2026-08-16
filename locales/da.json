@@ -4,5 +4,27 @@
     "not_connected": "Ingen forbindelse til ventilationsanlægget.",
     "command_failed": "Ventilationsanlægget accepterede ikke kommandoen.",
     "setting_rejected": "Anlægget afviste disse indstillinger: __keys__"
+  },
+  "widget": {
+    "outdoor": "Udeluft",
+    "supply": "Tilluft",
+    "extract": "Fraluft",
+    "exhaust": "Afkast",
+    "recovery": "genvinding",
+    "bypass": "bypass",
+    "alarm": "Alarm",
+    "days_short": "d",
+    "no_device": "Vælg et ventilationsanlæg i widgettens indstillinger",
+    "unavailable": "Anlægget svarer ikke",
+    "mode": {
+      "standby": "Standby",
+      "automatic": "Automatisk",
+      "manual": "Manuel",
+      "week_program": "Ugeprogram",
+      "away": "Ferie",
+      "summer": "Sommer",
+      "fireplace": "Pejs",
+      "night": "Natsænkning"
+    }
   }
 }

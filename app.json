@@ -1,7 +1,7 @@
 {
   "id": "dk.fredskilde.dantherm",
   "version": "1.0.0",
-  "compatibility": ">=5.0.0",
+  "compatibility": ">=12.3.0",
   "sdk": 3,
   "platforms": ["local"],
   "name": {
@@ -393,6 +393,73 @@
       ]
     }
   ],
+  "widgets": {
+    "status": {
+      "id": "status",
+      "name": {
+        "en": "Ventilation status",
+        "da": "Ventilationsstatus"
+      },
+      "height": 232,
+      "transparent": false,
+      "devices": {
+        "type": "app",
+        "singular": true,
+        "filter": {
+          "driver_id": "hcv"
+        }
+      },
+      "settings": [
+        {
+          "id": "show_efficiency",
+          "type": "checkbox",
+          "title": {
+            "en": "Show heat recovery efficiency",
+            "da": "Vis genvindingsgrad"
+          },
+          "value": true,
+          "hint": {
+            "en": "Calculated from the supply, extract and outdoor temperatures. Not shown while the bypass is open, since the exchanger is bypassed then.",
+            "da": "Beregnes ud fra tilluft, fraluft og udeluft. Vises ikke mens bypass er åben, da veksleren er koblet fra."
+          }
+        },
+        {
+          "id": "allow_control",
+          "type": "checkbox",
+          "title": {
+            "en": "Allow changing the fan level",
+            "da": "Tillad ændring af ventilationstrin"
+          },
+          "value": true
+        },
+        {
+          "id": "refresh_seconds",
+          "type": "number",
+          "title": {
+            "en": "Refresh interval",
+            "da": "Opdateringsinterval"
+          },
+          "value": 15,
+          "min": 5,
+          "max": 120,
+          "units": {
+            "en": "seconds",
+            "da": "sekunder"
+          }
+        }
+      ],
+      "api": {
+        "getState": {
+          "method": "GET",
+          "path": "/state"
+        },
+        "setFanLevel": {
+          "method": "POST",
+          "path": "/fan-level"
+        }
+      }
+    }
+  },
   "flow": {
     "triggers": [
       {
