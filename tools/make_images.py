@@ -1,9 +1,23 @@
 #!/usr/bin/env python3
-"""Generates Homey app and driver images from the Dantherm product render."""
+"""
+Generates the Homey app and driver images.
+
+Two sources are supported:
+
+  drawn  (default) the original illustration from draw_unit.py — owned outright,
+                   so nothing here depends on a third party's permission
+  render           a manufacturer product photo, which looks sharper but is
+                   somebody else's asset and needs clearing before publication
+
+    python3 tools/make-images.py [drawn|render]
+"""
 
 from PIL import Image, ImageDraw, ImageFilter
 import math
 import os
+import sys
+
+from draw_unit import draw_unit
 
 SRC = os.path.expanduser('~/Downloads/dantherm-hcv-460-p2-a-bp-rh.jpg')
 APP = os.path.expanduser('~/Documents/Github/Homey App Development/dk.fredskilde.dantherm')
@@ -11,8 +25,8 @@ APP = os.path.expanduser('~/Documents/Github/Homey App Development/dk.fredskilde
 WHITE = (255, 255, 255)
 
 
-def load_product():
-    """Returns the render cropped tight to the unit, plus an alpha mask."""
+def load_render():
+    """Returns the product render cropped tight to the unit, plus an alpha mask."""
     im = Image.open(SRC).convert('RGB')
 
     # The render sits on white, so anything below the threshold is product.
@@ -28,6 +42,17 @@ def load_product():
     alpha = alpha.filter(ImageFilter.GaussianBlur(0.6)).point(lambda p: min(255, int(p * 1.6)))
     product.putalpha(alpha)
     return product
+
+
+def load_drawn():
+    """Renders the illustration large and crops it to the unit."""
+    art = draw_unit(1400)
+    box = art.getbbox()
+    return art.crop(box)
+
+
+def load_product(source):
+    return load_render() if source == 'render' else load_drawn()
 
 
 def fit(img, size, margin=0.08):
@@ -93,10 +118,13 @@ def app_image(product, width, height):
     flow = flow.filter(ImageFilter.GaussianBlur(max(0.4, height * 0.0016)))
     canvas = Image.alpha_composite(canvas.convert('RGBA'), flow).convert('RGB')
 
-    # Unit on the right, sized to the canvas height.
+    # Unit on the right, sized to the canvas height. The x position is derived
+    # from the scaled width rather than fixed, because the drawn unit and the
+    # photographic render have very different aspect ratios and a hard-coded
+    # offset crops one of them off the edge.
     item = product.copy()
     item.thumbnail((int(width * 0.42), int(height * 0.82)), Image.LANCZOS)
-    x = int(width * 0.60)
+    x = width - item.width - int(width * 0.07)
     y = (height - item.height) // 2
 
     # Soft contact shadow so the unit sits in the scene.
@@ -115,8 +143,12 @@ def app_image(product, width, height):
 
 
 def main():
-    product = load_product()
-    print(f'produkt beskaaret til {product.width}x{product.height}')
+    source = sys.argv[1] if len(sys.argv) > 1 else 'drawn'
+    if source not in ('drawn', 'render'):
+        raise SystemExit('kilde skal vaere "drawn" eller "render"')
+
+    product = load_product(source)
+    print(f'kilde: {source} — beskaaret til {product.width}x{product.height}')
 
     for name, size in [('small', 75), ('large', 500), ('xlarge', 1000)]:
         path = f'{APP}/drivers/hcv/assets/images/{name}.png'
