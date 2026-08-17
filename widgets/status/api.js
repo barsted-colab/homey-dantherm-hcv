@@ -7,6 +7,8 @@
  * sockets and one poll loop is already using one.
  */
 
+const { recoveryEfficiency } = require('../../lib/dantherm');
+
 const DRIVER_ID = 'hcv';
 
 /**
@@ -30,20 +32,6 @@ function resolveDevice(homey, deviceId) {
   }
 
   return devices.length === 1 ? devices[0] : null;
-}
-
-/** Temperature ratio, the standard measure of how much heat the exchanger keeps. */
-function recoveryEfficiency({ supply, extract, outdoor }) {
-  if ([supply, extract, outdoor].some((value) => value === null || value === undefined)) return null;
-
-  // Below a couple of degrees of difference the ratio is dominated by sensor
-  // tolerance and swings wildly, so it is not worth showing.
-  const available = extract - outdoor;
-  if (Math.abs(available) < 2) return null;
-
-  const ratio = ((supply - outdoor) / available) * 100;
-  if (!Number.isFinite(ratio) || ratio < 0 || ratio > 110) return null;
-  return Math.round(ratio);
 }
 
 function read(device, capability) {
