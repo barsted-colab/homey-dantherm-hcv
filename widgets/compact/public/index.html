@@ -1,0 +1,276 @@
+<html lang="da">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ventilation kompakt</title>
+    <style>
+      /*
+        The small view. One hero figure, four supporting readings, and the fan
+        levels — anything more at this size becomes decoration rather than
+        information. Colours come from Homey's tokens so the widget belongs to
+        the dashboard; only the air temperature scale is fixed across themes.
+      */
+      :root {
+        --tile: color-mix(in srgb, var(--homey-text-color, #16191d) 6%, transparent);
+        --tile-line: color-mix(in srgb, var(--homey-text-color, #16191d) 11%, transparent);
+      }
+
+      body { margin: 0; overflow: hidden; }
+
+      .w { display: flex; flex-direction: column; gap: 8px; height: 200px; }
+
+      .head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+      .name {
+        font-weight: 620; font-size: 13px;
+        overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+      }
+      .chip {
+        flex: none; padding: 2px 8px; border-radius: var(--homey-border-radius-small, 5px);
+        font-size: 11.5px; white-space: nowrap;
+        background: color-mix(in srgb, var(--homey-color-blue, #2b8ede) 14%, transparent);
+        color: var(--homey-text-color-blue, #2b8ede);
+        border: 1px solid color-mix(in srgb, var(--homey-color-blue, #2b8ede) 32%, transparent);
+      }
+      .chip.alarm {
+        background: color-mix(in srgb, var(--homey-color-red, #e5484d) 16%, transparent);
+        color: var(--homey-text-color-danger, #e5484d);
+        border-color: color-mix(in srgb, var(--homey-color-red, #e5484d) 45%, transparent);
+      }
+
+      .body { flex: 1; display: flex; align-items: center; gap: 12px; min-height: 0; }
+
+      /* The dial reads as an amount of air moving, not a percentage of a
+         setting — the arc fills against the commissioned nominal flow when one
+         is known, and falls back to the fan step when it is not. */
+      .dial { position: relative; width: 116px; height: 116px; flex: none; }
+      .dial svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .dial .mid {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 1px; line-height: 1;
+      }
+      .dial .big { font-size: 25px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .dial .unit { font-size: 10px; color: var(--homey-text-color-light, #7a838d); }
+      .dial .sub {
+        font-size: 10px; font-variant-numeric: tabular-nums;
+        color: var(--homey-text-color-blue, #2b8ede); margin-top: 2px;
+      }
+
+      .tiles {
+        flex: 1; display: grid; grid-template-columns: 1fr 1fr;
+        gap: 5px; align-content: center; min-width: 0;
+      }
+      .tile {
+        background: var(--tile); border: 1px solid var(--tile-line);
+        border-radius: var(--homey-border-radius-small, 6px);
+        padding: 5px 8px; display: flex; flex-direction: column; gap: 1px; min-width: 0;
+      }
+      .tile .k {
+        font-size: 8.5px; letter-spacing: .07em; text-transform: uppercase;
+        color: var(--homey-text-color-light, #7a838d);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .tile .v { font-size: 14px; font-weight: 640; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .tile .u { font-size: 9px; font-weight: 400; color: var(--homey-text-color-light, #7a838d); }
+
+      .foot { display: flex; align-items: center; gap: 8px; }
+      .foot .lbl {
+        font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+        color: var(--homey-text-color-light, #7a838d); flex: none;
+      }
+      .levels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; flex: 1; }
+
+      button {
+        font: inherit; cursor: pointer; background: transparent;
+        border: 1px solid var(--tile-line);
+        color: var(--homey-text-color-light, #7a838d);
+        border-radius: var(--homey-border-radius-small, 6px);
+        height: 26px; font-size: 12px; font-weight: 500;
+        font-variant-numeric: tabular-nums;
+        transition: background .15s, border-color .15s, color .15s;
+      }
+      button:disabled { cursor: default; }
+      button:focus-visible { outline: 2px solid var(--homey-color-blue, #2b8ede); outline-offset: 1px; }
+      button.on {
+        background: color-mix(in srgb, var(--homey-color-blue, #2b8ede) 18%, transparent);
+        border-color: var(--homey-color-blue, #2b8ede);
+        color: var(--homey-text-color-blue, #2b8ede);
+      }
+      .busy { opacity: .5; }
+
+      .msg {
+        display: flex; align-items: center; justify-content: center;
+        height: 200px; text-align: center;
+        color: var(--homey-text-color-light, #7a838d);
+        font-size: 13px; padding: 0 20px;
+      }
+
+      [hidden] { display: none !important; }
+    </style>
+  </head>
+
+  <body class="homey-widget">
+    <div class="w" id="w" hidden>
+      <div class="head">
+        <span class="name" id="name">&nbsp;</span>
+        <span class="chip" id="chip">&nbsp;</span>
+      </div>
+
+      <div class="body">
+        <div class="dial">
+          <svg viewBox="0 0 116 116" aria-hidden="true">
+            <!-- 270° of arc starting at the lower left: r=48 gives a
+                 circumference of 301.6, so the track is 226.2 long. -->
+            <circle cx="58" cy="58" r="48" fill="none" stroke="var(--tile-line)"
+                    stroke-width="8" stroke-linecap="round"
+                    stroke-dasharray="226.2 302" transform="rotate(135 58 58)" />
+            <circle id="arc" cx="58" cy="58" r="48" fill="none"
+                    stroke="var(--homey-color-blue, #2b8ede)"
+                    stroke-width="8" stroke-linecap="round"
+                    stroke-dasharray="0 302" transform="rotate(135 58 58)"
+                    style="transition: stroke-dasharray .6s ease;" />
+          </svg>
+          <div class="mid">
+            <span class="big" id="big">–</span>
+            <span class="unit" id="unit">m³/h</span>
+            <span class="sub" id="sub"></span>
+          </div>
+        </div>
+
+        <div class="tiles" id="tiles"></div>
+      </div>
+
+      <div class="foot" id="foot">
+        <span class="lbl" id="l-level">Trin</span>
+        <div class="levels" id="levels"></div>
+      </div>
+    </div>
+
+    <div class="msg" id="msg">…</div>
+
+    <script type="text/javascript">
+      function onHomeyReady(Homey) {
+        const settings = Homey.getSettings() || {};
+        const deviceId = (Homey.getDeviceIds() || [])[0] || null;
+        const allowControl = settings.allow_control !== false;
+        const refreshMs = Math.max(5, Number(settings.refresh_seconds) || 15) * 1000;
+
+        const el = (id) => document.getElementById(id);
+        const t = (key, fallback) => {
+          const value = Homey.__(key);
+          return !value || value === key ? fallback : value;
+        };
+
+        const TRACK = 226.2;
+        const deg = (c) => (c === null || c === undefined ? '–' : `${c.toFixed(1).replace('.', ',')}°`);
+
+        el('l-level').textContent = t('widget.level', 'Trin');
+
+        const levels = [];
+        for (let i = 0; i <= 4; i++) {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = String(i);
+          if (allowControl) b.addEventListener('click', () => setLevel(i));
+          else b.disabled = true;
+          el('levels').appendChild(b);
+          levels.push(b);
+        }
+
+        const mark = (active) => levels.forEach((b, i) => b.classList.toggle('on', i === active));
+
+        let busy = false;
+        function setLevel(level) {
+          if (busy) return;
+          busy = true;
+          levels.forEach((b) => b.classList.add('busy'));
+          if (Homey.hapticFeedback) Homey.hapticFeedback();
+          mark(level);
+
+          Homey.api('POST', '/fan-level', { deviceId, level })
+            // The controller needs a moment before a read reflects the write.
+            .then(() => setTimeout(refresh, 3500))
+            .catch((err) => { console.error(err); refresh(); })
+            .finally(() => {
+              busy = false;
+              levels.forEach((b) => b.classList.remove('busy'));
+            });
+        }
+
+        function render(state) {
+          if (!state || !state.available) {
+            el('w').hidden = true;
+            el('msg').hidden = false;
+            el('msg').textContent = state && state.reason === 'unavailable'
+              ? (state.message || t('widget.unavailable', 'Anlægget svarer ikke'))
+              : t('widget.no_device', 'Vælg et ventilationsanlæg i widgettens indstillinger');
+            return;
+          }
+
+          el('msg').hidden = true;
+          el('w').hidden = false;
+          el('name').textContent = state.model || state.name || 'Dantherm';
+
+          const chip = el('chip');
+          chip.textContent = state.alarm
+            ? t('widget.alarm', 'Alarm')
+            : t(`widget.mode.${state.mode}`, state.mode || '–');
+          chip.classList.toggle('alarm', !!state.alarm);
+
+          // Airflow is the honest hero figure, but it only exists once the unit
+          // has been calibrated against a commissioning report. Without it the
+          // dial falls back to the fan step rather than inventing a number.
+          const flow = state.airflow ? state.airflow.extract : null;
+          const nominal = state.airflowNominal;
+          let fraction;
+
+          if (flow !== null && flow !== undefined && nominal) {
+            el('big').textContent = String(flow);
+            el('unit').textContent = 'm³/h';
+            // Scaled against the nominal flow with headroom, so the everyday
+            // setting sits four fifths round rather than pegged at the end.
+            fraction = Math.min(1, flow / (nominal * 1.25));
+          } else {
+            el('big').textContent = String(state.fanLevel);
+            el('unit').textContent = t('widget.level', 'Trin');
+            fraction = state.fanLevel / 4;
+          }
+
+          el('arc').setAttribute('stroke-dasharray', `${(TRACK * fraction).toFixed(1)} 302`);
+
+          const sub = el('sub');
+          if (state.bypassOpen) sub.textContent = t('widget.bypass_open', 'Bypass åben');
+          else if (state.efficiency !== null && state.efficiency !== undefined) {
+            sub.textContent = `${state.efficiency}% ${t('widget.recovery_short', 'genv.')}`;
+          } else sub.textContent = '';
+
+          const tiles = [];
+          const add = (k, v, u) => { if (v !== null && v !== undefined) tiles.push({ k, v, u }); };
+          const temps = state.temperatures || {};
+          add(t('widget.extract', 'Fraluft'), deg(temps.extract), '');
+          add(t('widget.supply', 'Tilluft'), deg(temps.supply), '');
+          add(t('widget.humidity', 'Fugt'), state.humidity, '%');
+          add(t('widget.filter', 'Filter'), state.filterDays, t('widget.days', 'dage'));
+
+          el('tiles').innerHTML = tiles.slice(0, 4).map((x) => '<div class="tile">'
+            + `<span class="k">${x.k}</span>`
+            + `<span class="v">${x.v}${x.u ? ` <span class="u">${x.u}</span>` : ''}</span></div>`).join('');
+
+          mark(state.fanLevel);
+          el('foot').hidden = !allowControl;
+        }
+
+        function refresh() {
+          const path = deviceId ? `/state?deviceId=${encodeURIComponent(deviceId)}` : '/state';
+          Homey.api('GET', path, {})
+            .then(render)
+            .catch((err) => { console.error(err); render(null); });
+        }
+
+        refresh();
+        setInterval(refresh, refreshMs);
+        Homey.ready();
+      }
+    </script>
+  </body>
+</html>

@@ -36,6 +36,7 @@
     "air_quality": "Luftkvalitet",
     "open": "Åben",
     "closed": "Lukket",
-    "bypass_open": "Bypass åben"
+    "bypass_open": "Bypass åben",
+    "recovery_short": "genv."
   }
 }

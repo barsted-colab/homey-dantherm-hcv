@@ -1,57 +1,46 @@
 #!/usr/bin/env python3
 """
-Draws the widget picker previews: a mock of the widget in light and dark.
+Draws the widget picker previews: a mock of each widget in light and dark.
 
-These are illustrations of the real layout, not screenshots — the widget needs
-a live unit to render, and a preview has to exist before it can be installed.
-Keep them in step with public/index.html when the layout changes.
+These are illustrations of the real layouts, not screenshots — a widget needs a
+paired unit to render, and the previews must exist before it can be installed.
+Keep them in step with the two public/index.html files when a layout changes.
+
+    python3 tools/make_widget_preview.py
 """
 
 from PIL import Image, ImageDraw, ImageFont
+import math
 import os
 
 SIZE = 1024
-OUT = os.path.join(os.path.dirname(__file__), '..', 'widgets', 'status')
+ROOT = os.path.join(os.path.dirname(__file__), '..', 'widgets')
 
-# Air colours are deliberately identical in both themes: a temperature should
-# not change meaning when the dashboard switches to dark.
-COLD = (74, 163, 224)
-COOL = (123, 191, 232)
-NEUTRAL = (154, 167, 180)
-WARM = (234, 161, 75)
-HOT = (226, 112, 58)
+# Air colours are identical in both themes on purpose: a temperature must not
+# change meaning when the dashboard goes dark.
+COLD = (63, 150, 216)
+COOL = (116, 184, 228)
+TEPID = (147, 162, 176)
+WARM = (231, 154, 69)
+HOT = (221, 101, 53)
 BLUE = (43, 142, 222)
 
 THEMES = {
-    'light': {
-        'page': (238, 241, 245),
-        'card': (255, 255, 255),
-        'text': (22, 25, 29),
-        'muted': (122, 130, 139),
-        'track': (223, 228, 233),
-        'core': (243, 245, 247),
-        'seg': (238, 240, 243),
-    },
-    'dark': {
-        'page': (18, 20, 24),
-        'card': (32, 36, 42),
-        'text': (240, 243, 246),
-        'muted': (142, 152, 163),
-        'track': (56, 62, 70),
-        'core': (44, 49, 57),
-        'seg': (48, 53, 61),
-    },
+    'light': dict(page=(238, 241, 244), card=(255, 255, 255), text=(22, 25, 29),
+                  muted=(122, 130, 141), tile=(242, 245, 248), line=(224, 229, 234),
+                  core=(255, 255, 255)),
+    'dark': dict(page=(13, 16, 20), card=(23, 28, 35), text=(238, 242, 246),
+                 muted=(141, 151, 163), tile=(30, 36, 44), line=(42, 50, 59),
+                 core=(23, 28, 35)),
 }
 
-FONT_CANDIDATES = [
-    '/System/Library/Fonts/Supplemental/Arial.ttf',
-    '/System/Library/Fonts/Helvetica.ttc',
-    '/Library/Fonts/Arial.ttf',
-]
+FONTS = ['/System/Library/Fonts/Supplemental/Arial.ttf',
+         '/System/Library/Fonts/Helvetica.ttc',
+         '/Library/Fonts/Arial.ttf']
 
 
 def font(size, bold=False):
-    for path in FONT_CANDIDATES:
+    for path in FONTS:
         if os.path.exists(path):
             try:
                 return ImageFont.truetype(path, size, index=1 if bold and path.endswith('.ttc') else 0)
@@ -60,134 +49,213 @@ def font(size, bold=False):
     return ImageFont.load_default()
 
 
-def colour_for(celsius):
-    if celsius <= 0:
-        return COLD
-    if celsius <= 12:
-        return COOL
-    if celsius <= 19:
-        return NEUTRAL
-    if celsius <= 24:
-        return WARM
+def colour_for(c):
+    for limit, colour in ((0, COLD), (12, COOL), (19, TEPID), (24, WARM)):
+        if c <= limit:
+            return colour
     return HOT
 
 
-def gradient_bar(draw, box, left, right):
-    """Horizontal gradient inside a rounded bar, drawn one column at a time."""
-    x0, y0, x1, y1 = box
-    radius = (y1 - y0) / 2
-    width = max(1, int(x1 - x0))
-    for i in range(width):
-        t = i / max(1, width - 1)
-        colour = tuple(int(left[c] + (right[c] - left[c]) * t) for c in range(3))
-        draw.line([(x0 + i, y0), (x0 + i, y1)], fill=colour)
-    # Mask the ends back to a rounded shape.
-    return radius
+def mix(a, b, t):
+    return tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3))
 
 
-def draw_preview(theme_name):
-    th = THEMES[theme_name]
+def tile(d, box, th, label, value, unit, f_k, f_v, f_u, value_colour=None):
+    d.rounded_rectangle(box, radius=9, fill=th['tile'], outline=th['line'], width=1)
+    x, y = box[0] + 13, box[1] + 9
+    d.text((x, y), label.upper(), font=f_k, fill=th['muted'])
+    d.text((x, y + 20), value, font=f_v, fill=value_colour or th['text'])
+    if unit:
+        w = d.textlength(value, font=f_v)
+        d.text((x + w + 6, y + 28), unit, font=f_u, fill=th['muted'])
+
+
+def header(d, th, x0, x1, y, title, chip):
+    d.text((x0, y), title, font=font(26, bold=True), fill=th['text'])
+    f = font(20)
+    w = d.textlength(chip, font=f)
+    d.rounded_rectangle([x1 - w - 26, y - 5, x1, y + 31], radius=8,
+                        fill=mix(th['card'], BLUE, .16), outline=mix(th['card'], BLUE, .4), width=1)
+    d.text((x1 - w - 13, y + 1), chip, font=f, fill=BLUE)
+
+
+def levels(d, th, x0, x1, y, active, height=46):
+    n, gap = 5, 7
+    w = (x1 - x0 - gap * (n - 1)) / n
+    f = font(21)
+    for i in range(n):
+        bx = x0 + i * (w + gap)
+        on = i == active
+        d.rounded_rectangle([bx, y, bx + w, y + height], radius=9,
+                            fill=mix(th['card'], BLUE, .18) if on else th['card'],
+                            outline=BLUE if on else th['line'], width=2 if on else 1)
+        label = str(i)
+        lw = d.textlength(label, font=f)
+        d.text((bx + (w - lw) / 2, y + height / 2 - 13), label, font=f,
+               fill=BLUE if on else th['muted'])
+
+
+# --- status widget -----------------------------------------------------------
+
+def bezier(p0, p1, p2, p3, steps=90):
+    pts = []
+    for i in range(steps + 1):
+        t = i / steps
+        u = 1 - t
+        pts.append((u**3 * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t**3 * p3[0],
+                    u**3 * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t**3 * p3[1]))
+    return pts
+
+
+def gradient_path(img, pts, c_from, c_to, width):
+    """Draws a polyline whose colour shifts along its length."""
+    d = ImageDraw.Draw(img)
+    for i in range(len(pts) - 1):
+        t = i / max(1, len(pts) - 2)
+        colour = mix(c_from, c_to, t)
+        d.line([pts[i], pts[i + 1]], fill=colour, width=width)
+        d.ellipse([pts[i][0] - width / 2, pts[i][1] - width / 2,
+                   pts[i][0] + width / 2, pts[i][1] + width / 2], fill=colour)
+
+
+def arrow(d, tip, direction, colour, size=15):
+    ang = math.atan2(direction[1], direction[0])
+    pts = [(tip[0], tip[1])]
+    for offset in (2.5, -2.5):
+        pts.append((tip[0] - size * math.cos(ang - offset * 0.32),
+                    tip[1] - size * math.sin(ang - offset * 0.32)))
+    d.polygon(pts, fill=colour)
+
+
+def draw_status(theme):
+    th = THEMES[theme]
     img = Image.new('RGB', (SIZE, SIZE), th['page'])
     d = ImageDraw.Draw(img)
 
-    # Card
-    cw, ch = 880, 512
+    cw, ch = 880, 720
     cx, cy = (SIZE - cw) // 2, (SIZE - ch) // 2
-    d.rounded_rectangle([cx, cy, cx + cw, cy + ch], radius=28, fill=th['card'])
+    d.rounded_rectangle([cx, cy, cx + cw, cy + ch], radius=26, fill=th['card'])
 
-    pad = 44
-    x0, y0 = cx + pad, cy + pad
-    x1 = cx + cw - pad
+    pad = 40
+    x0, x1 = cx + pad, cx + cw - pad
+    header(d, th, x0, x1, cy + pad, 'HCV400 P2', 'Automatisk')
 
-    f_title = font(28, bold=True)
-    f_label = font(20)
-    f_value = font(40, bold=True)
-    f_chip = font(22)
-    f_small = font(22)
-    f_pct = font(38, bold=True)
-    f_cap = font(18)
+    f_lbl, f_deg, f_flow = font(17), font(36, bold=True), font(17)
+    f_k, f_v, f_u = font(16), font(27, bold=True), font(17)
 
-    # --- header ---
-    d.text((x0, y0), 'HCV400 P2', font=f_title, fill=th['text'])
-    chip = 'Automatisk'
-    cw_chip = d.textlength(chip, font=f_chip)
-    d.rounded_rectangle([x1 - cw_chip - 28, y0 - 6, x1, y0 + 34], radius=8,
-                        fill=tuple(int(th['card'][i] + (BLUE[i] - th['card'][i]) * 0.16) for i in range(3)))
-    d.text((x1 - cw_chip - 14, y0 + 1), chip, font=f_chip, fill=BLUE)
+    ex_top = cy + pad + 76
+    ex_h = 300
+    mid_x, mid_y = cx + cw / 2, ex_top + ex_h / 2
 
-    # --- exchange block ---
-    ex_top = y0 + 78
-    core_w, core_h = 150, 128
-    core_x = cx + (cw - core_w) // 2
-    core_y = ex_top + 46
+    # Two streams crossing through the core, each drawn in the colour of the
+    # air at that end so the heat swap happens visibly in the middle.
+    left, right = x0 + 150, x1 - 150
+    top, bottom = ex_top + 40, ex_top + ex_h - 40
 
-    def temp_block(x, y, label, value, align_right=False):
-        text = f'{value:.1f}'.replace('.', ',') + '°'
-        if align_right:
-            lw = d.textlength(label, font=f_label)
-            vw = d.textlength(text, font=f_value)
-            d.text((x - lw, y), label, font=f_label, fill=th['muted'])
-            d.text((x - vw, y + 26), text, font=f_value, fill=colour_for(value))
-        else:
-            d.text((x, y), label, font=f_label, fill=th['muted'])
-            d.text((x, y + 26), text, font=f_value, fill=colour_for(value))
+    warm = bezier((left, top), (left + 150, top), (right - 150, bottom), (right, bottom))
+    cool = bezier((right, top), (right - 150, top), (left + 150, bottom), (left, bottom))
+    gradient_path(img, warm, colour_for(25.2), colour_for(2.1), 13)
+    gradient_path(img, cool, colour_for(-3.5), colour_for(19.4), 13)
+    d = ImageDraw.Draw(img)
+    arrow(d, warm[-1], (warm[-1][0] - warm[-6][0], warm[-1][1] - warm[-6][1]), colour_for(2.1))
+    arrow(d, cool[-1], (cool[-1][0] - cool[-6][0], cool[-1][1] - cool[-6][1]), colour_for(19.4))
 
-    temp_block(x0, ex_top, 'UDELUFT', -3.5)
-    temp_block(x1, ex_top, 'TILLUFT', 19.4, align_right=True)
-
-    # Core badge
-    d.rounded_rectangle([core_x, core_y, core_x + core_w, core_y + core_h],
-                        radius=16, fill=th['core'])
-    pct = '84%'
-    pw = d.textlength(pct, font=f_pct)
-    d.text((core_x + (core_w - pw) / 2, core_y + 30), pct, font=f_pct, fill=th['text'])
+    # Core diamond over the crossing
+    r = 78
+    d.polygon([(mid_x, mid_y - r), (mid_x + r, mid_y), (mid_x, mid_y + r), (mid_x - r, mid_y)],
+              fill=th['core'], outline=th['line'], width=3)
+    d.polygon([(mid_x, mid_y - r + 16), (mid_x + r - 16, mid_y),
+               (mid_x, mid_y + r - 16), (mid_x - r + 16, mid_y)],
+              outline=th['line'], width=1)
+    pct = '88%'
+    pw = d.textlength(pct, font=font(34, bold=True))
+    d.text((mid_x - pw / 2, mid_y - 26), pct, font=font(34, bold=True), fill=th['text'])
     cap = 'GENVINDING'
-    capw = d.textlength(cap, font=f_cap)
-    d.text((core_x + (core_w - capw) / 2, core_y + 78), cap, font=f_cap, fill=th['muted'])
+    cw2 = d.textlength(cap, font=font(14))
+    d.text((mid_x - cw2 / 2, mid_y + 14), cap, font=font(14), fill=th['muted'])
 
-    # Flow bars, one either side of the badge
-    bar_h = 12
-    gap = 26
-    for row, (left_c, right_c) in enumerate([
-        (colour_for(-3.5), colour_for(19.4)),   # intake, cold -> warm
-        (colour_for(21.8), colour_for(2.1)),    # extract, warm -> cold
-    ]):
-        by = core_y + 28 + row * (bar_h + gap)
-        for seg_x0, seg_x1 in [(x0, core_x - 22), (core_x + core_w + 22, x1)]:
-            bar = Image.new('RGB', (int(seg_x1 - seg_x0), bar_h))
-            bd = ImageDraw.Draw(bar)
-            gradient_bar(bd, (0, 0, bar.width, bar_h), left_c, right_c)
-            mask = Image.new('L', (bar.width, bar_h), 0)
-            ImageDraw.Draw(mask).rounded_rectangle([0, 0, bar.width - 1, bar_h - 1],
-                                                  radius=bar_h // 2, fill=255)
-            img.paste(bar, (int(seg_x0), int(by)), mask)
+    def port(x, y, label, value, flow, right_align=False):
+        text = f'{value:.1f}'.replace('.', ',') + '°'
+        rows = [(label.upper(), f_lbl, th['muted'], 0),
+                (text, f_deg, colour_for(value), 22),
+                (f'{flow} m³/h', f_flow, th['muted'], 62)]
+        for content, fnt, colour, dy in rows:
+            w = d.textlength(content, font=fnt)
+            d.text((x - w if right_align else x, y + dy), content, font=fnt, fill=colour)
 
-    bottom_top = core_y + core_h + 26
-    temp_block(x0, bottom_top, 'AFKAST', 2.1)
-    temp_block(x1, bottom_top, 'FRALUFT', 21.8, align_right=True)
+    port(x0, ex_top, 'Fraluft', 25.2, 214)
+    port(x1, ex_top, 'Udeluft', -3.5, 200, right_align=True)
+    port(x0, ex_top + ex_h - 86, 'Tilluft', 19.4, 200)
+    port(x1, ex_top + ex_h - 86, 'Afkast', 2.1, 214, right_align=True)
 
-    # --- footer ---
-    fy = cy + ch - pad - 52
-    seg_w, seg_h, seg_gap = 56, 52, 7
-    for i in range(5):
-        sx = x0 + i * (seg_w + seg_gap)
-        on = i == 2
-        d.rounded_rectangle([sx, fy, sx + seg_w, fy + seg_h], radius=10,
-                            fill=BLUE if on else th['seg'])
-        label = str(i)
-        lw = d.textlength(label, font=f_small)
-        d.text((sx + (seg_w - lw) / 2, fy + 13), label,
-               font=f_small, fill=(255, 255, 255) if on else th['muted'])
+    ty = ex_top + ex_h + 16
+    data = [('Fugt', '41', '%'), ('Bypass', 'Lukket', ''), ('Genvundet', '1,66', 'kW'),
+            ('Effekt', '39', 'W'), ('Filter', '173', 'dage')]
+    gap = 8
+    tw = (x1 - x0 - gap * 2) / 3
+    for i, (k, v, u) in enumerate(data):
+        col, row = i % 3, i // 3
+        bx = x0 + col * (tw + gap)
+        by = ty + row * 78
+        tile(d, [bx, by, bx + tw, by + 68], th, k, v, u, f_k, f_v, f_u)
 
-    stats = '42%  ·  90d'
-    sw = d.textlength(stats, font=f_small)
-    d.text((x1 - sw, fy + 14), stats, font=f_small, fill=th['muted'])
+    d.text((x0, ty + 168), 'TRIN', font=font(15), fill=th['muted'])
+    levels(d, th, x0, x1, ty + 190, 3, height=44)
+    return img
 
+
+# --- compact widget ----------------------------------------------------------
+
+def draw_compact(theme):
+    th = THEMES[theme]
+    img = Image.new('RGB', (SIZE, SIZE), th['page'])
+    d = ImageDraw.Draw(img)
+
+    cw, ch = 880, 470
+    cx, cy = (SIZE - cw) // 2, (SIZE - ch) // 2
+    d.rounded_rectangle([cx, cy, cx + cw, cy + ch], radius=26, fill=th['card'])
+
+    pad = 40
+    x0, x1 = cx + pad, cx + cw - pad
+    header(d, th, x0, x1, cy + pad, 'HCV400 P2', 'Automatisk')
+
+    # Dial: 270° of arc, filled against the commissioned nominal flow.
+    dial_r, dial_w = 118, 20
+    dcx, dcy = x0 + dial_r + 10, cy + pad + 76 + dial_r
+    box = [dcx - dial_r, dcy - dial_r, dcx + dial_r, dcy + dial_r]
+    d.arc(box, start=135, end=45, fill=th['line'], width=dial_w)
+    # Full scale is the nominal flow with headroom, so the nominal level sits
+    # at four fifths rather than pegged against the end.
+    d.arc(box, start=135, end=135 + 270 * min(1.0, 214 / (216 * 1.25)), fill=BLUE, width=dial_w)
+
+    big, unit, sub = '214', 'm³/h', '88% genv.'
+    f_big, f_unit, f_sub = font(52, bold=True), font(20), font(18)
+    for content, fnt, colour, dy in ((big, f_big, th['text'], -42),
+                                     (unit, f_unit, th['muted'], 16),
+                                     (sub, f_sub, BLUE, 44)):
+        w = d.textlength(content, font=fnt)
+        d.text((dcx - w / 2, dcy + dy), content, font=fnt, fill=colour)
+
+    f_k, f_v, f_u = font(16), font(27, bold=True), font(17)
+    tx0 = dcx + dial_r + 30
+    gap = 8
+    tw = (x1 - tx0 - gap) / 2
+    cells = [('Fraluft', '25,2°', '', colour_for(25.2)), ('Tilluft', '19,4°', '', colour_for(19.4)),
+             ('Fugt', '41', '%', None), ('Filter', '173', 'dage', None)]
+    for i, (k, v, u, colour) in enumerate(cells):
+        bx = tx0 + (i % 2) * (tw + gap)
+        by = dcy - 78 + (i // 2) * 78
+        tile(d, [bx, by, bx + tw, by + 68], th, k, v, u, f_k, f_v, f_u, value_colour=colour)
+
+    fy = cy + ch - pad - 50
+    d.text((x0, fy + 16), 'TRIN', font=font(15), fill=th['muted'])
+    levels(d, th, x0 + 66, x1, fy, 3, height=46)
     return img
 
 
 if __name__ == '__main__':
-    for name in ('light', 'dark'):
-        path = os.path.join(OUT, f'preview-{name}.png')
-        draw_preview(name).save(path, 'PNG', optimize=True)
-        print(f'preview-{name}.png -> {os.path.getsize(path) // 1024} KB')
+    for widget, draw in (('status', draw_status), ('compact', draw_compact)):
+        for theme in ('light', 'dark'):
+            path = os.path.join(ROOT, widget, f'preview-{theme}.png')
+            draw(theme).save(path, 'PNG', optimize=True)
+            print(f'{widget}/preview-{theme}.png -> {os.path.getsize(path) // 1024} KB')

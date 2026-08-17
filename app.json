@@ -926,6 +926,58 @@
           "path": "/mode"
         }
       }
+    },
+    "compact": {
+      "id": "compact",
+      "name": {
+        "en": "Ventilation compact",
+        "da": "Ventilation kompakt"
+      },
+      "height": 232,
+      "transparent": false,
+      "devices": {
+        "type": "app",
+        "singular": true,
+        "filter": {
+          "driver_id": "hcv"
+        }
+      },
+      "settings": [
+        {
+          "id": "allow_control",
+          "type": "checkbox",
+          "title": {
+            "en": "Allow changing the fan level",
+            "da": "Tillad ændring af ventilationstrin"
+          },
+          "value": true
+        },
+        {
+          "id": "refresh_seconds",
+          "type": "number",
+          "title": {
+            "en": "Refresh interval",
+            "da": "Opdateringsinterval"
+          },
+          "value": 15,
+          "min": 5,
+          "max": 120,
+          "units": {
+            "en": "seconds",
+            "da": "sekunder"
+          }
+        }
+      ],
+      "api": {
+        "getState": {
+          "method": "GET",
+          "path": "/state"
+        },
+        "setFanLevel": {
+          "method": "POST",
+          "path": "/fan-level"
+        }
+      }
     }
   },
   "flow": {

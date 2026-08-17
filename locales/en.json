@@ -36,6 +36,7 @@
     "air_quality": "Air quality",
     "open": "Open",
     "closed": "Closed",
-    "bypass_open": "Bypass open"
+    "bypass_open": "Bypass open",
+    "recovery_short": "recov."
   }
 }
