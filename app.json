@@ -66,6 +66,10 @@
     ]
   },
   "support": "mailto:mike.fredskilde@gmail.com",
+  "source": "https://github.com/barsted-colab/homey-dantherm-hcv",
+  "bugs": {
+    "url": "https://github.com/barsted-colab/homey-dantherm-hcv/issues"
+  },
   "brandColor": "#0091D4",
   "capabilities": {
     "dantherm_mode": {
