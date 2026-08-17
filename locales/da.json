@@ -25,6 +25,17 @@
       "summer": "Sommer",
       "fireplace": "Pejs",
       "night": "Natsænkning"
-    }
+    },
+    "level": "Trin",
+    "mode_label": "Driftstilstand",
+    "humidity": "Fugt",
+    "power": "Effekt",
+    "recovered": "Genvundet",
+    "filter": "Filter",
+    "days": "dage",
+    "air_quality": "Luftkvalitet",
+    "open": "Åben",
+    "closed": "Lukket",
+    "bypass_open": "Bypass åben"
   }
 }

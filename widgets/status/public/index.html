@@ -1,47 +1,41 @@
-<html lang="en">
+<html lang="da">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Ventilation status</title>
+    <title>Ventilationsstatus</title>
     <style>
       /*
-        Everything sizes off Homey's own tokens so the widget tracks the
-        dashboard's light/dark theme instead of carrying its own palette.
-        Only the warm/cool air colours are ours, and those stay constant
-        across themes on purpose — a temperature reading should not change
-        meaning when the sun goes down.
+        Sized and coloured from Homey's own tokens so the widget belongs to the
+        dashboard rather than arriving with its own palette. The one exception
+        is the air colours: a temperature must not change meaning when the
+        dashboard switches to dark, so those stay fixed in both themes.
       */
       :root {
-        --cold: #4aa3e0;
-        --cool: #7bbfe8;
-        --neutral: #9aa7b4;
-        --warm: #eaa14b;
-        --hot: #e2703a;
-        --flow-track: color-mix(in srgb, var(--homey-line-color, #cfd6dd) 70%, transparent);
+        --cold: #3f96d8;
+        --cool: #74b8e4;
+        --tepid: #93a2b0;
+        --warm: #e79a45;
+        --hot: #dd6535;
+        --tile: color-mix(in srgb, var(--homey-text-color, #16191d) 6%, transparent);
+        --tile-line: color-mix(in srgb, var(--homey-text-color, #16191d) 11%, transparent);
       }
 
-      body {
-        margin: 0;
-        overflow: hidden;
-      }
+      body { margin: 0; overflow: hidden; }
 
-      .wrap {
+      .w {
         display: flex;
         flex-direction: column;
-        gap: var(--homey-su-2, 8px);
-        height: 100%;
+        gap: 9px;
+        font-size: 14px;
       }
 
       /* --- header --- */
 
-      .head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: var(--homey-su-2, 8px);
-      }
+      .head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
-      .title {
+      .name {
+        font-weight: 620;
+        font-size: 13.5px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -49,223 +43,231 @@
 
       .chip {
         flex: none;
-        padding: 2px var(--homey-su-2, 8px);
-        border-radius: var(--homey-border-radius-small, 4px);
+        padding: 2px 9px;
+        border-radius: var(--homey-border-radius-small, 5px);
+        font-size: 12px;
+        white-space: nowrap;
         background: color-mix(in srgb, var(--homey-color-blue, #2b8ede) 14%, transparent);
         color: var(--homey-text-color-blue, #2b8ede);
-        white-space: nowrap;
+        border: 1px solid color-mix(in srgb, var(--homey-color-blue, #2b8ede) 34%, transparent);
       }
 
       .chip.alarm {
         background: color-mix(in srgb, var(--homey-color-red, #e5484d) 16%, transparent);
         color: var(--homey-text-color-danger, #e5484d);
+        border-color: color-mix(in srgb, var(--homey-color-red, #e5484d) 45%, transparent);
       }
 
-      /* --- heat exchange diagram --- */
+      /* --- exchanger ---
+         Each stream runs corner to opposite corner and the two cross inside the
+         core, which is the actual topology of a counter-flow exchanger. Reading
+         a path diagonally gives you both of its temperatures. */
 
       .exchange {
         display: grid;
         grid-template-columns: 1fr auto 1fr;
+        grid-template-rows: auto auto;
         align-items: center;
-        row-gap: var(--homey-su-2, 8px);
-        column-gap: var(--homey-su-2, 8px);
-        flex: 1;
+        column-gap: 6px;
+        row-gap: 22px;
+        padding: 2px 0;
       }
 
-      .temp {
-        display: flex;
-        flex-direction: column;
-        line-height: 1.15;
-      }
+      .port { display: flex; flex-direction: column; line-height: 1.18; min-width: 0; }
+      .port.r { align-items: flex-end; text-align: right; }
 
-      .temp.right {
-        align-items: flex-end;
-        text-align: right;
-      }
-
-      .temp .label {
-        color: var(--homey-text-color-light, #7a828b);
-        font-size: 11px;
-        letter-spacing: 0.02em;
+      .port .lbl {
+        font-size: 9px;
+        letter-spacing: .08em;
         text-transform: uppercase;
+        color: var(--homey-text-color-light, #7a838d);
       }
-
-      .temp .value {
-        font-size: 19px;
-        font-weight: var(--homey-font-weight-bold, 700);
+      .port .deg { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .port .flow {
+        font-size: 9.5px;
         font-variant-numeric: tabular-nums;
+        color: var(--homey-text-color-light, #7a838d);
       }
 
-      /* Direction of travel is carried by the gradient, not by an arrowhead —
-         at this size a glyph turns to mush, a fading bar does not. */
-      .flow {
-        position: relative;
-        height: 6px;
-        border-radius: 3px;
-        background: var(--flow-track);
-        overflow: hidden;
-      }
+      .core { position: relative; width: 146px; height: 146px; grid-row: span 2; }
+      .core svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-      .flow::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(var(--dir, 90deg), var(--from, var(--cold)), var(--to, var(--warm)));
-        opacity: 0.9;
-      }
-
-      .flow.idle::after {
-        opacity: 0.25;
-      }
-
-      .core {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1px;
-        min-width: 62px;
-        padding: var(--homey-su-1, 4px) var(--homey-su-2, 8px);
-        border-radius: var(--homey-border-radius-default, 8px);
-        background: color-mix(in srgb, var(--homey-text-color, #16191d) 6%, transparent);
-        grid-row: span 2;
-      }
-
-      .core .pct {
-        font-size: 18px;
-        font-weight: var(--homey-font-weight-bold, 700);
-        font-variant-numeric: tabular-nums;
+      .core .val {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums;
       }
 
       .core .cap {
-        font-size: 10px;
-        color: var(--homey-text-color-light, #7a828b);
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
+        position: absolute; left: 0; right: 0; bottom: 2px;
+        text-align: center;
+        font-size: 8px; letter-spacing: .09em; text-transform: uppercase;
+        color: var(--homey-text-color-light, #7a838d);
       }
 
-      /* --- footer --- */
+      /* --- tiles --- */
 
-      .foot {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: var(--homey-su-2, 8px);
+      .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+
+      .tile {
+        background: var(--tile);
+        border: 1px solid var(--tile-line);
+        border-radius: var(--homey-border-radius-small, 6px);
+        padding: 5px 8px;
+        display: flex; flex-direction: column; gap: 1px; min-width: 0;
+      }
+      .tile .k {
+        font-size: 8.5px; letter-spacing: .07em; text-transform: uppercase;
+        color: var(--homey-text-color-light, #7a838d);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .tile .v { font-size: 13.5px; font-weight: 640; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .tile .u { font-size: 9px; font-weight: 400; color: var(--homey-text-color-light, #7a838d); }
+
+      /* --- controls --- */
+
+      .ctl { display: flex; flex-direction: column; gap: 5px; }
+
+      .ctl-lbl {
+        font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+        color: var(--homey-text-color-light, #7a838d);
       }
 
-      .levels {
-        display: flex;
-        gap: 3px;
-      }
+      .levels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+      .modes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
 
-      .level {
-        width: 26px;
-        height: 24px;
-        border: 0;
-        padding: 0;
-        border-radius: var(--homey-border-radius-small, 4px);
-        background: color-mix(in srgb, var(--homey-text-color, #16191d) 8%, transparent);
-        color: var(--homey-text-color-light, #7a828b);
+      button {
         font: inherit;
-        font-size: 12px;
-        font-weight: var(--homey-font-weight-medium, 500);
         cursor: pointer;
+        background: transparent;
+        border: 1px solid var(--tile-line);
+        color: var(--homey-text-color-light, #7a838d);
+        border-radius: var(--homey-border-radius-small, 6px);
+        transition: background .15s, border-color .15s, color .15s;
+      }
+      button:disabled { cursor: default; }
+      button:focus-visible { outline: 2px solid var(--homey-color-blue, #2b8ede); outline-offset: 1px; }
+
+      .lvl { height: 28px; font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums; }
+
+      .mode {
+        height: 40px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+        font-size: 8.5px; letter-spacing: .04em;
+      }
+      .mode svg { width: 15px; height: 15px; }
+
+      button.on {
+        background: color-mix(in srgb, var(--homey-color-blue, #2b8ede) 18%, transparent);
+        border-color: var(--homey-color-blue, #2b8ede);
+        color: var(--homey-text-color-blue, #2b8ede);
       }
 
-      .level[disabled] {
-        cursor: default;
-      }
-
-      .level.on {
-        background: var(--homey-color-blue, #2b8ede);
-        color: var(--homey-text-color-white, #fff);
-      }
-
-      .level.busy {
-        opacity: 0.5;
-      }
-
-      .stats {
-        display: flex;
-        gap: var(--homey-su-2, 8px);
-        color: var(--homey-text-color-light, #7a828b);
-        font-size: 12px;
-        white-space: nowrap;
-      }
-
-      .stats b {
-        color: var(--homey-text-color, #16191d);
-        font-weight: var(--homey-font-weight-medium, 500);
-        font-variant-numeric: tabular-nums;
-      }
+      .busy { opacity: .5; }
 
       .msg {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        text-align: center;
-        color: var(--homey-text-color-light, #7a828b);
-        padding: 0 var(--homey-su-3, 12px);
+        display: flex; align-items: center; justify-content: center;
+        height: 392px; text-align: center;
+        color: var(--homey-text-color-light, #7a838d);
+        font-size: 13px; padding: 0 20px;
       }
 
-      [hidden] {
-        display: none !important;
-      }
+      [hidden] { display: none !important; }
     </style>
   </head>
 
   <body class="homey-widget">
-    <div class="wrap" id="wrap" hidden>
+    <div class="w" id="w" hidden>
       <div class="head">
-        <span class="title homey-text-small-bold" id="name">&nbsp;</span>
-        <span class="chip homey-text-small" id="mode">&nbsp;</span>
+        <span class="name" id="name">&nbsp;</span>
+        <span class="chip" id="chip">&nbsp;</span>
       </div>
 
       <div class="exchange">
-        <div class="temp">
-          <span class="label" id="l-outdoor">Outdoor</span>
-          <span class="value" id="t-outdoor">–</span>
-        </div>
-        <div class="core" id="core">
-          <span class="pct" id="eff">–</span>
-          <span class="cap" id="l-eff">recovery</span>
-        </div>
-        <div class="temp right">
-          <span class="label" id="l-supply">Supply</span>
-          <span class="value" id="t-supply">–</span>
+        <div class="port">
+          <span class="lbl" id="l-extract">Fraluft</span>
+          <span class="deg" id="t-extract">–</span>
+          <span class="flow" id="f-extract"></span>
         </div>
 
-        <div class="flow" id="flow-in"></div>
-        <div class="flow" id="flow-out"></div>
+        <div class="core">
+          <svg viewBox="0 0 146 146" aria-hidden="true">
+            <defs>
+              <linearGradient id="gWarm" gradientUnits="userSpaceOnUse" x1="8" y1="0" x2="134" y2="0">
+                <stop offset="0" id="w0" stop-color="#e79a45" />
+                <stop offset="1" id="w1" stop-color="#3f96d8" />
+              </linearGradient>
+              <linearGradient id="gCool" gradientUnits="userSpaceOnUse" x1="134" y1="0" x2="8" y2="0">
+                <stop offset="0" id="c0" stop-color="#3f96d8" />
+                <stop offset="1" id="c1" stop-color="#e79a45" />
+              </linearGradient>
+              <marker id="mWarm" viewBox="0 0 10 8" refX="1.5" refY="4"
+                      markerWidth="3.6" markerHeight="3" orient="auto">
+                <path d="M0 .7 L10 4 L0 7.3 Z" id="mw" fill="#3f96d8" />
+              </marker>
+              <marker id="mCool" viewBox="0 0 10 8" refX="1.5" refY="4"
+                      markerWidth="3.6" markerHeight="3" orient="auto">
+                <path d="M0 .7 L10 4 L0 7.3 Z" id="mc" fill="#e79a45" />
+              </marker>
+            </defs>
 
-        <div class="temp">
-          <span class="label" id="l-exhaust">Exhaust</span>
-          <span class="value" id="t-exhaust">–</span>
+            <g id="flows">
+              <!-- extract: top-left down to bottom-right, shedding its heat -->
+              <path d="M8 34 C 56 34, 90 112, 116 112" fill="none" stroke="url(#gWarm)"
+                    stroke-width="6.5" stroke-linecap="round" marker-end="url(#mWarm)" />
+              <!-- intake: top-right down to bottom-left, picking it up -->
+              <path d="M138 34 C 90 34, 56 112, 30 112" fill="none" stroke="url(#gCool)"
+                    stroke-width="6.5" stroke-linecap="round" marker-end="url(#mCool)" />
+            </g>
+
+            <rect x="43" y="43" width="60" height="60" rx="10" transform="rotate(45 73 73)"
+                  fill="var(--homey-background-color, #fff)"
+                  stroke="var(--tile-line)" stroke-width="1.5" />
+            <rect x="50" y="50" width="46" height="46" rx="7" transform="rotate(45 73 73)"
+                  fill="none" stroke="var(--tile-line)" stroke-width="1" />
+          </svg>
+          <span class="val" id="core">–</span>
+          <span class="cap" id="core-cap">Genvinding</span>
         </div>
-        <div class="temp right">
-          <span class="label" id="l-extract">Extract</span>
-          <span class="value" id="t-extract">–</span>
+
+        <div class="port r">
+          <span class="lbl" id="l-outdoor">Udeluft</span>
+          <span class="deg" id="t-outdoor">–</span>
+          <span class="flow" id="f-outdoor"></span>
+        </div>
+
+        <div class="port">
+          <span class="lbl" id="l-supply">Tilluft</span>
+          <span class="deg" id="t-supply">–</span>
+          <span class="flow" id="f-supply"></span>
+        </div>
+
+        <div class="port r">
+          <span class="lbl" id="l-exhaust">Afkast</span>
+          <span class="deg" id="t-exhaust">–</span>
+          <span class="flow" id="f-exhaust"></span>
         </div>
       </div>
 
-      <div class="foot">
+      <div class="tiles" id="tiles"></div>
+
+      <div class="ctl" id="ctl-level">
+        <span class="ctl-lbl" id="l-level">Trin</span>
         <div class="levels" id="levels"></div>
-        <div class="stats">
-          <span id="s-humidity" hidden><b id="v-humidity">–</b>%</span>
-          <span id="s-bypass" hidden>· <b id="v-bypass">–</b></span>
-          <span id="s-filter" hidden>· <b id="v-filter">–</b><span id="u-filter">d</span></span>
-        </div>
+      </div>
+
+      <div class="ctl" id="ctl-mode">
+        <span class="ctl-lbl" id="l-mode">Driftstilstand</span>
+        <div class="modes" id="modes"></div>
       </div>
     </div>
 
-    <div class="msg homey-text-small" id="msg">…</div>
+    <div class="msg" id="msg">…</div>
 
     <script type="text/javascript">
       function onHomeyReady(Homey) {
         const settings = Homey.getSettings() || {};
-        const deviceIds = Homey.getDeviceIds() || [];
-        const deviceId = deviceIds[0] || null;
+        const deviceId = (Homey.getDeviceIds() || [])[0] || null;
 
         const allowControl = settings.allow_control !== false;
         const showEfficiency = settings.show_efficiency !== false;
@@ -274,170 +276,180 @@
         const el = (id) => document.getElementById(id);
         const t = (key, fallback) => {
           const value = Homey.__(key);
-          // Homey returns the key itself when a translation is missing.
           return !value || value === key ? fallback : value;
         };
 
-        // --- static labels ---
-        el('l-outdoor').textContent = t('widget.outdoor', 'Outdoor');
-        el('l-supply').textContent = t('widget.supply', 'Supply');
-        el('l-exhaust').textContent = t('widget.exhaust', 'Exhaust');
-        el('l-extract').textContent = t('widget.extract', 'Extract');
-        el('l-eff').textContent = t('widget.recovery', 'recovery');
+        const SCALE = [[0, '#3f96d8'], [12, '#74b8e4'], [19, '#93a2b0'], [24, '#e79a45'], [Infinity, '#dd6535']];
+        const colourFor = (c) => (c === null || c === undefined ? '#93a2b0' : SCALE.find(([m]) => c <= m)[1]);
+        const deg = (c) => (c === null || c === undefined ? '–' : `${c.toFixed(1).replace('.', ',')}°`);
+        const num = (v, dec = 0) => (v === null || v === undefined
+          ? '–' : v.toFixed(dec).replace('.', ','));
 
-        // --- fan level buttons ---
+        // --- static labels ---
+        el('l-extract').textContent = t('widget.extract', 'Fraluft');
+        el('l-outdoor').textContent = t('widget.outdoor', 'Udeluft');
+        el('l-supply').textContent = t('widget.supply', 'Tilluft');
+        el('l-exhaust').textContent = t('widget.exhaust', 'Afkast');
+        el('l-level').textContent = t('widget.level', 'Trin');
+        el('l-mode').textContent = t('widget.mode_label', 'Driftstilstand');
+
+        // --- controls ---
+        const ICONS = {
+          automatic: '<path d="M12 4a8 8 0 1 1-7.5 5.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 3v6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+          manual: '<path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="7" r="2.4" fill="currentColor"/><circle cx="15" cy="12" r="2.4" fill="currentColor"/><circle cx="10" cy="17" r="2.4" fill="currentColor"/>',
+          away: '<rect x="3" y="7" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="2"/>',
+          night: '<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+        };
+
         const levels = [];
         for (let i = 0; i <= 4; i++) {
-          const button = document.createElement('button');
-          button.className = 'level';
-          button.textContent = String(i);
-          button.type = 'button';
-          if (allowControl) {
-            button.addEventListener('click', () => setLevel(i));
-          } else {
-            button.disabled = true;
-          }
-          el('levels').appendChild(button);
-          levels.push(button);
+          const b = document.createElement('button');
+          b.className = 'lvl';
+          b.type = 'button';
+          b.textContent = String(i);
+          if (allowControl) b.addEventListener('click', () => send('/fan-level', { level: i }, () => mark(levels, i)));
+          else b.disabled = true;
+          el('levels').appendChild(b);
+          levels.push(b);
         }
+
+        const MODES = [
+          ['automatic', t('widget.mode.automatic', 'Auto')],
+          ['manual', t('widget.mode.manual', 'Manuel')],
+          ['away', t('widget.mode.away', 'Ferie')],
+          ['night', t('widget.mode.night', 'Nat')],
+        ];
+        const modes = [];
+        MODES.forEach(([id, label]) => {
+          const b = document.createElement('button');
+          b.className = 'mode';
+          b.type = 'button';
+          b.dataset.mode = id;
+          b.innerHTML = `<svg viewBox="0 0 24 24">${ICONS[id]}</svg><span>${label}</span>`;
+          if (allowControl) b.addEventListener('click', () => send('/mode', { mode: id }, () => mark(modes, MODES.findIndex((m) => m[0] === id))));
+          else b.disabled = true;
+          el('modes').appendChild(b);
+          modes.push(b);
+        });
+
+        const mark = (list, active) => list.forEach((b, i) => b.classList.toggle('on', i === active));
 
         let busy = false;
-
-        function setLevel(level) {
+        function send(path, body, optimistic) {
           if (busy) return;
           busy = true;
-          levels.forEach((b) => b.classList.add('busy'));
+          [...levels, ...modes].forEach((b) => b.classList.add('busy'));
           if (Homey.hapticFeedback) Homey.hapticFeedback();
+          if (optimistic) optimistic();
 
-          Homey.api('POST', '/fan-level', { deviceId, level })
-            .then(() => {
-              // The controller needs a moment before a read reflects the write.
-              markLevel(level);
-              setTimeout(refresh, 3500);
-            })
-            .catch((err) => console.error(err))
+          Homey.api('POST', path, { deviceId, ...body })
+            // The controller needs a moment before a read reflects the write.
+            .then(() => setTimeout(refresh, 3500))
+            .catch((err) => { console.error(err); refresh(); })
             .finally(() => {
               busy = false;
-              levels.forEach((b) => b.classList.remove('busy'));
+              [...levels, ...modes].forEach((b) => b.classList.remove('busy'));
             });
-        }
-
-        function markLevel(active) {
-          levels.forEach((b, i) => b.classList.toggle('on', i === active));
         }
 
         // --- rendering ---
 
-        function colourFor(celsius) {
-          if (celsius === null || celsius === undefined) return 'var(--neutral)';
-          if (celsius <= 0) return 'var(--cold)';
-          if (celsius <= 12) return 'var(--cool)';
-          if (celsius <= 19) return 'var(--neutral)';
-          if (celsius <= 24) return 'var(--warm)';
-          return 'var(--hot)';
-        }
-
-        function temperature(id, value) {
-          const node = el(id);
-          if (value === null || value === undefined) {
-            node.textContent = '–';
-            node.style.color = 'var(--neutral)';
-            return;
-          }
-          node.textContent = `${value.toFixed(1).replace('.', ',')}°`;
+        function port(id, value, flow) {
+          const node = el(`t-${id}`);
+          node.textContent = deg(value);
           node.style.color = colourFor(value);
+          el(`f-${id}`).textContent = flow === null || flow === undefined ? '' : `${flow} m³/h`;
         }
 
-        function flow(id, from, to, running, reverse) {
-          const node = el(id);
-          node.style.setProperty('--from', colourFor(reverse ? to : from));
-          node.style.setProperty('--to', colourFor(reverse ? from : to));
-          node.style.setProperty('--dir', reverse ? '270deg' : '90deg');
-          node.classList.toggle('idle', !running);
-        }
-
-        function show(id, visible) {
-          el(id).hidden = !visible;
+        function paint(state) {
+          const temps = state.temperatures || {};
+          const set = (id, colour) => { el(id).setAttribute('stop-color', colour); };
+          // The gradient carries the heat transfer: each stream is drawn in the
+          // colour of the air at that end, so the swap happens inside the core.
+          set('w0', colourFor(temps.extract));
+          set('w1', colourFor(temps.exhaust));
+          set('c0', colourFor(temps.outdoor));
+          set('c1', colourFor(temps.supply));
+          el('mw').setAttribute('fill', colourFor(temps.exhaust));
+          el('mc').setAttribute('fill', colourFor(temps.supply));
+          el('flows').setAttribute('opacity', state.fanLevel > 0 ? '1' : '.22');
         }
 
         function render(state) {
           if (!state || !state.available) {
-            el('wrap').hidden = true;
+            el('w').hidden = true;
             el('msg').hidden = false;
             el('msg').textContent = state && state.reason === 'unavailable'
-              ? (state.message || t('widget.unavailable', 'Unit not responding'))
-              : t('widget.no_device', 'Select a ventilation unit in the widget settings');
+              ? (state.message || t('widget.unavailable', 'Anlægget svarer ikke'))
+              : t('widget.no_device', 'Vælg et ventilationsanlæg i widgettens indstillinger');
             return;
           }
 
           el('msg').hidden = true;
-          el('wrap').hidden = false;
-
+          el('w').hidden = false;
           el('name').textContent = state.model || state.name || 'Dantherm';
 
-          const mode = el('mode');
-          mode.textContent = state.alarm
+          const chip = el('chip');
+          const bypassOpen = state.bypass === 'opened' || state.bypass === 'opening';
+          chip.textContent = state.alarm
             ? t('widget.alarm', 'Alarm')
             : t(`widget.mode.${state.mode}`, state.mode || '–');
-          mode.classList.toggle('alarm', !!state.alarm);
+          chip.classList.toggle('alarm', !!state.alarm);
 
           const temps = state.temperatures || {};
-          temperature('t-outdoor', temps.outdoor);
-          temperature('t-supply', temps.supply);
-          temperature('t-extract', temps.extract);
-          temperature('t-exhaust', temps.exhaust);
-
-          const running = state.fanLevel > 0;
-          // Intake travels left to right, extract right to left — the two
-          // streams cross in the exchanger, which is the whole point of it.
-          flow('flow-in', temps.outdoor, temps.supply, running, false);
-          flow('flow-out', temps.extract, temps.exhaust, running, true);
+          const air = state.airflow || {};
+          port('extract', temps.extract, air.extract);
+          port('outdoor', temps.outdoor, air.supply);
+          port('supply', temps.supply, air.supply);
+          port('exhaust', temps.exhaust, air.extract);
+          paint(state);
 
           const core = el('core');
-          if (showEfficiency && state.efficiency !== null && state.efficiency !== undefined) {
-            core.hidden = false;
-            el('eff').textContent = `${state.efficiency}%`;
-          } else if (showEfficiency) {
-            core.hidden = false;
-            el('eff').textContent = '–';
+          const cap = el('core-cap');
+          if (bypassOpen) {
+            core.textContent = '–';
+            cap.textContent = t('widget.bypass_open', 'Bypass åben');
+          } else if (showEfficiency && state.efficiency !== null && state.efficiency !== undefined) {
+            core.textContent = `${state.efficiency}%`;
+            cap.textContent = t('widget.recovery', 'Genvinding');
           } else {
-            core.hidden = true;
+            core.textContent = '–';
+            cap.textContent = t('widget.recovery', 'Genvinding');
           }
 
-          markLevel(state.fanLevel);
+          // Only tiles with a real value — a unit without an RH sensor should
+          // not carry an empty humidity box around forever.
+          const tiles = [];
+          const add = (k, v, u) => { if (v !== null && v !== undefined) tiles.push({ k, v, u }); };
+          add(t('widget.humidity', 'Fugt'), state.humidity, '%');
+          add(t('widget.bypass', 'Bypass'), bypassOpen
+            ? t('widget.open', 'Åben') : t('widget.closed', 'Lukket'), '');
+          add(t('widget.recovered', 'Genvundet'), state.recovered === null ? null : num(state.recovered, 2), 'kW');
+          add(t('widget.power', 'Effekt'), state.power === null ? null : num(state.power, 0), 'W');
+          add(t('widget.filter', 'Filter'), state.filterDays, t('widget.days', 'dage'));
+          add(t('widget.air_quality', 'Luftkvalitet'), state.airQuality, 'ppm');
 
-          show('s-humidity', state.humidity !== null && state.humidity !== undefined);
-          if (state.humidity !== null) el('v-humidity').textContent = state.humidity;
+          el('tiles').innerHTML = tiles.map((x) => `<div class="tile">`
+            + `<span class="k">${x.k}</span>`
+            + `<span class="v">${x.v}${x.u ? ` <span class="u">${x.u}</span>` : ''}</span></div>`).join('');
 
-          const bypassOpen = state.bypass === 'opened' || state.bypass === 'opening';
-          show('s-bypass', bypassOpen);
-          el('v-bypass').textContent = t('widget.bypass', 'bypass');
+          mark(levels, state.fanLevel);
+          mark(modes, MODES.findIndex((m) => m[0] === state.mode));
 
-          show('s-filter', state.filterDays !== null && state.filterDays !== undefined);
-          if (state.filterDays !== null) {
-            el('v-filter').textContent = state.filterDays;
-            el('u-filter').textContent = t('widget.days_short', 'd');
-          }
+          el('ctl-level').hidden = !allowControl;
+          el('ctl-mode').hidden = !allowControl;
         }
 
         function refresh() {
-          // GET carries no body, so the device has to travel in the query
-          // string — api.js reads it off `query`.
-          const path = deviceId
-            ? `/state?deviceId=${encodeURIComponent(deviceId)}`
-            : '/state';
-
+          // GET carries no body, so the device travels in the query string.
+          const path = deviceId ? `/state?deviceId=${encodeURIComponent(deviceId)}` : '/state';
           Homey.api('GET', path, {})
             .then(render)
-            .catch((err) => {
-              console.error(err);
-              render(null);
-            });
+            .catch((err) => { console.error(err); render(null); });
         }
 
         refresh();
         setInterval(refresh, refreshMs);
-
         Homey.ready();
       }
     </script>

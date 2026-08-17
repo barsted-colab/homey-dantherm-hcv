@@ -73,3 +73,34 @@ test('doubling the flow roughly eightfolds the fan contribution', () => {
   const fanHigh = high - 15;
   assert.ok(Math.abs(fanHigh / fanLow - 8) < 0.1, `expected ~8x, got ${(fanHigh / fanLow).toFixed(2)}x`);
 });
+
+// --- Recovered heat ----------------------------------------------------------
+
+const { recoveredHeat } = require('../lib/dantherm');
+
+test('recovered heat matches the hand calculation on a cold day', () => {
+  // 216 m³/h at 1,2 kg/m³ is 0,072 kg/s; lifting it 22,9 K at 1,006 kJ/kgK
+  // is 1,66 kW.
+  assert.strictEqual(recoveredHeat(216, 19.4, -3.5), 1.66);
+});
+
+test('recovered heat scales with both flow and temperature lift', () => {
+  const base = recoveredHeat(216, 19.4, -3.5);
+  assert.ok(Math.abs(recoveredHeat(108, 19.4, -3.5) - base / 2) < 0.02, 'half the flow, half the heat');
+  assert.ok(recoveredHeat(216, 17.8, 15.2) < base / 5, 'a mild evening recovers far less');
+});
+
+test('cooling is not counted as recovery', () => {
+  // Bypass open on a summer day: supply arrives colder than outdoor. That is
+  // the point of free cooling, but it is not heat handed back.
+  assert.strictEqual(recoveredHeat(216, 15.0, 20.0), 0);
+});
+
+test('a stopped unit recovers nothing', () => {
+  assert.strictEqual(recoveredHeat(0, 19.4, -3.5), 0);
+});
+
+test('no estimate without airflow', () => {
+  assert.strictEqual(recoveredHeat(null, 19.4, -3.5), null);
+  assert.strictEqual(recoveredHeat(216, null, -3.5), null);
+});

@@ -136,14 +136,17 @@ class DanthermHCVDevice extends Homey.Device {
    * the settings screen is corrected afterwards — leaving a rejected number on
    * screen would be a lie about the unit's state.
    */
-  async applyConfigChanges(changedKeys) {
+  async applyConfigChanges(changedKeys, newSettings) {
     const corrections = {};
     const failed = [];
 
     for (const key of changedKeys) {
       if (!(key in CONFIG)) continue;
 
-      const requested = this.getSetting(key);
+      // From newSettings, not getSetting — the latter still holds the previous
+      // value while this handler is running, so the unit would be sent the
+      // number the user just changed away from.
+      const requested = newSettings[key];
       try {
         const written = await this.unit.writeConfig(key, requested);
         if (written !== requested) corrections[key] = written;
@@ -450,19 +453,23 @@ class DanthermHCVDevice extends Homey.Device {
 
   // --- Lifecycle ---
 
-  async onSettings({ changedKeys }) {
-    const failed = this.unit ? await this.applyConfigChanges(changedKeys) : [];
+  async onSettings({ newSettings, changedKeys }) {
+    const failed = this.unit ? await this.applyConfigChanges(changedKeys, newSettings) : [];
 
-    if (changedKeys.includes('host') || changedKeys.includes('port')) {
-      await this.connectUnit();
-    }
+    const reconnect = ['host', 'port', 'airflow_enabled'].some((k) => changedKeys.includes(k));
+
     if (changedKeys.includes('polling_interval')) {
       this.startPolling();
     }
-    if (changedKeys.includes('airflow_enabled')) {
-      // Adding or dropping the estimated tiles needs the identity and a fresh
-      // reading, which connectUnit gathers in one pass.
-      await this.connectUnit();
+
+    // Deferred rather than awaited: getSettings() still returns the old values
+    // until this handler resolves, and connectUnit decides the capability set
+    // from them. Reconnecting inline would read the settings the user just
+    // replaced and, for instance, leave the airflow tiles switched off.
+    if (reconnect) {
+      this.homey.setTimeout(() => {
+        this.connectUnit().catch((err) => this.error(`Reconnect failed: ${err.message}`));
+      }, 500);
     }
 
     if (failed.length) {

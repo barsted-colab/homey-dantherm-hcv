@@ -7,7 +7,7 @@
  * sockets and one poll loop is already using one.
  */
 
-const { recoveryEfficiency } = require('../../lib/dantherm');
+const { recoveryEfficiency, recoveredHeat } = require('../../lib/dantherm');
 
 const DRIVER_ID = 'hcv';
 
@@ -81,12 +81,29 @@ module.exports = {
       // efficiency figure calculated then would be meaningless.
       efficiency: bypassOpen ? null : recoveryEfficiency(temperatures),
       filterDays: read(device, 'measure_filter_remain'),
+      airflow: {
+        supply: read(device, 'measure_airflow.supply'),
+        extract: read(device, 'measure_airflow.extract'),
+      },
+      power: read(device, 'measure_power'),
+      // The heat the exchanger hands back — what the unit is actually worth,
+      // as opposed to how well it works. Meaningless with the bypass open.
+      recovered: bypassOpen
+        ? null
+        : recoveredHeat(read(device, 'measure_airflow.supply'), temperatures.supply, temperatures.outdoor),
       alarm: read(device, 'alarm_generic'),
       fanSpeeds: {
         fan1: read(device, 'measure_rpm.fan1'),
         fan2: read(device, 'measure_rpm.fan2'),
       },
     };
+  },
+
+  async setMode({ homey, body }) {
+    const device = resolveDevice(homey, body?.deviceId);
+    if (!device) throw new Error('Device not found');
+    await device.setMode(String(body?.mode));
+    return { ok: true, mode: body.mode };
   },
 
   async setFanLevel({ homey, body }) {
