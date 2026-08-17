@@ -1,7 +1,9 @@
 'use strict';
 
 const Homey = require('homey');
-const { DanthermDevice, CONFIG } = require('../../lib/dantherm');
+const {
+  DanthermDevice, CONFIG, estimateAirflow, estimatePower,
+} = require('../../lib/dantherm');
 const { discover } = require('../../lib/discovery');
 
 /** The controller needs ~3 s before a read reflects a preceding write. */
@@ -85,6 +87,11 @@ class DanthermHCVDevice extends Homey.Device {
       dantherm_bypass: (info.components & 0x0004) !== 0 && state.bypassState !== null,
       // ServoFlow units report a condition level instead of counting down days.
       measure_filter_remain: !info.servoFlow && state.filterRemain !== null,
+      // Derived rather than measured — only shown when the user has supplied
+      // the commissioning figures the estimate is anchored to.
+      'measure_airflow.extract': this.getSetting('airflow_enabled') === true,
+      'measure_airflow.supply': this.getSetting('airflow_enabled') === true,
+      measure_power: this.getSetting('airflow_enabled') === true,
     };
 
     for (const [capability, supported] of Object.entries(optional)) {
@@ -273,6 +280,11 @@ class DanthermHCVDevice extends Homey.Device {
     await this.setCapability('measure_filter_remain', state.filterRemain);
     await this.setCapability('measure_rpm.fan1', this.round(state.fan1Speed));
     await this.setCapability('measure_rpm.fan2', this.round(state.fan2Speed));
+
+    const estimated = this.estimateFlows(state);
+    await this.setCapability('measure_airflow.extract', estimated.extract);
+    await this.setCapability('measure_airflow.supply', estimated.supply);
+    await this.setCapability('measure_power', estimated.power);
     await this.setCapability('alarm_generic', state.alarm === null ? null : state.alarm !== 0);
 
     await this.triggerOnChange(state, previous);
@@ -314,6 +326,47 @@ class DanthermHCVDevice extends Homey.Device {
         await fire('filter_needs_replacement');
       }
     }
+  }
+
+  /**
+   * Scales fan speed into airflow, and airflow into power draw.
+   *
+   * Both need a commissioned reference point, which the unit cannot supply —
+   * it measures speed, not volume. The user provides the volumes from their
+   * commissioning report; the matching fan speeds are captured here the first
+   * time the unit is seen running at that level, so the two halves of the
+   * reference always come from the same operating point.
+   */
+  estimateFlows(state) {
+    const absent = { extract: null, supply: null, power: null };
+    const s = this.getSettings();
+    if (!s.airflow_enabled) return absent;
+
+    let extractRef = s.airflow_rpm_extract_ref;
+    let supplyRef = s.airflow_rpm_supply_ref;
+
+    if ((!extractRef || !supplyRef)
+      && state.fanLevel === s.airflow_nominal_level
+      && state.fan1Speed > 0 && state.fan2Speed > 0) {
+      extractRef = Math.round(state.fan1Speed);
+      supplyRef = Math.round(state.fan2Speed);
+
+      this.log(`Captured airflow reference at level ${state.fanLevel}: `
+        + `${extractRef} rpm extract, ${supplyRef} rpm supply`);
+      this.setSettings({
+        airflow_rpm_extract_ref: extractRef,
+        airflow_rpm_supply_ref: supplyRef,
+      }).catch((err) => this.error(`Could not store airflow reference: ${err.message}`));
+    }
+
+    const extract = estimateAirflow(state.fan1Speed, extractRef, s.airflow_extract_nominal);
+    const supply = estimateAirflow(state.fan2Speed, supplyRef, s.airflow_supply_nominal);
+
+    return {
+      extract,
+      supply,
+      power: estimatePower(extract, s.airflow_extract_nominal, s.power_nominal, s.power_idle),
+    };
   }
 
   /** Rounds without turning an absent reading into a hard zero. */
@@ -405,6 +458,11 @@ class DanthermHCVDevice extends Homey.Device {
     }
     if (changedKeys.includes('polling_interval')) {
       this.startPolling();
+    }
+    if (changedKeys.includes('airflow_enabled')) {
+      // Adding or dropping the estimated tiles needs the identity and a fresh
+      // reading, which connectUnit gathers in one pass.
+      await this.connectUnit();
     }
 
     if (failed.length) {

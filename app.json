@@ -108,6 +108,17 @@
       "icon": "/assets/fan.svg",
       "insights": true
     },
+    "measure_airflow": {
+      "type": "number",
+      "title": { "en": "Airflow", "da": "Luftmængde" },
+      "getable": true,
+      "setable": false,
+      "units": { "en": "m³/h", "da": "m³/h" },
+      "decimals": 0,
+      "uiComponent": "sensor",
+      "icon": "/assets/airflow.svg",
+      "insights": true
+    },
     "measure_air_quality": {
       "type": "number",
       "title": { "en": "Air quality", "da": "Luftkvalitet" },
@@ -143,6 +154,9 @@
         "measure_filter_remain",
         "measure_rpm.fan1",
         "measure_rpm.fan2",
+        "measure_airflow.extract",
+        "measure_airflow.supply",
+        "measure_power",
         "alarm_generic"
       ],
       "capabilitiesOptions": {
@@ -167,10 +181,22 @@
           "insights": true
         },
         "measure_rpm.fan1": {
-          "title": { "en": "Fan 1 speed", "da": "Ventilator 1" }
+          "title": { "en": "Extract fan", "da": "Udsugningsventilator" }
         },
         "measure_rpm.fan2": {
-          "title": { "en": "Fan 2 speed", "da": "Ventilator 2" }
+          "title": { "en": "Supply fan", "da": "Indblæsningsventilator" }
+        },
+        "measure_airflow.extract": {
+          "title": { "en": "Extract airflow", "da": "Udsugning" },
+          "insights": true
+        },
+        "measure_airflow.supply": {
+          "title": { "en": "Supply airflow", "da": "Indblæsning" },
+          "insights": true
+        },
+        "measure_power": {
+          "title": { "en": "Power (estimated)", "da": "Effekt (estimeret)" },
+          "insights": true
         },
         "alarm_generic": {
           "title": { "en": "Alarm", "da": "Alarm" }
@@ -349,6 +375,96 @@
                 "en": "Days between filter changes. Reset the timer from a Flow after replacing the filter.",
                 "da": "Dage mellem filterskift. Nulstil timeren fra et Flow når filteret er skiftet."
               }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": { "en": "Airflow and power (estimated)", "da": "Luftmængde og effekt (estimeret)" },
+          "children": [
+            {
+              "id": "airflow_enabled",
+              "type": "checkbox",
+              "label": { "en": "Estimate airflow and power", "da": "Estimér luftmængde og effekt" },
+              "value": false,
+              "hint": {
+                "en": "The unit measures fan speed, not volume. With the figures from your commissioning report the app can scale speed into m³/h. Leave off if you do not have the report — a guessed number is worse than none.",
+                "da": "Anlægget måler omdrejninger, ikke volumen. Med tallene fra din indreguleringsrapport kan appen omregne omdrejninger til m³/h. Lad den være slået fra hvis du ikke har rapporten — et gættet tal er værre end intet."
+              }
+            },
+            {
+              "id": "airflow_nominal_level",
+              "type": "number",
+              "label": { "en": "Level the unit was commissioned at", "da": "Trin anlægget er indreguleret på" },
+              "value": 3,
+              "min": 1,
+              "max": 4,
+              "hint": {
+                "en": "Dantherm calibrates at level 3, the nominal setting.",
+                "da": "Dantherm indregulerer på trin 3, den nominelle indstilling."
+              }
+            },
+            {
+              "id": "airflow_extract_nominal",
+              "type": "number",
+              "label": { "en": "Extract at that level", "da": "Udsugning ved det trin" },
+              "value": 216,
+              "min": 0,
+              "max": 1000,
+              "units": { "en": "m³/h", "da": "m³/h" }
+            },
+            {
+              "id": "airflow_supply_nominal",
+              "type": "number",
+              "label": { "en": "Supply at that level", "da": "Indblæsning ved det trin" },
+              "value": 201,
+              "min": 0,
+              "max": 1000,
+              "units": { "en": "m³/h", "da": "m³/h" }
+            },
+            {
+              "id": "power_nominal",
+              "type": "number",
+              "label": { "en": "Power at that level", "da": "Effektforbrug ved det trin" },
+              "value": 40,
+              "min": 0,
+              "max": 3000,
+              "units": { "en": "W", "da": "W" }
+            },
+            {
+              "id": "power_idle",
+              "type": "number",
+              "label": { "en": "Standing power", "da": "Grundforbrug" },
+              "value": 15,
+              "min": 0,
+              "max": 500,
+              "units": { "en": "W", "da": "W" },
+              "hint": {
+                "en": "What the electronics draw regardless of fan speed. Fan power itself follows the cube of speed on top of this.",
+                "da": "Hvad elektronikken trækker uanset ventilatorhastighed. Selve ventilatoreffekten følger hastigheden i tredje potens oven i dette."
+              }
+            },
+            {
+              "id": "airflow_rpm_extract_ref",
+              "type": "number",
+              "label": { "en": "Reference extract speed", "da": "Reference-omdrejninger udsugning" },
+              "value": 0,
+              "min": 0,
+              "max": 6000,
+              "units": { "en": "rpm", "da": "o/min" },
+              "hint": {
+                "en": "Captured automatically the first time the unit is seen running at the commissioned level. Set to 0 to capture again after a filter change or re-balancing.",
+                "da": "Registreres automatisk første gang anlægget ses køre på det indregulerede trin. Sæt til 0 for at registrere igen efter filterskift eller ny indregulering."
+              }
+            },
+            {
+              "id": "airflow_rpm_supply_ref",
+              "type": "number",
+              "label": { "en": "Reference supply speed", "da": "Reference-omdrejninger indblæsning" },
+              "value": 0,
+              "min": 0,
+              "max": 6000,
+              "units": { "en": "rpm", "da": "o/min" }
             }
           ]
         },

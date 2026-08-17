@@ -1,0 +1,75 @@
+'use strict';
+
+/**
+ * Airflow and power estimation, anchored to a commissioning report.
+ *
+ * The reference figures below are from a real HCV 400 P2 installation
+ * (Boligvex, 08.11.2022): 216 m³/h extract and 201 m³/h supply at level 3,
+ * with 33 / 40 / 56 W measured at 189 / 216 / 250 m³/h.
+ */
+
+const test = require('node:test');
+const assert = require('node:assert');
+
+const { estimateAirflow, estimatePower } = require('../lib/dantherm');
+
+// Fan speeds measured at level 3 on the same unit.
+const RPM_EXTRACT_REF = 1922;
+const RPM_SUPPLY_REF = 1651;
+const EXTRACT_NOMINAL = 216;
+const SUPPLY_NOMINAL = 201;
+
+test('the reference point returns exactly the commissioned figure', () => {
+  assert.strictEqual(estimateAirflow(RPM_EXTRACT_REF, RPM_EXTRACT_REF, EXTRACT_NOMINAL), 216);
+  assert.strictEqual(estimateAirflow(RPM_SUPPLY_REF, RPM_SUPPLY_REF, SUPPLY_NOMINAL), 201);
+});
+
+test('flow scales linearly with fan speed', () => {
+  // Half the speed moves half the air, for an unchanged duct system.
+  assert.strictEqual(estimateAirflow(961, RPM_EXTRACT_REF, EXTRACT_NOMINAL), 108);
+  // Measured at level 2 on the real unit.
+  assert.strictEqual(estimateAirflow(1312, RPM_EXTRACT_REF, EXTRACT_NOMINAL), 147);
+});
+
+test('a stopped fan moves no air', () => {
+  assert.strictEqual(estimateAirflow(0, RPM_EXTRACT_REF, EXTRACT_NOMINAL), 0);
+});
+
+test('no estimate without a reference', () => {
+  assert.strictEqual(estimateAirflow(1500, 0, EXTRACT_NOMINAL), null);
+  assert.strictEqual(estimateAirflow(1500, RPM_EXTRACT_REF, 0), null);
+  assert.strictEqual(estimateAirflow(null, RPM_EXTRACT_REF, EXTRACT_NOMINAL), null);
+});
+
+test('power matches all three commissioned operating points within 5 percent', () => {
+  const measured = [[189, 33], [216, 40], [250, 56]];
+
+  for (const [flow, watts] of measured) {
+    const estimate = estimatePower(flow, EXTRACT_NOMINAL, 40, 15);
+    const error = Math.abs(estimate - watts) / watts;
+    assert.ok(
+      error < 0.05,
+      `${flow} m³/h: estimated ${estimate} W against ${watts} W measured (${(error * 100).toFixed(1)} % off)`,
+    );
+  }
+});
+
+test('power falls to the standing draw when the fans stop', () => {
+  assert.strictEqual(estimatePower(0, EXTRACT_NOMINAL, 40, 15), 15);
+});
+
+test('power refuses nonsense configuration rather than returning it', () => {
+  // Nominal below standing draw would make the cubic term negative.
+  assert.strictEqual(estimatePower(216, EXTRACT_NOMINAL, 10, 15), null);
+  assert.strictEqual(estimatePower(null, EXTRACT_NOMINAL, 40, 15), null);
+  assert.strictEqual(estimatePower(216, 0, 40, 15), null);
+});
+
+test('doubling the flow roughly eightfolds the fan contribution', () => {
+  // The cube law, which is why boost mode is disproportionately expensive.
+  const low = estimatePower(108, EXTRACT_NOMINAL, 40, 15);
+  const high = estimatePower(216, EXTRACT_NOMINAL, 40, 15);
+  const fanLow = low - 15;
+  const fanHigh = high - 15;
+  assert.ok(Math.abs(fanHigh / fanLow - 8) < 0.1, `expected ~8x, got ${(fanHigh / fanLow).toFixed(2)}x`);
+});
