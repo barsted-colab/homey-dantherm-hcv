@@ -753,8 +753,8 @@
                 "sv": "Kyl ned till"
               },
               "value": 23,
-              "min": 21,
-              "max": 27,
+              "min": 12,
+              "max": 30,
               "step": 0.5,
               "units": {
                 "en": "°C",
@@ -765,12 +765,12 @@
                 "sv": "°C"
               },
               "hint": {
-                "en": "When the house is warmer than this and the air outside is cooler, the unit opens the bypass and lets the outside air in unheated. Requires firmware 2.70 or newer.",
-                "nl": "Is het huis warmer dan dit en is de buitenlucht koeler, dan opent het toestel de bypass en laat het de buitenlucht ongeconditioneerd binnen. Vereist firmware 2.70 of nieuwer.",
-                "da": "Er huset varmere end det her, og er luften udenfor køligere, åbner anlægget bypass og lukker udeluften ind uopvarmet. Kræver firmware 2.70 eller nyere.",
-                "de": "Ist das Haus wärmer als dieser Wert und die Außenluft kühler, öffnet das Gerät den Bypass und lässt die Außenluft unbehandelt ein. Erfordert Firmware 2.70 oder neuer.",
-                "no": "Er huset varmere enn dette, og er luften ute kjøligere, åpner enheten bypassen og slipper uteluften inn uoppvarmet. Krever fastvare 2.70 eller nyere.",
-                "sv": "Är huset varmare än så här och är luften ute svalare öppnar enheten bypassen och släpper in uteluften ouppvärmd. Kräver fastvara 2.70 eller senare."
+                "en": "When the house is warmer than this and the air outside is cooler, the unit opens the bypass and lets the outside air in unheated. Requires firmware 2.70 or newer. Set it near or below the temperature the house normally sits at and the bypass will open on any mild day, cooling a house you are paying to heat.",
+                "nl": "Is het huis warmer dan dit en is de buitenlucht koeler, dan opent het toestel de bypass en laat het de buitenlucht ongeconditioneerd binnen. Vereist firmware 2.70 of nieuwer. Stelt u hem in de buurt van of onder de temperatuur in waar het huis normaal op zit, dan gaat de bypass op elke zachte dag open en koelt hij een huis dat u betaalt om te verwarmen.",
+                "da": "Er huset varmere end det her, og er luften udenfor køligere, åbner anlægget bypass og lukker udeluften ind uopvarmet. Kræver firmware 2.70 eller nyere. Sætter du den tæt på eller under den temperatur huset normalt ligger på, åbner bypass på enhver mild dag og køler et hus du betaler for at varme op.",
+                "de": "Ist das Haus wärmer als dieser Wert und die Außenluft kühler, öffnet das Gerät den Bypass und lässt die Außenluft unbehandelt ein. Erfordert Firmware 2.70 oder neuer. Setzen Sie ihn nahe oder unter die Temperatur, die das Haus ohnehin hat, öffnet der Bypass an jedem milden Tag und kühlt ein Haus, das Sie beheizen.",
+                "no": "Er huset varmere enn dette, og er luften ute kjøligere, åpner enheten bypassen og slipper uteluften inn uoppvarmet. Krever fastvare 2.70 eller nyere. Setter du den nær eller under temperaturen huset normalt ligger på, åpner bypassen på enhver mild dag og kjøler et hus du betaler for å varme opp.",
+                "sv": "Är huset varmare än så här och är luften ute svalare öppnar enheten bypassen och släpper in uteluften ouppvärmd. Kräver fastvara 2.70 eller senare. Sätter du den nära eller under den temperatur huset normalt ligger på öppnar bypassen varje mild dag och kyler ett hus du betalar för att värma."
               }
             },
             {
@@ -786,7 +786,7 @@
               },
               "value": 12,
               "min": 12,
-              "max": 15,
+              "max": 17,
               "step": 0.5,
               "units": {
                 "en": "°C",
@@ -797,12 +797,12 @@
                 "sv": "°C"
               },
               "hint": {
-                "en": "Below this outdoor temperature the bypass stays shut and the exchanger keeps warming the incoming air. This is what stops free cooling in winter, so there is no separate winter setting. Set it low for the most cooling, higher if cool air from the vents bothers you.",
-                "nl": "Onder deze buitentemperatuur blijft de bypass dicht en blijft de wisselaar de inkomende lucht opwarmen. Dit is wat vrije koeling in de winter tegenhoudt, dus een aparte winterinstelling is er niet. Laag instellen geeft de meeste koeling, hoger als koele lucht uit de roosters u stoort.",
-                "da": "Under denne udetemperatur holder bypass sig lukket, og veksleren bliver ved med at varme indblæsningen. Det er den her, der stopper fri køling om vinteren, så der er ikke en særskilt vinterindstilling. Sæt den lavt for mest mulig køling, højere hvis kølig luft fra ventilerne generer dig.",
-                "de": "Unterhalb dieser Außentemperatur bleibt der Bypass geschlossen und der Wärmetauscher wärmt die einströmende Luft weiter vor. Das ist es, was die freie Kühlung im Winter verhindert; eine eigene Wintereinstellung gibt es daher nicht. Niedrig eingestellt kühlt am meisten, höher, wenn kühle Luft aus den Ventilen stört.",
-                "no": "Under denne utetemperaturen holder bypassen seg lukket, og veksleren fortsetter å varme tilluften. Det er dette som stopper frikjøling om vinteren, så det finnes ingen egen vinterinnstilling. Sett den lavt for mest mulig kjøling, høyere hvis kjølig luft fra ventilene plager deg.",
-                "sv": "Under den här utetemperaturen förblir bypassen stängd och växlaren fortsätter värma tilluften. Det är detta som stoppar frikyla på vintern, så någon separat vinterinställning finns inte. Ställ den lågt för mest kyla, högre om sval luft från donen stör dig."
+                "en": "Below this outdoor temperature the bypass stays shut and the exchanger keeps warming the incoming air. This is what stops free cooling in winter, so there is no separate winter setting. Set it low for the most cooling, higher if cool air from the vents bothers you. The unit will not go below 12 °C whatever it is asked for.",
+                "nl": "Onder deze buitentemperatuur blijft de bypass dicht en blijft de wisselaar de inkomende lucht opwarmen. Dit is wat vrije koeling in de winter tegenhoudt, dus een aparte winterinstelling is er niet. Laag instellen geeft de meeste koeling, hoger als koele lucht uit de roosters u stoort. Onder 12 °C gaat het toestel niet, wat er ook gevraagd wordt.",
+                "da": "Under denne udetemperatur holder bypass sig lukket, og veksleren bliver ved med at varme indblæsningen. Det er den her, der stopper fri køling om vinteren, så der er ikke en særskilt vinterindstilling. Sæt den lavt for mest mulig køling, højere hvis kølig luft fra ventilerne generer dig. Anlægget går ikke under 12 °C, uanset hvad det bliver bedt om.",
+                "de": "Unterhalb dieser Außentemperatur bleibt der Bypass geschlossen und der Wärmetauscher wärmt die einströmende Luft weiter vor. Das ist es, was die freie Kühlung im Winter verhindert; eine eigene Wintereinstellung gibt es daher nicht. Niedrig eingestellt kühlt am meisten, höher, wenn kühle Luft aus den Ventilen stört. Unter 12 °C geht das Gerät nicht, was auch immer verlangt wird.",
+                "no": "Under denne utetemperaturen holder bypassen seg lukket, og veksleren fortsetter å varme tilluften. Det er dette som stopper frikjøling om vinteren, så det finnes ingen egen vinterinnstilling. Sett den lavt for mest mulig kjøling, høyere hvis kjølig luft fra ventilene plager deg. Enheten går ikke under 12 °C, uansett hva den blir bedt om.",
+                "sv": "Under den här utetemperaturen förblir bypassen stängd och växlaren fortsätter värma tilluften. Det är detta som stoppar frikyla på vintern, så någon separat vinterinställning finns inte. Ställ den lågt för mest kyla, högre om sval luft från donen stör dig. Enheten går inte under 12 °C, oavsett vad den ombeds om."
               }
             },
             {

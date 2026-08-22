@@ -76,8 +76,16 @@ warm.
 
 So the screen now asks two questions instead of four:
 
-    Cool down to                  23 °C   → bypass_max_temp
-    Coldest outdoor air to use    12 °C   → bypass_min_temp
+    Cool down to                  23 °C   → bypass_max_temp   (12..30)
+    Coldest outdoor air to use    12 °C   → bypass_min_temp   (12..17)
+
+Those ranges were probed against the hardware rather than copied from the Home
+Assistant integration, which had them as 21..27 and 12..15. Both were wrong:
+the controller accepts a setpoint from at least 10 up to 30, and clamps the
+outdoor floor to 12..17 on its own — 12 is the firmware's own limit, not a
+choice this app makes, so an owner asking for 10 °C cannot have it. The app's
+own floor of 12 on the setpoint is a judgement call: below the temperature a
+house normally sits at, the bypass would open on any mild day.
 
 Summer mode's copies are mirrored from these, on every connect rather than only
 when something is edited — a unit commissioned with different values would
@@ -100,6 +108,23 @@ house is above the setpoint and the outside air is genuinely colder, then hands
 the level back on arrival. Engaging needs setpoint + 0,3 K and a full degree of
 outdoor advantage; releasing waits for the setpoint itself. The gap is what
 keeps the fans from hunting either side of the mark.
+
+### When it is warmer outside than in
+
+Then the bypass must shut, and the exchanger earns its keep in the other
+direction: the outgoing cool air chills the incoming hot air through the same
+plates. Left open, that heat arrives undiluted.
+
+Closing it is the controller's job and only the controller's. The protocol has
+a command to force the damper open and one to hand control back, but none to
+force it shut, so the app cannot do this even if it wanted to. What it does
+instead is watch: if the bypass is ever found settled open with warmer air
+outside than in, that goes to the error log once per occurrence. It should never
+fire.
+
+The boost deliberately does nothing here either. With heat outside, every extra
+cubic metre brings some of it in despite the recovery, so the right move is to
+ventilate less, not more — which the `outdoor < indoor` condition already gives.
 
 It stays out of the way where it should. Nothing happens while the bypass is
 shut, since the exchanger then tempers the incoming air back towards room

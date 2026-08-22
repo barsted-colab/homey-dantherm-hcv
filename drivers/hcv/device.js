@@ -45,6 +45,7 @@ class DanthermHCVDevice extends Homey.Device {
     this.unit = null;
     this.consecutiveFailures = 0;
     this.rediscovering = false;
+    this.warnedInverted = false;
 
     this.registerCapabilityListener('onoff', (value) => this.onCapabilityOnoff(value));
     this.registerCapabilityListener('dantherm_mode', (value) => this.setMode(value));
@@ -276,6 +277,7 @@ class DanthermHCVDevice extends Homey.Device {
       // same as having lost the unit.
       await this.applyCooling(state)
         .catch((err) => this.error(`Cooling control failed: ${err.message}`));
+      this.checkCoolingRecovery(state);
 
       this.consecutiveFailures = 0;
       if (!this.getAvailable()) await this.setAvailable();
@@ -470,6 +472,36 @@ class DanthermHCVDevice extends Homey.Device {
     } else if (decision === 'release') {
       await this.endCoolBoost(from, state);
     }
+  }
+
+  /**
+   * Watches for the bypass standing open while it is warmer outside than in.
+   *
+   * That is the one case where an open damper actively costs you: with the
+   * exchanger out of the loop the outside heat arrives undiluted, where a shut
+   * damper would have let the outgoing cool air chill it on the way past. In
+   * summer that is the whole point of the exchanger, running the other way.
+   *
+   * Closing it is the controller's job and only the controller's. The protocol
+   * has a command to force the damper open and one to hand control back, but
+   * none to force it shut — so all this can do is notice and say so. It should
+   * never fire; if it does, the unit is not doing something every heat
+   * exchanger is expected to do, and that is worth knowing about.
+   */
+  checkCoolingRecovery(state) {
+    const settled = state.bypassState === 'opened';
+    const inverted = state.outdoorTemp !== null && state.extractTemp !== null
+      && state.outdoorTemp > state.extractTemp + 0.5;
+    const wrong = settled && inverted;
+
+    // Once per transition. A damper caught mid-swing on a borderline day would
+    // otherwise fill the log with the same line.
+    if (wrong && !this.warnedInverted) {
+      this.error(`Bypass open with ${state.outdoorTemp.toFixed(1)} °C outside against `
+        + `${state.extractTemp.toFixed(1)} °C inside — the exchanger should be cooling `
+        + 'the incoming air, not being bypassed');
+    }
+    this.warnedInverted = wrong;
   }
 
   /** Gives the fan level back to whoever had it before the boost. */
