@@ -310,12 +310,12 @@
           ? '–' : v.toFixed(dec).replace('.', ','));
 
         // --- static labels ---
-        el('l-extract').textContent = t('widget.extract', 'Fraluft');
-        el('l-outdoor').textContent = t('widget.outdoor', 'Udeluft');
-        el('l-supply').textContent = t('widget.supply', 'Tilluft');
-        el('l-exhaust').textContent = t('widget.exhaust', 'Afkast');
-        el('l-level').textContent = t('widget.level', 'Trin');
-        el('l-mode').textContent = t('widget.mode_label', 'Driftstilstand');
+        el('l-extract').textContent = t('widget.extract', "Extract");
+        el('l-outdoor').textContent = t('widget.outdoor', "Outdoor");
+        el('l-supply').textContent = t('widget.supply', "Supply");
+        el('l-exhaust').textContent = t('widget.exhaust', "Exhaust");
+        el('l-level').textContent = t('widget.level', "Level");
+        el('l-mode').textContent = t('widget.mode_label', "Operating mode");
 
         // --- controls ---
         const ICONS = {
@@ -338,10 +338,10 @@
         }
 
         const MODES = [
-          ['automatic', t('widget.mode.automatic', 'Auto')],
-          ['manual', t('widget.mode.manual', 'Manuel')],
-          ['away', t('widget.mode.away', 'Ferie')],
-          ['night', t('widget.mode.night', 'Nat')],
+          ['automatic', t('widget.mode.automatic', "Automatic")],
+          ['manual', t('widget.mode.manual', "Manual")],
+          ['away', t('widget.mode.away', "Away")],
+          ['night', t('widget.mode.night', "Night")],
         ];
         const modes = [];
         MODES.forEach(([id, label]) => {
@@ -404,8 +404,8 @@
             el('w').hidden = true;
             el('msg').hidden = false;
             el('msg').textContent = state && state.reason === 'unavailable'
-              ? (state.message || t('widget.unavailable', 'Anlægget svarer ikke'))
-              : t('widget.no_device', 'Vælg et ventilationsanlæg i widgettens indstillinger');
+              ? (state.message || t('widget.unavailable', "Unit not responding"))
+              : t('widget.no_device', "Select a ventilation unit in the widget settings");
             return;
           }
 
@@ -432,26 +432,26 @@
           const cap = el('core-cap');
           if (bypassOpen) {
             core.textContent = '–';
-            cap.textContent = t('widget.bypass_open', 'Bypass åben');
+            cap.textContent = t('widget.bypass_open', "Bypass open");
           } else if (showEfficiency && state.efficiency !== null && state.efficiency !== undefined) {
             core.textContent = `${state.efficiency}%`;
-            cap.textContent = t('widget.recovery', 'Genvinding');
+            cap.textContent = t('widget.recovery', "recovery");
           } else {
             core.textContent = '–';
-            cap.textContent = t('widget.recovery', 'Genvinding');
+            cap.textContent = t('widget.recovery', "recovery");
           }
 
           // Only tiles with a real value — a unit without an RH sensor should
           // not carry an empty humidity box around forever.
           const tiles = [];
           const add = (k, v, u) => { if (v !== null && v !== undefined) tiles.push({ k, v, u }); };
-          add(t('widget.humidity', 'Fugt'), state.humidity, '%');
-          add(t('widget.bypass', 'Bypass'), bypassOpen
-            ? t('widget.open', 'Åben') : t('widget.closed', 'Lukket'), '');
-          add(t('widget.recovered', 'Genvundet'), state.recovered === null ? null : num(state.recovered, 2), 'kW');
-          add(t('widget.power', 'Effekt'), state.power === null ? null : num(state.power, 0), 'W');
-          add(t('widget.filter', 'Filter'), state.filterDays, t('widget.days', 'dage'));
-          add(t('widget.air_quality', 'Luftkvalitet'), state.airQuality, 'ppm');
+          add(t('widget.humidity', "Humidity"), state.humidity, '%');
+          add(t('widget.bypass', "bypass"), bypassOpen
+            ? t('widget.open', "Open") : t('widget.closed', "Closed"), '');
+          add(t('widget.recovered', "Recovered"), state.recovered === null ? null : num(state.recovered, 2), 'kW');
+          add(t('widget.power', "Power"), state.power === null ? null : num(state.power, 0), 'W');
+          add(t('widget.filter', 'Filter'), state.filterDays, t('widget.days', "days"));
+          add(t('widget.air_quality', "Air quality"), state.airQuality, 'ppm');
 
           el('tiles').innerHTML = tiles.map((x) => `<div class="tile">`
             + `<span class="k">${x.k}</span>`

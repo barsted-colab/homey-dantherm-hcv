@@ -188,7 +188,7 @@
         const TRACK = 226.2;
         const deg = (c) => (c === null || c === undefined ? '–' : `${c.toFixed(1).replace('.', ',')}°`);
 
-        el('l-level').textContent = t('widget.level', 'Trin');
+        el('l-level').textContent = t('widget.level', "Level");
 
         const levels = [];
         for (let i = 0; i <= 4; i++) {
@@ -226,8 +226,8 @@
             el('w').hidden = true;
             el('msg').hidden = false;
             el('msg').textContent = state && state.reason === 'unavailable'
-              ? (state.message || t('widget.unavailable', 'Anlægget svarer ikke'))
-              : t('widget.no_device', 'Vælg et ventilationsanlæg i widgettens indstillinger');
+              ? (state.message || t('widget.unavailable', "Unit not responding"))
+              : t('widget.no_device', "Select a ventilation unit in the widget settings");
             return;
           }
 
@@ -256,25 +256,25 @@
             fraction = Math.min(1, flow / (nominal * 1.25));
           } else {
             el('big').textContent = String(state.fanLevel);
-            el('unit').textContent = t('widget.level', 'Trin');
+            el('unit').textContent = t('widget.level', "Level");
             fraction = state.fanLevel / 4;
           }
 
           el('arc').setAttribute('stroke-dasharray', `${(TRACK * fraction).toFixed(1)} 302`);
 
           const sub = el('sub');
-          if (state.bypassOpen) sub.textContent = t('widget.bypass_open', 'Bypass åben');
+          if (state.bypassOpen) sub.textContent = t('widget.bypass_open', "Bypass open");
           else if (state.efficiency !== null && state.efficiency !== undefined) {
-            sub.textContent = `${state.efficiency}% ${t('widget.recovery_short', 'genv.')}`;
+            sub.textContent = `${state.efficiency}% ${t('widget.recovery_short', "recov.")}`;
           } else sub.textContent = '';
 
           const tiles = [];
           const add = (k, v, u) => { if (v !== null && v !== undefined) tiles.push({ k, v, u }); };
           const temps = state.temperatures || {};
-          add(t('widget.extract', 'Fraluft'), deg(temps.extract), '');
-          add(t('widget.supply', 'Tilluft'), deg(temps.supply), '');
-          add(t('widget.humidity', 'Fugt'), state.humidity, '%');
-          add(t('widget.filter', 'Filter'), state.filterDays, t('widget.days', 'dage'));
+          add(t('widget.extract', "Extract"), deg(temps.extract), '');
+          add(t('widget.supply', "Supply"), deg(temps.supply), '');
+          add(t('widget.humidity', "Humidity"), state.humidity, '%');
+          add(t('widget.filter', 'Filter'), state.filterDays, t('widget.days', "days"));
 
           el('tiles').innerHTML = tiles.slice(0, 4).map((x) => '<div class="tile">'
             + `<span class="k">${x.k}</span>`
