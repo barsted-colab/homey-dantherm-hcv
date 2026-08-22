@@ -10,4 +10,8 @@ module.exports = {
   async setFanLevel({ homey, body }) {
     return widget.setFanLevel(homey, body);
   },
+
+  async log({ homey, body }) {
+    return widget.logError(homey, { ...body, widget: 'compact' });
+  },
 };

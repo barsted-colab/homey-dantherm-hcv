@@ -266,12 +266,36 @@
 
     <script type="text/javascript">
       function onHomeyReady(Homey) {
+        // Signal ready before anything else can run. A widget that throws on
+        // the way up never sends this, and then it stays blank and cannot be
+        // opened at all — which turns any setup slip into a dead tile instead
+        // of a visible error.
+        Homey.ready();
+        try {
+          build(Homey);
+        } catch (err) {
+          const msg = document.getElementById('msg');
+          if (msg) {
+            msg.hidden = false;
+            msg.textContent = `Widget error: ${err && err.message ? err.message : err}`;
+          }
+        }
+      }
+
+      function build(Homey) {
         const settings = Homey.getSettings() || {};
         const deviceId = (Homey.getDeviceIds() || [])[0] || null;
 
         const allowControl = settings.allow_control !== false;
         const showEfficiency = settings.show_efficiency !== false;
         const refreshMs = Math.max(5, Number(settings.refresh_seconds) || 15) * 1000;
+
+        // Errors go to the app rather than the webview console, which nobody
+        // opens. From there they reach Homey's own log and a diagnostic report.
+        const report = (context, err) => {
+          const detail = err && err.message ? err.message : String(err);
+          Homey.api('POST', '/log', { message: `${context}: ${detail}` }).catch(() => {});
+        };
 
         const el = (id) => document.getElementById(id);
         const t = (key, fallback) => {
@@ -345,7 +369,7 @@
           Homey.api('POST', path, { deviceId, ...body })
             // The controller needs a moment before a read reflects the write.
             .then(() => setTimeout(refresh, 3500))
-            .catch((err) => { console.error(err); refresh(); })
+            .catch((err) => { report('command failed', err); refresh(); })
             .finally(() => {
               busy = false;
               [...levels, ...modes].forEach((b) => b.classList.remove('busy'));
@@ -445,12 +469,11 @@
           const path = deviceId ? `/state?deviceId=${encodeURIComponent(deviceId)}` : '/state';
           Homey.api('GET', path, {})
             .then(render)
-            .catch((err) => { console.error(err); render(null); });
+            .catch((err) => { report('state read failed', err); render(null); });
         }
 
         refresh();
         setInterval(refresh, refreshMs);
-        Homey.ready();
       }
     </script>
   </body>

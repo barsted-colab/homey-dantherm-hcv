@@ -2,5 +2,9 @@
   "1.0.0": {
     "en": "First release. Reads temperatures, humidity, fan speeds, bypass position and filter life from Dantherm HCV, HCC, RCV and WG units over Modbus TCP, and sets operating mode, fan level and bypass from Flows. The capability set adapts to what each unit is actually fitted with, and the unit is found again automatically if its IP address changes.",
     "da": "Første udgivelse. Aflæser temperaturer, luftfugtighed, ventilatorhastigheder, bypass-stilling og filterlevetid fra Dantherm HCV-, HCC-, RCV- og WG-anlæg via Modbus TCP, og sætter driftstilstand, ventilationstrin og bypass fra Flows. Enhedens funktioner tilpasses det enkelte anlægs faktiske udstyr, og anlægget genfindes automatisk hvis dets IP-adresse ændrer sig."
+  },
+  "1.0.1": {
+    "en": "First release. Reads temperatures, humidity, fan speeds, bypass position and filter life from Dantherm HCV, HCC, RCV and WG units over Modbus TCP, and sets operating mode, fan level and bypass from Flows. Two dashboard widgets show the heat exchanger at work. Enter the figures from your commissioning report and it also estimates airflow, power draw and the heat the exchanger hands back. The capability set adapts to what each unit is actually fitted with, and the unit is found again automatically if its IP address changes.",
+    "da": "Første udgivelse. Aflæser temperaturer, luftfugtighed, ventilatorhastigheder, bypass-stilling og filterlevetid fra Dantherm HCV-, HCC-, RCV- og WG-anlæg via Modbus TCP, og sætter driftstilstand, ventilationstrin og bypass fra Flows. To dashboard-widgets viser varmeveksleren i arbejde. Indtaster du tallene fra din indreguleringsrapport, estimeres desuden luftmængde, effektforbrug og den varme veksleren giver tilbage. Enhedens funktioner tilpasses det enkelte anlægs udstyr, og anlægget genfindes automatisk hvis dets IP-adresse ændrer sig."
   }
 }

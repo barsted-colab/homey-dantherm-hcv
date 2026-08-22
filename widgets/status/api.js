@@ -11,6 +11,10 @@ module.exports = {
     return widget.setFanLevel(homey, body);
   },
 
+  async log({ homey, body }) {
+    return widget.logError(homey, { ...body, widget: 'status' });
+  },
+
   async setMode({ homey, body }) {
     return widget.setMode(homey, body);
   },

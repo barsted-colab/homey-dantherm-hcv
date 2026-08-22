@@ -9,6 +9,11 @@ Two sources are supported:
   render           a manufacturer product photo, which looks sharper but is
                    somebody else's asset and needs clearing before publication
 
+Note that the app images themselves are no longer generated here. App Store
+review asked for lifestyle imagery rather than a product on a decorative
+background, so those come from a Dantherm interior photograph instead. Driver
+images still use this script, since guideline 1.5 asks for the device on white.
+
     python3 tools/make-images.py [drawn|render]
 """
 

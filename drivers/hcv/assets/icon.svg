@@ -1,10 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-  <!-- Ventilation unit: cabinet with four duct spigots on top -->
-  <path fill="currentColor" d="M28 30h44a4 4 0 0 1 4 4v52a4 4 0 0 1-4 4H28a4 4 0 0 1-4-4V34a4 4 0 0 1 4-4zm4 8v44h36V38H32z"/>
-  <path fill="currentColor" d="M36 46h12v5H36zm16 0h12v5H52z"/>
-  <circle fill="currentColor" cx="36" cy="22" r="7"/>
-  <circle fill="currentColor" cx="52" cy="15" r="7"/>
-  <circle fill="currentColor" cx="66" cy="22" r="7"/>
-  <circle fill="currentColor" cx="50" cy="29" r="6"/>
-  <path fill="currentColor" d="M40 62h20v4H40zm4 9h12v4H44z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960" width="960" height="960">
+  <!-- Dantherm HCV: heat-recovery ventilation unit, three-quarter view. -->
+  <path d="M250 340 L418 248 H738 L570 340 Z" fill="currentColor" fill-opacity=".45"/>
+  <path d="M570 340 L738 248 V738 L570 830 Z" fill="currentColor" fill-opacity=".72"/>
+  <path d="M250 340 H570 V830 H250 Z" fill="currentColor"/>
+
+  <g>
+    <path d="M411.52 271.92 v-30 a46 25.19047619047619 0 0 1 92 0 v30 a46 25.19047619047619 0 0 1 -92 0 Z" fill="currentColor" fill-opacity=".62"/>
+    <ellipse cx="457.52" cy="241.92000000000002" rx="46" ry="25.2" fill="currentColor" fill-opacity=".82"/>
+    <ellipse cx="457.52" cy="241.92000000000002" rx="28" ry="15.1" fill="currentColor"/>
+  </g>
+  <g>
+    <path d="M555.36 273.76 v-30 a46 25.19047619047619 0 0 1 92 0 v30 a46 25.19047619047619 0 0 1 -92 0 Z" fill="currentColor" fill-opacity=".62"/>
+    <ellipse cx="601.36" cy="243.76" rx="46" ry="25.2" fill="currentColor" fill-opacity=".82"/>
+    <ellipse cx="601.36" cy="243.76" rx="28" ry="15.1" fill="currentColor"/>
+  </g>
+  <g>
+    <path d="M338.96000000000004 315.15999999999997 v-30 a46 25.19047619047619 0 0 1 92 0 v30 a46 25.19047619047619 0 0 1 -92 0 Z" fill="currentColor" fill-opacity=".62"/>
+    <ellipse cx="384.96000000000004" cy="285.15999999999997" rx="46" ry="25.2" fill="currentColor" fill-opacity=".82"/>
+    <ellipse cx="384.96000000000004" cy="285.15999999999997" rx="28" ry="15.1" fill="currentColor"/>
+  </g>
+  <g>
+    <path d="M482.79999999999995 317.0 v-30 a46 25.19047619047619 0 0 1 92 0 v30 a46 25.19047619047619 0 0 1 -92 0 Z" fill="currentColor" fill-opacity=".62"/>
+    <ellipse cx="528.8" cy="287.0" rx="46" ry="25.2" fill="currentColor" fill-opacity=".82"/>
+    <ellipse cx="528.8" cy="287.0" rx="28" ry="15.1" fill="currentColor"/>
+  </g>
+
+  <!-- Control panel and the two filter drawer handles on the front. -->
+  <rect x="290" y="386" width="130" height="38" rx="12" fill="#fff" fill-opacity=".82"/>
+  <rect x="290" y="466" width="222" height="30" rx="10" fill="#fff" fill-opacity=".38"/>
+  <rect x="290" y="518" width="222" height="30" rx="10" fill="#fff" fill-opacity=".38"/>
+  <path d="M250 588 H570" stroke="#fff" stroke-opacity=".28" stroke-width="6"/>
 </svg>

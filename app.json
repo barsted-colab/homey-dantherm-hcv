@@ -1,6 +1,6 @@
 {
   "id": "dk.fredskilde.dantherm",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "compatibility": ">=12.3.0",
   "sdk": 3,
   "platforms": [
@@ -872,10 +872,7 @@
       "transparent": false,
       "devices": {
         "type": "app",
-        "singular": true,
-        "filter": {
-          "driver_id": "hcv"
-        }
+        "singular": true
       },
       "settings": [
         {
@@ -928,6 +925,10 @@
         "setMode": {
           "method": "POST",
           "path": "/mode"
+        },
+        "log": {
+          "method": "POST",
+          "path": "/log"
         }
       }
     },
@@ -941,10 +942,7 @@
       "transparent": false,
       "devices": {
         "type": "app",
-        "singular": true,
-        "filter": {
-          "driver_id": "hcv"
-        }
+        "singular": true
       },
       "settings": [
         {
@@ -980,6 +978,10 @@
         "setFanLevel": {
           "method": "POST",
           "path": "/fan-level"
+        },
+        "log": {
+          "method": "POST",
+          "path": "/log"
         }
       }
     }
