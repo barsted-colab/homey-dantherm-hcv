@@ -443,6 +443,15 @@ class DanthermHCVDevice extends Homey.Device {
       this.log(`Cooling boost released: level is ${state.fanLevel}, not the `
         + `${s.cool_boost_level} we set — something else has it`);
       await this.setStoreValue('coolBoostFrom', null);
+      await this.setStoreValue('coolBoostMode', null);
+
+      // Standing down properly, not just for one poll. Releasing and grabbing
+      // again thirty seconds later is not deference, it is an argument — and it
+      // is one the user cannot win, since the conditions that started the boost
+      // are still true. Anyone putting the unit back on automatic mid-cooling
+      // would watch it flip to manual again and reasonably conclude the app was
+      // broken.
+      await this.setStoreValue('coolBoostBlocked', true);
       this.fireCooling('cooling_stopped');
       boosting = false;
     }
@@ -462,6 +471,9 @@ class DanthermHCVDevice extends Homey.Device {
     });
 
     if (decision === 'boost') {
+      // Held off until this round of cooling has run its course on its own.
+      if (this.getStoreValue('coolBoostBlocked')) return;
+
       // Already moving more air than we would ask for — leave it alone.
       if (state.fanLevel >= s.cool_boost_level) return;
 
@@ -476,6 +488,14 @@ class DanthermHCVDevice extends Homey.Device {
       this.fireCooling('cooling_started');
     } else if (decision === 'release') {
       await this.endCoolBoost(from, state);
+    } else if (!boosting) {
+      // Cooling is no longer called for, so whatever the user overrode is over.
+      // Arming again here rather than on a timer means the app comes back when
+      // the next warm afternoon does, not in the middle of this one.
+      if (this.getStoreValue('coolBoostBlocked')) {
+        await this.setStoreValue('coolBoostBlocked', null);
+        this.log('Cooling no longer called for — the boost may take over again');
+      }
     }
   }
 
@@ -513,6 +533,36 @@ class DanthermHCVDevice extends Homey.Device {
     this.homey.flow.getDeviceTriggerCard(card)
       .trigger(this)
       .catch((err) => this.error(`${card} trigger failed: ${err.message}`));
+  }
+
+  /**
+   * Hands the unit back to itself.
+   *
+   * Everything this app imposes is let go of in one step: the cooling boost
+   * stops and is switched off so it cannot take over again, a manual bypass is
+   * released, and the unit goes back to automatic. Written as one action
+   * because undoing them one at a time is how you end up with the last one
+   * still on.
+   *
+   * Deliberately not a factory reset. Nothing on the controller is erased —
+   * the commissioning, the bypass temperatures, the filter life all stay put.
+   * Those took an engineer an afternoon; this is about the app stepping back,
+   * not about throwing that away.
+   */
+  async returnToNormal() {
+    const held = this.isCooling();
+    await this.setStoreValue('coolBoostFrom', null);
+    await this.setStoreValue('coolBoostMode', null);
+    await this.setStoreValue('coolBoostBlocked', null);
+    if (held) this.fireCooling('cooling_stopped');
+
+    await this.setSettings({ cool_boost_enabled: false });
+
+    if (this.unit) {
+      await this.setManualBypass(false);
+      await this.setMode('automatic');
+    }
+    this.log('Handed the unit back: boost off, bypass released, automatic mode');
   }
 
   /** Whether the app is currently holding the fan level up for free cooling. */

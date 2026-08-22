@@ -2512,6 +2512,32 @@
             }
           }
         ]
+      },
+      {
+        "id": "return_to_normal",
+        "title": {
+          "en": "Back to normal operation",
+          "nl": "Terug naar normale werking",
+          "da": "Tilbage til normal drift",
+          "de": "Zurück zum Normalbetrieb",
+          "no": "Tilbake til normal drift",
+          "sv": "Tillbaka till normal drift"
+        },
+        "hint": {
+          "en": "Hands the unit back to itself. Stops the free cooling boost and turns it off so it will not take over again, releases a manual bypass, and puts the unit in automatic. Nothing on the unit is erased — the commissioning settings, bypass temperatures and filter life are left exactly as they are.",
+          "nl": "Geeft het toestel aan zichzelf terug. Stopt de boost van de vrije koeling en zet die uit zodat hij het niet opnieuw overneemt, laat een handmatige bypass los en zet het toestel op automatisch. Er wordt niets gewist — de inregelinstellingen, bypasstemperaturen en filterlevensduur blijven precies zoals ze zijn.",
+          "da": "Giver anlægget tilbage til sig selv. Stopper boosten ved fri køling og slår den fra, så den ikke tager over igen, slipper en manuel bypass, og sætter anlægget i automatik. Intet på anlægget slettes — indreguleringen, bypass-temperaturerne og filterlevetiden står præcis som de gør.",
+          "de": "Gibt das Gerät sich selbst zurück. Beendet den Boost der freien Kühlung und schaltet ihn ab, damit er nicht erneut übernimmt, gibt einen manuellen Bypass frei und stellt das Gerät auf Automatik. Es wird nichts gelöscht — Einregulierung, Bypass-Temperaturen und Filterstandzeit bleiben genau so, wie sie sind.",
+          "no": "Gir anlegget tilbake til seg selv. Stopper boosten ved frikjøling og slår den av så den ikke tar over igjen, slipper en manuell bypass, og setter anlegget i automatikk. Ingenting slettes — innreguleringen, bypass-temperaturene og filterlevetiden står nøyaktig som de gjør.",
+          "sv": "Lämnar tillbaka aggregatet till sig självt. Stoppar boosten vid frikyla och stänger av den så att den inte tar över igen, släpper en manuell bypass, och sätter aggregatet i automatik. Ingenting raderas — injusteringen, bypass-temperaturerna och filterlivslängden står precis som de gör."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hcv"
+          }
+        ]
       }
     ]
   }

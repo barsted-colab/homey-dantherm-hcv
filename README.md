@@ -179,10 +179,20 @@ There is a condition for whether cooling is running, and triggers for when it
 starts and stops, so a Flow can close the blinds or say something about the
 windows.
 
+`Back to normal operation` lets go of all of it at once — boost stopped and
+switched off, manual bypass released, unit back on automatic. It is not a
+factory reset and deliberately erases nothing: the commissioning, the bypass
+temperatures and the filter life took an engineer an afternoon and stay exactly
+where they are. This is the app stepping back, not the unit being wiped.
+
 The level is borrowed rather than taken: whatever it was is remembered and
 restored, and if a Flow or the wall panel moves it in the meantime, that is
-treated as someone overriding on purpose and the boost is abandoned rather than
-fought over. Losing a temperature reading hands the level back too — going blind
+treated as someone overriding on purpose. The boost then stands down until this
+round of cooling has run its course on its own — releasing and grabbing again
+thirty seconds later is not deference but an argument, and one the user cannot
+win, since the conditions that started it are all still true. Someone putting
+the unit back on automatic mid-afternoon would watch it flip to manual again and
+reasonably conclude the app was broken. Losing a temperature reading hands the level back too — going blind
 is not a reason to hold someone's fans at speed.
 
 ### Airflow and power, from your own commissioning report
