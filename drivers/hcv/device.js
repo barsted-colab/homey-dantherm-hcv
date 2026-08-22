@@ -578,6 +578,11 @@ class DanthermHCVDevice extends Homey.Device {
    */
   async setCoolBoost(enabled) {
     await this.setSettings({ cool_boost_enabled: enabled });
+
+    // Asking for it outright outranks having stood down earlier. Otherwise the
+    // card would report success and do nothing, which is the worst of both.
+    if (enabled) await this.setStoreValue('coolBoostBlocked', null);
+
     this.log(`Free cooling boost turned ${enabled ? 'on' : 'off'} from a Flow`);
     await this.poll();
   }
