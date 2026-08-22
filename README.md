@@ -92,11 +92,35 @@ discards them, since a new figure describes a new operating point.
 `P_idle` and `k` are fitted by least squares — the model is linear in Q³ — rather
 than asked for, since no report states a standing draw.
 
-Both fans are anchored to the single flow figure. A balanced unit is meant to
-move the same volume each way, and the few percent a report records between
-supply and extract is commissioning tolerance. Each fan is then scaled by its
-own speed, so the two readings part company when the unit genuinely runs them
-apart — summer bypass stops the supply fan while extract keeps going.
+Supply is not asked for, because the unit can be made to tell you. A commissioned
+unit is deliberately unbalanced: extract runs a few percent above supply so the
+house sits at slight negative pressure, which pulls moisture out of the
+construction rather than pushing it into the walls to condense inside the
+build-up. Danish practice is 4-8 %, it is fixed per installation, and no
+register or report column states it as a ratio.
+
+The exchanger does. Energy across it balances, so
+
+    ṁ_supply · (supply − outdoor) = ṁ_extract · (extract − exhaust)
+
+and since both streams share a density, the volume ratio is just the ratio of
+the two temperature spans. On the reference installation that returns 201 m³/h
+from a 216 m³/h extract — the report's own figure, to the litre.
+
+It needs a real temperature difference to divide by, so the last good reading is
+kept and used through the mild months, an implausible one (condensation on the
+extract side releases latent heat this does not model) is discarded rather than
+absorbed, and a unit first run in summer falls back on 6 % until the first cold
+spell settles it.
+
+Each fan is still scaled by its own speed on top of that, so the two readings
+part company when the unit genuinely runs them apart — summer bypass stops the
+supply fan while extract keeps going.
+
+Recovered heat is then measured on the extract side, across the drop from
+extract to exhaust, because that is the stream whose volume is known outright
+rather than derived. The supply side carries the same energy by the balance
+above, so taking it there would only put an estimate inside an estimate.
 
 Every field defaults to zero and the feature stays off until filled in, because
 an HCV 700 moving three times the air has its own numbers in its own report, and

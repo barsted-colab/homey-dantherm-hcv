@@ -106,35 +106,76 @@ test('doubling the flow roughly eightfolds the fan contribution', () => {
   assert.ok(Math.abs(fanHigh / fanLow - 8) < 0.2, `expected ~8x, got ${(fanHigh / fanLow).toFixed(2)}x`);
 });
 
-// --- Recovered heat ----------------------------------------------------------
+// --- Negative pressure --------------------------------------------------------
 
-const { recoveredHeat } = require('../lib/dantherm');
+const { supplyImbalance, recoveredHeat } = require('../lib/dantherm');
 
-test('recovered heat matches the hand calculation on a cold day', () => {
-  // 216 m³/h at 1,2 kg/m³ is 0,072 kg/s; lifting it 22,9 K at 1,006 kJ/kgK
-  // is 1,66 kW.
-  assert.strictEqual(recoveredHeat(216, 19.4, -3.5), 1.66);
+// A cold morning on the reference installation, bypass closed.
+const COLD = {
+  supply: 19.4, outdoor: -3.5, extract: 21.0, exhaust: -0.3,
+};
+
+test('the exchanger reveals the commissioned negative pressure', () => {
+  // The report says 216 extract against 201 supply. Nothing states that as a
+  // ratio, but the two temperature spans across the exchanger carry it.
+  const ratio = supplyImbalance(COLD);
+  assert.strictEqual(Math.round(EXTRACT_NOMINAL * ratio), SUPPLY_NOMINAL);
+  // 4-8 % is normal Danish practice; outside that something is off.
+  assert.ok(ratio > 0.92 && ratio < 0.96, `expected a few percent negative, got ${ratio}`);
 });
 
-test('recovered heat scales with both flow and temperature lift', () => {
-  const base = recoveredHeat(216, 19.4, -3.5);
-  assert.ok(Math.abs(recoveredHeat(108, 19.4, -3.5) - base / 2) < 0.02, 'half the flow, half the heat');
-  assert.ok(recoveredHeat(216, 17.8, 15.2) < base / 5, 'a mild evening recovers far less');
+test('no answer on a mild day rather than a noisy one', () => {
+  // Small spans make the ratio mostly sensor error, so it declines to guess.
+  assert.strictEqual(supplyImbalance({
+    supply: 19.0, outdoor: 15.0, extract: 21.0, exhaust: 17.0,
+  }), null);
+  assert.strictEqual(supplyImbalance({ ...COLD, outdoor: null }), null);
+});
+
+test('an implausible balance is discarded, not absorbed', () => {
+  // Condensation on the extract side releases latent heat the sensible balance
+  // does not model, which inflates the ratio.
+  assert.strictEqual(supplyImbalance({ ...COLD, exhaust: -8.0 }), null);
+  // Supply above extract would pressurise the house — the opposite of the point.
+  assert.strictEqual(supplyImbalance({ ...COLD, exhaust: 2.0 }), null);
+});
+
+// --- Recovered heat ----------------------------------------------------------
+
+test('recovered heat matches the hand calculation on a cold day', () => {
+  // Measured on the extract side, where the volume is the report's own figure.
+  // 216 m³/h at 1,2 kg/m³ is 0,072 kg/s; 21,3 K at 1,006 kJ/kgK is 1,54 kW.
+  assert.strictEqual(recoveredHeat(EXTRACT_NOMINAL, COLD.extract, COLD.exhaust), 1.54);
+});
+
+test('both sides of the exchanger agree, which is why either may be used', () => {
+  // The extract side is chosen because its volume is known rather than derived;
+  // the energy it gives up is the energy the supply side takes on.
+  const fromExtract = recoveredHeat(EXTRACT_NOMINAL, COLD.extract, COLD.exhaust);
+  const fromSupply = recoveredHeat(SUPPLY_NOMINAL, COLD.supply, COLD.outdoor);
+  assert.ok(Math.abs(fromExtract - fromSupply) < 0.02, `${fromExtract} vs ${fromSupply} kW`);
+});
+
+test('recovered heat scales with both flow and temperature drop', () => {
+  const base = recoveredHeat(EXTRACT_NOMINAL, COLD.extract, COLD.exhaust);
+  assert.ok(Math.abs(recoveredHeat(108, COLD.extract, COLD.exhaust) - base / 2) < 0.02,
+    'half the flow, half the heat');
+  assert.ok(recoveredHeat(EXTRACT_NOMINAL, 21.0, 17.0) < base / 5, 'a mild evening recovers far less');
 });
 
 test('cooling is not counted as recovery', () => {
-  // Bypass open on a summer day: supply arrives colder than outdoor. That is
-  // the point of free cooling, but it is not heat handed back.
-  assert.strictEqual(recoveredHeat(216, 15.0, 20.0), 0);
+  // Free cooling on a summer day: the outgoing air is warmed on its way out.
+  // Real, but not heat handed back to the house.
+  assert.strictEqual(recoveredHeat(EXTRACT_NOMINAL, 22.0, 26.0), 0);
 });
 
 test('a stopped unit recovers nothing', () => {
-  assert.strictEqual(recoveredHeat(0, 19.4, -3.5), 0);
+  assert.strictEqual(recoveredHeat(0, COLD.extract, COLD.exhaust), 0);
 });
 
 test('no estimate without airflow', () => {
-  assert.strictEqual(recoveredHeat(null, 19.4, -3.5), null);
-  assert.strictEqual(recoveredHeat(216, null, -3.5), null);
+  assert.strictEqual(recoveredHeat(null, COLD.extract, COLD.exhaust), null);
+  assert.strictEqual(recoveredHeat(EXTRACT_NOMINAL, null, COLD.exhaust), null);
 });
 
 test('power stays sane outside the range a report covers', () => {

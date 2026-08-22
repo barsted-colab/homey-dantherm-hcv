@@ -2,7 +2,7 @@
 
 const Homey = require('homey');
 const {
-  DanthermDevice, CONFIG, estimateAirflow, estimatePower, fitPowerCurve,
+  DanthermDevice, CONFIG, estimateAirflow, estimatePower, fitPowerCurve, supplyImbalance,
 } = require('../../lib/dantherm');
 const { discover } = require('../../lib/discovery');
 
@@ -18,6 +18,13 @@ const DEFAULT_ON_LEVEL = 2;
  * installation, so it is not worth a settings field.
  */
 const NOMINAL_LEVEL = 3;
+
+/**
+ * Fallback negative-pressure imbalance, used until the exchanger has been
+ * asked. Danish commissioning practice puts extract 4-8 % above supply, so 6 %
+ * is the middle of the band rather than any particular unit's figure.
+ */
+const TYPICAL_IMBALANCE = 0.94;
 
 class DanthermHCVDevice extends Homey.Device {
 
@@ -406,11 +413,43 @@ class DanthermHCVDevice extends Homey.Device {
       ]).catch((err) => this.error(`Could not store airflow reference: ${err.message}`));
     }
 
+    const extract = estimateAirflow(state.fan1Speed, extractRef, nominal);
+
     return {
-      extract: estimateAirflow(state.fan1Speed, extractRef, nominal),
-      supply: estimateAirflow(state.fan2Speed, supplyRef, nominal),
-      power: estimatePower(estimateAirflow(state.fan1Speed, extractRef, nominal), this.powerCurve()),
+      extract,
+      supply: estimateAirflow(state.fan2Speed, supplyRef, nominal * this.imbalance(state)),
+      power: estimatePower(extract, this.powerCurve()),
     };
+  }
+
+  /**
+   * How much less air comes in than goes out, as a factor on the extract flow.
+   *
+   * Read off the exchanger where the weather allows it, since that answer is
+   * this installation's own. It only works with a real temperature difference
+   * to divide by, so the last good reading is kept and used through the mild
+   * months, and a unit commissioned in summer falls back on the typical figure
+   * until the first cold spell settles it.
+   */
+  imbalance(state) {
+    if (state.bypassState !== 'closed' && state.bypassState !== null) {
+      return this.getStoreValue('supplyRatio') || TYPICAL_IMBALANCE;
+    }
+
+    const measured = supplyImbalance({
+      supply: state.supplyTemp,
+      outdoor: state.outdoorTemp,
+      extract: state.extractTemp,
+      exhaust: state.exhaustTemp,
+    });
+
+    if (measured !== null && measured !== this.getStoreValue('supplyRatio')) {
+      this.log(`Exchanger balance puts supply at ${(measured * 100).toFixed(1)} % of extract`);
+      this.setStoreValue('supplyRatio', measured)
+        .catch((err) => this.error(`Could not store supply ratio: ${err.message}`));
+    }
+
+    return measured ?? this.getStoreValue('supplyRatio') ?? TYPICAL_IMBALANCE;
   }
 
   /** Rounds without turning an absent reading into a hard zero. */
