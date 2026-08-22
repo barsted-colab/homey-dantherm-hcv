@@ -171,6 +171,14 @@ night and fireplace were each chosen for a reason that outranks a degree of
 comfort, and Dantherm's own summer mode stops the supply fan outright, so there
 is no incoming air to speed up.
 
+All of it lives in the app rather than in Flows, so it works out of the box —
+but Flows can override it where a schedule knows something the thermostat does
+not. `Turn free cooling boost off` through the night and on again for the
+afternoon; `Cool down to 24 °C` while the house is empty and 21 when it is not.
+There is a condition for whether cooling is running, and triggers for when it
+starts and stops, so a Flow can close the blinds or say something about the
+windows.
+
 The level is borrowed rather than taken: whatever it was is remembered and
 restored, and if a Flow or the wall panel moves it in the meantime, that is
 treated as someone overriding on purpose and the boost is abandoned rather than

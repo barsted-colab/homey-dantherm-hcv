@@ -837,16 +837,16 @@
                 "no": "Trinn det kjøles på",
                 "sv": "Steg vid kylning"
               },
-              "value": 3,
+              "value": 4,
               "min": 1,
               "max": 4,
               "hint": {
-                "en": "Level 4 moves the most air and makes the most noise.",
-                "nl": "Stand 4 verplaatst de meeste lucht en maakt het meeste geluid.",
-                "da": "Trin 4 flytter mest luft og støjer mest.",
-                "de": "Stufe 4 bewegt die meiste Luft und ist am lautesten.",
-                "no": "Trinn 4 flytter mest luft og støyer mest.",
-                "sv": "Steg 4 flyttar mest luft och låter mest."
+                "en": "The whole point is to move more air than usual, so this defaults to the top level. Drop it to 3 if level 4 is too loud to live with.",
+                "nl": "Het doel is juist meer lucht te verplaatsen dan normaal, dus staat dit standaard op de hoogste stand. Zet hem op 3 als stand 4 te luid is.",
+                "da": "Hele pointen er at flytte mere luft end sædvanligt, så den står på det højeste trin. Sæt den til 3 hvis trin 4 støjer for meget til at leve med.",
+                "de": "Der Sinn der Sache ist, mehr Luft zu bewegen als sonst, daher steht dies auf der höchsten Stufe. Auf 3 stellen, wenn Stufe 4 zu laut ist.",
+                "no": "Hele poenget er å flytte mer luft enn vanlig, så denne står på høyeste trinn. Sett den til 3 hvis trinn 4 støyer for mye.",
+                "sv": "Hela poängen är att flytta mer luft än vanligt, så denna står på högsta steget. Sätt den till 3 om steg 4 låter för mycket."
               }
             },
             {
@@ -1534,6 +1534,58 @@
             }
           }
         ]
+      },
+      {
+        "id": "cooling_started",
+        "title": {
+          "en": "Free cooling started",
+          "nl": "Vrije koeling gestart",
+          "da": "Fri køling startede",
+          "de": "Freie Kühlung hat begonnen",
+          "no": "Frikjøling startet",
+          "sv": "Frikyla startade"
+        },
+        "hint": {
+          "en": "The app has run the fans up to pull cool outside air in.",
+          "nl": "De app heeft de ventilatoren hoger gezet om koele buitenlucht binnen te halen.",
+          "da": "Appen har kørt ventilatorerne op for at hente kølig udeluft ind.",
+          "de": "Die App hat die Ventilatoren hochgefahren, um kühle Außenluft hereinzuholen.",
+          "no": "Appen har kjørt viftene opp for å hente kjølig uteluft inn.",
+          "sv": "Appen har kört upp fläktarna för att hämta in sval uteluft."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hcv"
+          }
+        ]
+      },
+      {
+        "id": "cooling_stopped",
+        "title": {
+          "en": "Free cooling stopped",
+          "nl": "Vrije koeling gestopt",
+          "da": "Fri køling stoppede",
+          "de": "Freie Kühlung hat aufgehört",
+          "no": "Frikjøling stoppet",
+          "sv": "Frikyla stoppade"
+        },
+        "hint": {
+          "en": "The fan level has been handed back — either the house reached the setpoint or the cooling was no longer worth having.",
+          "nl": "De ventilatiestand is teruggegeven — het huis heeft de streefwaarde bereikt of de koeling was niet langer de moeite waard.",
+          "da": "Ventilationstrinnet er givet tilbage — enten nåede huset sætpunktet, eller også var kølingen ikke længere værd at hente.",
+          "de": "Die Lüfterstufe wurde zurückgegeben — entweder hat das Haus den Sollwert erreicht oder die Kühlung lohnte nicht mehr.",
+          "no": "Viftetrinnet er gitt tilbake — enten nådde huset settpunktet, eller så var kjølingen ikke lenger verdt å hente.",
+          "sv": "Fläktsteget har lämnats tillbaka — antingen nådde huset börvärdet eller så var kylan inte längre värd att hämta."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hcv"
+          }
+        ]
       }
     ],
     "conditions": [
@@ -1800,6 +1852,24 @@
               "no": "14",
               "sv": "14"
             }
+          }
+        ]
+      },
+      {
+        "id": "is_cooling",
+        "title": {
+          "en": "Free cooling !{{is|is not}} running",
+          "nl": "Vrije koeling !{{is|is niet}} bezig",
+          "da": "Fri køling !{{kører|kører ikke}}",
+          "de": "Freie Kühlung !{{läuft|läuft nicht}}",
+          "no": "Frikjøling !{{kjører|kjører ikke}}",
+          "sv": "Frikyla !{{pågår|pågår inte}}"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hcv"
           }
         ]
       }
@@ -2329,6 +2399,117 @@
                 }
               }
             ]
+          }
+        ]
+      },
+      {
+        "id": "set_cool_boost",
+        "title": {
+          "en": "Free cooling boost",
+          "nl": "Boost vrije koeling",
+          "da": "Boost ved fri køling",
+          "de": "Boost bei freier Kühlung",
+          "no": "Boost ved frikjøling",
+          "sv": "Boost vid frikyla"
+        },
+        "titleFormatted": {
+          "en": "Turn free cooling boost [[state]]",
+          "nl": "Zet boost vrije koeling [[state]]",
+          "da": "Slå boost ved fri køling [[state]]",
+          "de": "Boost bei freier Kühlung [[state]]",
+          "no": "Slå boost ved frikjøling [[state]]",
+          "sv": "Slå boost vid frikyla [[state]]"
+        },
+        "hint": {
+          "en": "Overrides the setting, so a Flow can leave the boost off at night and allow it during the day.",
+          "nl": "Overschrijft de instelling, zodat een Flow de boost ’s nachts uit kan laten en overdag kan toestaan.",
+          "da": "Overstyrer indstillingen, så et Flow kan lade boosten være slået fra om natten og tillade den om dagen.",
+          "de": "Überschreibt die Einstellung, sodass ein Flow den Boost nachts aus lassen und tagsüber zulassen kann.",
+          "no": "Overstyrer innstillingen, slik at en Flow kan la boosten være av om natten og tillate den om dagen.",
+          "sv": "Åsidosätter inställningen, så att ett Flow kan låta boosten vara av på natten och tillåta den på dagen."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "on",
+                "title": {
+                  "en": "on",
+                  "nl": "aan",
+                  "da": "til",
+                  "de": "einschalten",
+                  "no": "på",
+                  "sv": "på"
+                }
+              },
+              {
+                "id": "off",
+                "title": {
+                  "en": "off",
+                  "nl": "uit",
+                  "da": "fra",
+                  "de": "ausschalten",
+                  "no": "av",
+                  "sv": "av"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_cool_setpoint",
+        "title": {
+          "en": "Set the cooling temperature",
+          "nl": "Koeltemperatuur instellen",
+          "da": "Sæt køletemperaturen",
+          "de": "Kühltemperatur einstellen",
+          "no": "Sett kjøletemperaturen",
+          "sv": "Ställ in kyltemperaturen"
+        },
+        "titleFormatted": {
+          "en": "Cool down to [[temperature]] °C",
+          "nl": "Koelen tot [[temperature]] °C",
+          "da": "Køl ned til [[temperature]] °C",
+          "de": "Kühlen bis [[temperature]] °C",
+          "no": "Kjøl ned til [[temperature]] °C",
+          "sv": "Kyl ned till [[temperature]] °C"
+        },
+        "hint": {
+          "en": "Lets a Flow hold a different temperature when nobody is home, or overnight.",
+          "nl": "Laat een Flow een andere temperatuur aanhouden als er niemand thuis is, of ’s nachts.",
+          "da": "Lader et Flow holde en anden temperatur når ingen er hjemme, eller om natten.",
+          "de": "Lässt einen Flow eine andere Temperatur halten, wenn niemand zu Hause ist, oder über Nacht.",
+          "no": "Lar en Flow holde en annen temperatur når ingen er hjemme, eller om natten.",
+          "sv": "Låter ett Flow hålla en annan temperatur när ingen är hemma, eller över natten."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "name": "temperature",
+            "type": "number",
+            "min": 12,
+            "max": 30,
+            "step": 1,
+            "placeholder": {
+              "en": "21",
+              "nl": "21",
+              "da": "21",
+              "de": "21",
+              "no": "21",
+              "sv": "21"
+            }
           }
         ]
       }

@@ -443,6 +443,7 @@ class DanthermHCVDevice extends Homey.Device {
       this.log(`Cooling boost released: level is ${state.fanLevel}, not the `
         + `${s.cool_boost_level} we set — something else has it`);
       await this.setStoreValue('coolBoostFrom', null);
+      this.fireCooling('cooling_stopped');
       boosting = false;
     }
 
@@ -469,6 +470,7 @@ class DanthermHCVDevice extends Homey.Device {
         + `${state.outdoorTemp.toFixed(1)} outside — level ${state.fanLevel} `
         + `to ${s.cool_boost_level}`);
       await this.setFanLevel(s.cool_boost_level);
+      this.fireCooling('cooling_started');
     } else if (decision === 'release') {
       await this.endCoolBoost(from, state);
     }
@@ -504,9 +506,47 @@ class DanthermHCVDevice extends Homey.Device {
     this.warnedInverted = wrong;
   }
 
+  fireCooling(card) {
+    this.homey.flow.getDeviceTriggerCard(card)
+      .trigger(this)
+      .catch((err) => this.error(`${card} trigger failed: ${err.message}`));
+  }
+
+  /** Whether the app is currently holding the fan level up for free cooling. */
+  isCooling() {
+    const from = this.getStoreValue('coolBoostFrom');
+    return from !== null && from !== undefined;
+  }
+
+  /**
+   * Lets a Flow override the boost setting — off through the night, on for the
+   * afternoon. A poll follows immediately, so switching it off hands the fan
+   * level back now rather than at the next scheduled read.
+   */
+  async setCoolBoost(enabled) {
+    await this.setSettings({ cool_boost_enabled: enabled });
+    this.log(`Free cooling boost turned ${enabled ? 'on' : 'off'} from a Flow`);
+    await this.poll();
+  }
+
+  /** Lets a Flow hold a different cooling temperature, and keeps summer in step. */
+  async setCoolSetpoint(temperature) {
+    if (!this.unit) throw new Error(this.homey.__('error.not_connected'));
+
+    const written = await this.unit.writeConfig('bypass_max_temp', temperature);
+    await this.unit.writeConfig(BYPASS_MIRRORS.bypass_max_temp, temperature);
+    await this.setSettings({ bypass_max_temp: written });
+
+    if (written !== temperature) {
+      this.log(`Cooling setpoint ${temperature} °C was clamped to ${written} °C by the unit`);
+    }
+    return written;
+  }
+
   /** Gives the fan level back to whoever had it before the boost. */
   async endCoolBoost(from, state) {
     await this.setStoreValue('coolBoostFrom', null);
+    this.fireCooling('cooling_stopped');
     if (from === state.fanLevel) return;
 
     this.log(`Cooling finished — level ${state.fanLevel} back to ${from}`);
