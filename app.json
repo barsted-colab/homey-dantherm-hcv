@@ -1,6 +1,6 @@
 {
   "id": "dk.fredskilde.dantherm",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "compatibility": ">=12.3.0",
   "sdk": 3,
   "platforms": [
@@ -673,8 +673,8 @@
         {
           "type": "group",
           "label": {
-            "en": "Airflow and power (estimated)",
-            "da": "Luftmængde og effekt (estimeret)"
+            "en": "Airflow and power (from your commissioning report)",
+            "da": "Luftmængde og effekt (fra din indreguleringsrapport)"
           },
           "children": [
             {
@@ -686,8 +686,8 @@
               },
               "value": false,
               "hint": {
-                "en": "The unit measures fan speed, not volume. With the figures from your commissioning report the app can scale speed into m³/h. Leave off if you do not have the report — a guessed number is worse than none.",
-                "da": "Anlægget måler omdrejninger, ikke volumen. Med tallene fra din indreguleringsrapport kan appen omregne omdrejninger til m³/h. Lad den være slået fra hvis du ikke har rapporten — et gættet tal er værre end intet."
+                "en": "The unit measures fan speed, not volume or power. Enter the figures your installer recorded for THIS unit and the app can work both out. Leave this off if you do not have the report — the numbers differ for every installation, and a borrowed one is worse than none.",
+                "da": "Anlægget måler omdrejninger, ikke volumen eller effekt. Indtast de tal din montør noterede for DIT anlæg, så kan appen regne begge dele ud. Lad den være slået fra hvis du ikke har rapporten — tallene er forskellige for hver installation, og et lånt tal er værre end intet."
               }
             },
             {
@@ -706,43 +706,51 @@
               }
             },
             {
-              "id": "airflow_extract_nominal",
+              "id": "report_flow_standard",
               "type": "number",
               "label": {
-                "en": "Extract at that level",
-                "da": "Udsugning ved det trin"
+                "en": "Standard · extract",
+                "da": "Standard · udsugning"
               },
-              "value": 216,
+              "value": 0,
               "min": 0,
-              "max": 1000,
+              "max": 2000,
               "units": {
                 "en": "m³/h",
                 "da": "m³/h"
+              },
+              "hint": {
+                "en": "From the \"Standard\" column of the report. This one anchors the airflow figure — without it nothing is shown.",
+                "da": "Fra rapportens kolonne \"Standard\". Denne forankrer luftmængden — uden den vises intet."
               }
             },
             {
-              "id": "airflow_supply_nominal",
+              "id": "report_supply_standard",
               "type": "number",
               "label": {
-                "en": "Supply at that level",
-                "da": "Indblæsning ved det trin"
+                "en": "Standard · supply",
+                "da": "Standard · indblæsning"
               },
-              "value": 201,
+              "value": 0,
               "min": 0,
-              "max": 1000,
+              "max": 2000,
               "units": {
                 "en": "m³/h",
                 "da": "m³/h"
+              },
+              "hint": {
+                "en": "The total supply figure, usually a little lower than extract.",
+                "da": "Den samlede indblæsning, normalt lidt lavere end udsugningen."
               }
             },
             {
-              "id": "power_nominal",
+              "id": "report_watt_standard",
               "type": "number",
               "label": {
-                "en": "Power at that level",
-                "da": "Effektforbrug ved det trin"
+                "en": "Standard · power",
+                "da": "Standard · effekt"
               },
-              "value": 40,
+              "value": 0,
               "min": 0,
               "max": 3000,
               "units": {
@@ -751,22 +759,67 @@
               }
             },
             {
-              "id": "power_idle",
+              "id": "report_flow_min",
               "type": "number",
               "label": {
-                "en": "Standing power",
-                "da": "Grundforbrug"
+                "en": "Minimum · extract",
+                "da": "Minimum · udsugning"
               },
-              "value": 15,
+              "value": 0,
               "min": 0,
-              "max": 500,
+              "max": 2000,
+              "units": {
+                "en": "m³/h",
+                "da": "m³/h"
+              },
+              "hint": {
+                "en": "The minimum and forced rows are what let the app separate the standing draw from the fan power. Give at least two of the three rows, or no power figure is shown.",
+                "da": "Rækkerne Minimum og Forceret er dem der lader appen skille grundforbruget fra ventilatoreffekten. Udfyld mindst to af de tre rækker, ellers vises ingen effekt."
+              }
+            },
+            {
+              "id": "report_watt_min",
+              "type": "number",
+              "label": {
+                "en": "Minimum · power",
+                "da": "Minimum · effekt"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 3000,
               "units": {
                 "en": "W",
                 "da": "W"
+              }
+            },
+            {
+              "id": "report_flow_boost",
+              "type": "number",
+              "label": {
+                "en": "Forced · extract",
+                "da": "Forceret · udsugning"
               },
-              "hint": {
-                "en": "What the electronics draw regardless of fan speed. Fan power itself follows the cube of speed on top of this.",
-                "da": "Hvad elektronikken trækker uanset ventilatorhastighed. Selve ventilatoreffekten følger hastigheden i tredje potens oven i dette."
+              "value": 0,
+              "min": 0,
+              "max": 2000,
+              "units": {
+                "en": "m³/h",
+                "da": "m³/h"
+              }
+            },
+            {
+              "id": "report_watt_boost",
+              "type": "number",
+              "label": {
+                "en": "Forced · power",
+                "da": "Forceret · effekt"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 3000,
+              "units": {
+                "en": "W",
+                "da": "W"
               }
             },
             {
@@ -780,7 +833,7 @@
               "min": 0,
               "max": 6000,
               "units": {
-                "en": "rpm",
+                "en": "o/min",
                 "da": "o/min"
               },
               "hint": {
@@ -799,7 +852,7 @@
               "min": 0,
               "max": 6000,
               "units": {
-                "en": "rpm",
+                "en": "o/min",
                 "da": "o/min"
               }
             }

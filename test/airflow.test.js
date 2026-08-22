@@ -11,13 +11,22 @@
 const test = require('node:test');
 const assert = require('node:assert');
 
-const { estimateAirflow, estimatePower } = require('../lib/dantherm');
+const { estimateAirflow, estimatePower, fitPowerCurve } = require('../lib/dantherm');
 
 // Fan speeds measured at level 3 on the same unit.
 const RPM_EXTRACT_REF = 1922;
 const RPM_SUPPLY_REF = 1651;
 const EXTRACT_NOMINAL = 216;
 const SUPPLY_NOMINAL = 201;
+
+// The BR2018 table exactly as it is printed on the report, which is what the
+// user is asked to copy into the settings screen.
+const REPORT = [
+  { flow: 189, watts: 33 }, // Minimum
+  { flow: 216, watts: 40 }, // Standard
+  { flow: 250, watts: 56 }, // Forceret
+];
+const CURVE = fitPowerCurve(REPORT);
 
 test('the reference point returns exactly the commissioned figure', () => {
   assert.strictEqual(estimateAirflow(RPM_EXTRACT_REF, RPM_EXTRACT_REF, EXTRACT_NOMINAL), 216);
@@ -41,11 +50,9 @@ test('no estimate without a reference', () => {
   assert.strictEqual(estimateAirflow(null, RPM_EXTRACT_REF, EXTRACT_NOMINAL), null);
 });
 
-test('power matches all three commissioned operating points within 5 percent', () => {
-  const measured = [[189, 33], [216, 40], [250, 56]];
-
-  for (const [flow, watts] of measured) {
-    const estimate = estimatePower(flow, EXTRACT_NOMINAL, 40, 15);
+test('the fitted curve reproduces every row of the report within 5 percent', () => {
+  for (const { flow, watts } of REPORT) {
+    const estimate = estimatePower(flow, CURVE);
     const error = Math.abs(estimate - watts) / watts;
     assert.ok(
       error < 0.05,
@@ -54,24 +61,49 @@ test('power matches all three commissioned operating points within 5 percent', (
   }
 });
 
-test('power falls to the standing draw when the fans stop', () => {
-  assert.strictEqual(estimatePower(0, EXTRACT_NOMINAL, 40, 15), 15);
+test('the standing draw is derived from the report, not asked for', () => {
+  // No commissioning report states idle draw, so it is the intercept of the
+  // fit. Three rows spanning 189-250 m³/h put it in the mid-teens; the exact
+  // figure matters less than it landing somewhere a controller plausibly sits.
+  assert.ok(CURVE.idle > 5 && CURVE.idle < 25, `implausible standing draw: ${CURVE.idle} W`);
+  assert.strictEqual(estimatePower(0, CURVE), Math.round(CURVE.idle * 10) / 10);
 });
 
-test('power refuses nonsense configuration rather than returning it', () => {
-  // Nominal below standing draw would make the cubic term negative.
-  assert.strictEqual(estimatePower(216, EXTRACT_NOMINAL, 10, 15), null);
-  assert.strictEqual(estimatePower(null, EXTRACT_NOMINAL, 40, 15), null);
-  assert.strictEqual(estimatePower(216, 0, 40, 15), null);
+test('two rows are enough, one row is not', () => {
+  // Airflow needs a single figure; power needs two, because one point cannot
+  // separate the standing draw from the fan power. They must degrade apart,
+  // so a user with a sparse report still gets the flow reading.
+  assert.ok(fitPowerCurve([REPORT[0], REPORT[2]]), 'minimum plus forced should fit');
+  assert.strictEqual(fitPowerCurve([REPORT[1]]), null);
+  assert.strictEqual(fitPowerCurve([]), null);
+});
+
+test('blank and nonsense rows are ignored rather than fitted', () => {
+  // Every field defaults to 0 — an untouched row must not drag the curve.
+  const withBlanks = fitPowerCurve([
+    { flow: 0, watts: 0 },
+    ...REPORT,
+    { flow: 250, watts: 0 },
+  ]);
+  assert.ok(Math.abs(withBlanks.idle - CURVE.idle) < 0.01, 'blank rows changed the fit');
+
+  assert.strictEqual(fitPowerCurve([{ flow: 216, watts: 40 }, { flow: 0, watts: 0 }]), null);
+  assert.strictEqual(fitPowerCurve(null), null);
+});
+
+test('no curve means no power reading, never a guessed one', () => {
+  assert.strictEqual(estimatePower(216, null), null);
+  assert.strictEqual(estimatePower(null, CURVE), null);
 });
 
 test('doubling the flow roughly eightfolds the fan contribution', () => {
   // The cube law, which is why boost mode is disproportionately expensive.
-  const low = estimatePower(108, EXTRACT_NOMINAL, 40, 15);
-  const high = estimatePower(216, EXTRACT_NOMINAL, 40, 15);
-  const fanLow = low - 15;
-  const fanHigh = high - 15;
-  assert.ok(Math.abs(fanHigh / fanLow - 8) < 0.1, `expected ~8x, got ${(fanHigh / fanLow).toFixed(2)}x`);
+  // Both readings come back rounded to 0,1 W, and at half flow the fans account
+  // for only ~3 W, so that rounding alone shifts the ratio by about a percent.
+  // The tolerance covers it and still rules out a square law, which would be 4x.
+  const fanLow = estimatePower(108, CURVE) - CURVE.idle;
+  const fanHigh = estimatePower(216, CURVE) - CURVE.idle;
+  assert.ok(Math.abs(fanHigh / fanLow - 8) < 0.2, `expected ~8x, got ${(fanHigh / fanLow).toFixed(2)}x`);
 });
 
 // --- Recovered heat ----------------------------------------------------------
@@ -108,13 +140,13 @@ test('no estimate without airflow', () => {
 test('power stays sane outside the range a report covers', () => {
   // Extrapolation is allowed — blanking the tile at boost would be worse than
   // an estimate that reads a little low — but it must not misbehave.
-  const at = (flow) => estimatePower(flow, EXTRACT_NOMINAL, 40, 15);
+  const at = (flow) => estimatePower(flow, CURVE);
 
   const curve = [0, 50, 108, 189, 216, 250, 300, 400].map(at);
   for (let i = 1; i < curve.length; i++) {
     assert.ok(curve[i] > curve[i - 1], `not monotonic at index ${i}: ${curve}`);
   }
-  assert.ok(curve.every((w) => w >= 15), 'never below the standing draw');
+  assert.ok(curve.every((w) => w >= CURVE.idle - 0.05), 'never below the standing draw');
   // Far above nominal it must still be a number a person would recognise as
   // power rather than an overflow.
   assert.ok(at(400) < 500, `implausible at 400 m³/h: ${at(400)} W`);

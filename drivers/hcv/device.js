@@ -2,7 +2,7 @@
 
 const Homey = require('homey');
 const {
-  DanthermDevice, CONFIG, estimateAirflow, estimatePower,
+  DanthermDevice, CONFIG, estimateAirflow, estimatePower, fitPowerCurve,
 } = require('../../lib/dantherm');
 const { discover } = require('../../lib/discovery');
 
@@ -88,10 +88,12 @@ class DanthermHCVDevice extends Homey.Device {
       // ServoFlow units report a condition level instead of counting down days.
       measure_filter_remain: !info.servoFlow && state.filterRemain !== null,
       // Derived rather than measured — only shown when the user has supplied
-      // the commissioning figures the estimate is anchored to.
-      'measure_airflow.extract': this.getSetting('airflow_enabled') === true,
-      'measure_airflow.supply': this.getSetting('airflow_enabled') === true,
-      measure_power: this.getSetting('airflow_enabled') === true,
+      // the commissioning figures the estimate is anchored to. Ticking the box
+      // is not enough on its own: without the numbers these would be tiles that
+      // can never hold a value, which is the same trap as the bitmask above.
+      'measure_airflow.extract': this.airflowConfigured('report_flow_standard'),
+      'measure_airflow.supply': this.airflowConfigured('report_supply_standard'),
+      measure_power: this.airflowConfigured() && this.powerCurve() !== null,
     };
 
     for (const [capability, supported] of Object.entries(optional)) {
@@ -107,6 +109,27 @@ class DanthermHCVDevice extends Homey.Device {
         this.error(`Could not sync capability ${capability}: ${err.message}`);
       }
     }
+  }
+
+  /**
+   * Whether a derived reading has everything it needs. Two rows of the report
+   * are required for power and one for each airflow direction, so each tile is
+   * asked about separately rather than sharing a single flag.
+   */
+  airflowConfigured(key) {
+    const s = this.getSettings();
+    if (s.airflow_enabled !== true) return false;
+    return key ? s[key] > 0 : true;
+  }
+
+  /** The fitted P = idle + k·Q³, or null when the report rows are too sparse. */
+  powerCurve() {
+    const s = this.getSettings();
+    return fitPowerCurve([
+      { flow: s.report_flow_min, watts: s.report_watt_min },
+      { flow: s.report_flow_standard, watts: s.report_watt_standard },
+      { flow: s.report_flow_boost, watts: s.report_watt_boost },
+    ]);
   }
 
   // --- Configuration ---
@@ -334,11 +357,15 @@ class DanthermHCVDevice extends Homey.Device {
   /**
    * Scales fan speed into airflow, and airflow into power draw.
    *
-   * Both need a commissioned reference point, which the unit cannot supply —
-   * it measures speed, not volume. The user provides the volumes from their
-   * commissioning report; the matching fan speeds are captured here the first
-   * time the unit is seen running at that level, so the two halves of the
-   * reference always come from the same operating point.
+   * Both need figures the unit cannot supply — it measures speed, not volume
+   * or watts — so they come from the commissioning report for THIS unit.
+   * Nothing is assumed: an HCV 700 moving three times the air has its own
+   * numbers in its own report, and a default borrowed from another
+   * installation would be a plausible-looking lie.
+   *
+   * The two halves fail independently. Airflow needs one flow figure; power
+   * needs two operating points, because with one the standing draw cannot be
+   * told apart from the fan power.
    */
   estimateFlows(state) {
     const absent = { extract: null, supply: null, power: null };
@@ -348,6 +375,8 @@ class DanthermHCVDevice extends Homey.Device {
     let extractRef = s.airflow_rpm_extract_ref;
     let supplyRef = s.airflow_rpm_supply_ref;
 
+    // The fan speeds that go with those flows are captured here rather than
+    // typed in, so both halves of the reference come from one operating point.
     if ((!extractRef || !supplyRef)
       && state.fanLevel === s.airflow_nominal_level
       && state.fan1Speed > 0 && state.fan2Speed > 0) {
@@ -362,14 +391,10 @@ class DanthermHCVDevice extends Homey.Device {
       }).catch((err) => this.error(`Could not store airflow reference: ${err.message}`));
     }
 
-    const extract = estimateAirflow(state.fan1Speed, extractRef, s.airflow_extract_nominal);
-    const supply = estimateAirflow(state.fan2Speed, supplyRef, s.airflow_supply_nominal);
+    const extract = estimateAirflow(state.fan1Speed, extractRef, s.report_flow_standard);
+    const supply = estimateAirflow(state.fan2Speed, supplyRef, s.report_supply_standard);
 
-    return {
-      extract,
-      supply,
-      power: estimatePower(extract, s.airflow_extract_nominal, s.power_nominal, s.power_idle),
-    };
+    return { extract, supply, power: estimatePower(extract, this.powerCurve()) };
   }
 
   /** Rounds without turning an absent reading into a hard zero. */
@@ -456,7 +481,10 @@ class DanthermHCVDevice extends Homey.Device {
   async onSettings({ newSettings, changedKeys }) {
     const failed = this.unit ? await this.applyConfigChanges(changedKeys, newSettings) : [];
 
-    const reconnect = ['host', 'port', 'airflow_enabled'].some((k) => changedKeys.includes(k));
+    const reconnect = ['host', 'port', 'airflow_enabled', 'report_flow_standard',
+      'report_supply_standard', 'report_watt_standard', 'report_flow_min',
+      'report_watt_min', 'report_flow_boost', 'report_watt_boost',
+    ].some((k) => changedKeys.includes(k));
 
     if (changedKeys.includes('polling_interval')) {
       this.startPolling();

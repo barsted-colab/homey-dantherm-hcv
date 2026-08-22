@@ -60,6 +60,43 @@ the `id` field, which Compose would otherwise derive from the folder name.
 Widgets require `"compatibility": ">=12.3.0"`, which is why the app no longer
 declares `>=5.0.0`.
 
+### Airflow and power, from your own commissioning report
+
+The controller reports fan speed in rpm. It does not measure volume, and it has
+no power register — a sweep across a 2.45x speed range found exactly ten moving
+registers, all of them linear in rpm, where a wattmeter would have scaled ~14.8x.
+
+Both figures can still be derived, but only from numbers that are specific to
+one installation. Flow follows rpm for a fixed system curve, and fan power
+follows its cube, so one reference point turns rpm into m³/h and two turn m³/h
+into watts:
+
+    Q = Q_ref · (rpm / rpm_ref)          P = P_idle + k · Q³
+
+The anchors come from the BR2018 table on the commissioning report, entered in
+the device settings as printed:
+
+| | Extract m³/h | Power W |
+|---|---|---|
+| Minimum | | |
+| Standard | | |
+| Forced | | |
+
+`P_idle` and `k` are then fitted by least squares — linear in Q³ — rather than
+asked for, since no report states a standing draw. The reference rpm is captured
+automatically the first time the unit is seen running at the commissioned level,
+so both halves of the reference describe one operating point.
+
+Nothing is assumed. Every field defaults to zero and the feature is off until
+filled in, because an HCV 700 moving three times the air has its own numbers in
+its own report, and a default borrowed from another installation would be a
+plausible-looking lie. The two halves also degrade apart: with the Standard row
+alone you get airflow but no power, since a single point cannot separate the
+standing draw from the fan power.
+
+On the installation this was built against, the estimate lands within 1 % of the
+report — 214 m³/h against 216 measured, 200 against 201, 39.3 W against 40.
+
 ### Self-configuring capability set
 
 The unit is asked what it is fitted with, and the tiles follow. Two signals are
