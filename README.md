@@ -66,36 +66,47 @@ The controller reports fan speed in rpm. It does not measure volume, and it has
 no power register — a sweep across a 2.45x speed range found exactly ten moving
 registers, all of them linear in rpm, where a wattmeter would have scaled ~14.8x.
 
-Both figures can still be derived, but only from numbers that are specific to
-one installation. Flow follows rpm for a fixed system curve, and fan power
-follows its cube, so one reference point turns rpm into m³/h and two turn m³/h
-into watts:
+Both figures can still be derived, but only from numbers specific to one
+installation. Flow follows rpm for a fixed system curve, and fan power follows
+its cube, so one reference point turns rpm into m³/h and two turn m³/h into
+watts:
 
     Q = Q_ref · (rpm / rpm_ref)          P = P_idle + k · Q³
 
-The anchors come from the BR2018 table on the commissioning report, entered in
-the device settings as printed:
+That is six numbers, copied from the table on the commissioning report exactly
+as printed:
 
-| | Extract m³/h | Power W |
+| | Airflow m³/h | Power W |
 |---|---|---|
 | Minimum | | |
 | Standard | | |
 | Forced | | |
 
-`P_idle` and `k` are then fitted by least squares — linear in Q³ — rather than
-asked for, since no report states a standing draw. The reference rpm is captured
-automatically the first time the unit is seen running at the commissioned level,
-so both halves of the reference describe one operating point.
+Nothing else is asked for. The commissioned level is 3 on every Dantherm unit,
+part of the procedure rather than a property of the installation. The reference
+fan speeds are captured the first time the unit is seen running at that level —
+they are the unit's own measurements, so asking the user to read them back would
+be asking for a value the app already holds. Re-typing the Standard airflow
+discards them, since a new figure describes a new operating point.
 
-Nothing is assumed. Every field defaults to zero and the feature is off until
-filled in, because an HCV 700 moving three times the air has its own numbers in
-its own report, and a default borrowed from another installation would be a
-plausible-looking lie. The two halves also degrade apart: with the Standard row
-alone you get airflow but no power, since a single point cannot separate the
-standing draw from the fan power.
+`P_idle` and `k` are fitted by least squares — the model is linear in Q³ — rather
+than asked for, since no report states a standing draw.
+
+Both fans are anchored to the single flow figure. A balanced unit is meant to
+move the same volume each way, and the few percent a report records between
+supply and extract is commissioning tolerance. Each fan is then scaled by its
+own speed, so the two readings part company when the unit genuinely runs them
+apart — summer bypass stops the supply fan while extract keeps going.
+
+Every field defaults to zero and the feature stays off until filled in, because
+an HCV 700 moving three times the air has its own numbers in its own report, and
+a default borrowed from another installation would be a plausible-looking lie.
+The two halves degrade apart: with only the Standard row you get airflow but no
+power, since a single point cannot separate the standing draw from the fan power.
 
 On the installation this was built against, the estimate lands within 1 % of the
-report — 214 m³/h against 216 measured, 200 against 201, 39.3 W against 40.
+report — 214 m³/h against 216 measured — and the fitted curve reproduces all
+three power rows within 3 %.
 
 ### Self-configuring capability set
 

@@ -686,31 +686,50 @@
               },
               "value": false,
               "hint": {
-                "en": "The unit measures fan speed, not volume or power. Enter the figures your installer recorded for THIS unit and the app can work both out. Leave this off if you do not have the report — the numbers differ for every installation, and a borrowed one is worse than none.",
-                "da": "Anlægget måler omdrejninger, ikke volumen eller effekt. Indtast de tal din montør noterede for DIT anlæg, så kan appen regne begge dele ud. Lad den være slået fra hvis du ikke har rapporten — tallene er forskellige for hver installation, og et lånt tal er værre end intet."
+                "en": "The unit measures fan speed, not volume or power. Copy the six figures from the table on your commissioning report and the app works out both. Airflow needs the Standard row; power needs any two rows. Leave this off if you do not have the report — the figures differ for every installation.",
+                "da": "Anlægget måler omdrejninger, ikke volumen eller effekt. Skriv de seks tal af fra tabellen i din indreguleringsrapport, så regner appen begge dele ud. Luftmængde kræver Standard-rækken; effekt kræver to vilkårlige rækker. Lad den være slået fra hvis du ikke har rapporten — tallene er forskellige for hver installation."
               }
             },
             {
-              "id": "airflow_nominal_level",
+              "id": "report_flow_min",
               "type": "number",
               "label": {
-                "en": "Level the unit was commissioned at",
-                "da": "Trin anlægget er indreguleret på"
+                "en": "Minimum · airflow",
+                "da": "Minimum · luftmængde"
               },
-              "value": 3,
-              "min": 1,
-              "max": 4,
+              "value": 0,
+              "min": 0,
+              "max": 2000,
+              "units": {
+                "en": "m³/h",
+                "da": "m³/h"
+              }
+            },
+            {
+              "id": "report_watt_min",
+              "type": "number",
+              "label": {
+                "en": "Minimum · power",
+                "da": "Minimum · effekt"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 3000,
+              "units": {
+                "en": "W",
+                "da": "W"
+              },
               "hint": {
-                "en": "Dantherm calibrates at level 3, the nominal setting.",
-                "da": "Dantherm indregulerer på trin 3, den nominelle indstilling."
+                "en": "Two rows of watts are what let the app separate the standing draw from the fan power. With only one, no power is shown.",
+                "da": "To watt-rækker er det der lader appen skille grundforbruget fra ventilatoreffekten. Med kun én vises ingen effekt."
               }
             },
             {
               "id": "report_flow_standard",
               "type": "number",
               "label": {
-                "en": "Standard · extract",
-                "da": "Standard · udsugning"
+                "en": "Standard · airflow",
+                "da": "Standard · luftmængde"
               },
               "value": 0,
               "min": 0,
@@ -720,27 +739,8 @@
                 "da": "m³/h"
               },
               "hint": {
-                "en": "From the \"Standard\" column of the report. This one anchors the airflow figure — without it nothing is shown.",
-                "da": "Fra rapportens kolonne \"Standard\". Denne forankrer luftmængden — uden den vises intet."
-              }
-            },
-            {
-              "id": "report_supply_standard",
-              "type": "number",
-              "label": {
-                "en": "Standard · supply",
-                "da": "Standard · indblæsning"
-              },
-              "value": 0,
-              "min": 0,
-              "max": 2000,
-              "units": {
-                "en": "m³/h",
-                "da": "m³/h"
-              },
-              "hint": {
-                "en": "The total supply figure, usually a little lower than extract.",
-                "da": "Den samlede indblæsning, normalt lidt lavere end udsugningen."
+                "en": "The airflow reading is anchored to this one figure. Without it no flow is shown.",
+                "da": "Luftmængden forankres til netop dette tal. Uden det vises ingen luftmængde."
               }
             },
             {
@@ -759,45 +759,11 @@
               }
             },
             {
-              "id": "report_flow_min",
-              "type": "number",
-              "label": {
-                "en": "Minimum · extract",
-                "da": "Minimum · udsugning"
-              },
-              "value": 0,
-              "min": 0,
-              "max": 2000,
-              "units": {
-                "en": "m³/h",
-                "da": "m³/h"
-              },
-              "hint": {
-                "en": "The minimum and forced rows are what let the app separate the standing draw from the fan power. Give at least two of the three rows, or no power figure is shown.",
-                "da": "Rækkerne Minimum og Forceret er dem der lader appen skille grundforbruget fra ventilatoreffekten. Udfyld mindst to af de tre rækker, ellers vises ingen effekt."
-              }
-            },
-            {
-              "id": "report_watt_min",
-              "type": "number",
-              "label": {
-                "en": "Minimum · power",
-                "da": "Minimum · effekt"
-              },
-              "value": 0,
-              "min": 0,
-              "max": 3000,
-              "units": {
-                "en": "W",
-                "da": "W"
-              }
-            },
-            {
               "id": "report_flow_boost",
               "type": "number",
               "label": {
-                "en": "Forced · extract",
-                "da": "Forceret · udsugning"
+                "en": "Forced · airflow",
+                "da": "Forceret · luftmængde"
               },
               "value": 0,
               "min": 0,
@@ -820,40 +786,6 @@
               "units": {
                 "en": "W",
                 "da": "W"
-              }
-            },
-            {
-              "id": "airflow_rpm_extract_ref",
-              "type": "number",
-              "label": {
-                "en": "Reference extract speed",
-                "da": "Reference-omdrejninger udsugning"
-              },
-              "value": 0,
-              "min": 0,
-              "max": 6000,
-              "units": {
-                "en": "o/min",
-                "da": "o/min"
-              },
-              "hint": {
-                "en": "Captured automatically the first time the unit is seen running at the commissioned level. Set to 0 to capture again after a filter change or re-balancing.",
-                "da": "Registreres automatisk første gang anlægget ses køre på det indregulerede trin. Sæt til 0 for at registrere igen efter filterskift eller ny indregulering."
-              }
-            },
-            {
-              "id": "airflow_rpm_supply_ref",
-              "type": "number",
-              "label": {
-                "en": "Reference supply speed",
-                "da": "Reference-omdrejninger indblæsning"
-              },
-              "value": 0,
-              "min": 0,
-              "max": 6000,
-              "units": {
-                "en": "o/min",
-                "da": "o/min"
               }
             }
           ]

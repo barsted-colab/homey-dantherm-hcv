@@ -12,6 +12,13 @@ const WRITE_SETTLE_MS = 3000;
 /** Default fan level when the unit is switched on via the onoff capability. */
 const DEFAULT_ON_LEVEL = 2;
 
+/**
+ * The level Dantherm commissions at, and the one the report's Standard column
+ * describes. A fixed part of the procedure rather than a property of any given
+ * installation, so it is not worth a settings field.
+ */
+const NOMINAL_LEVEL = 3;
+
 class DanthermHCVDevice extends Homey.Device {
 
   async onInit() {
@@ -92,7 +99,7 @@ class DanthermHCVDevice extends Homey.Device {
       // is not enough on its own: without the numbers these would be tiles that
       // can never hold a value, which is the same trap as the bitmask above.
       'measure_airflow.extract': this.airflowConfigured('report_flow_standard'),
-      'measure_airflow.supply': this.airflowConfigured('report_supply_standard'),
+      'measure_airflow.supply': this.airflowConfigured('report_flow_standard'),
       measure_power: this.airflowConfigured() && this.powerCurve() !== null,
     };
 
@@ -112,9 +119,9 @@ class DanthermHCVDevice extends Homey.Device {
   }
 
   /**
-   * Whether a derived reading has everything it needs. Two rows of the report
-   * are required for power and one for each airflow direction, so each tile is
-   * asked about separately rather than sharing a single flag.
+   * Whether a derived reading has everything it needs. Airflow wants the
+   * Standard row and power wants two rows, so each tile is asked separately
+   * rather than sharing one flag.
    */
   airflowConfigured(key) {
     const s = this.getSettings();
@@ -366,35 +373,44 @@ class DanthermHCVDevice extends Homey.Device {
    * The two halves fail independently. Airflow needs one flow figure; power
    * needs two operating points, because with one the standing draw cannot be
    * told apart from the fan power.
+   *
+   * Both fans are anchored to that one flow figure — a balanced unit is meant
+   * to move the same volume each way, and the few percent a report records
+   * between supply and extract is commissioning tolerance. Each fan is then
+   * scaled by its own speed, so the two readings part company when the unit
+   * actually runs them apart: summer bypass stops the supply fan while extract
+   * keeps going, and the tiles show exactly that.
    */
   estimateFlows(state) {
     const absent = { extract: null, supply: null, power: null };
-    const s = this.getSettings();
-    if (!s.airflow_enabled) return absent;
+    const nominal = this.getSetting('report_flow_standard');
+    if (!this.airflowConfigured('report_flow_standard')) return absent;
 
-    let extractRef = s.airflow_rpm_extract_ref;
-    let supplyRef = s.airflow_rpm_supply_ref;
+    let extractRef = this.getStoreValue('rpmExtractRef');
+    let supplyRef = this.getStoreValue('rpmSupplyRef');
 
-    // The fan speeds that go with those flows are captured here rather than
-    // typed in, so both halves of the reference come from one operating point.
+    // The fan speeds behind that figure are captured rather than typed in:
+    // they are the unit's own measurements, and asking for them would be
+    // asking the user to read a value the app is already holding.
     if ((!extractRef || !supplyRef)
-      && state.fanLevel === s.airflow_nominal_level
+      && state.fanLevel === NOMINAL_LEVEL
       && state.fan1Speed > 0 && state.fan2Speed > 0) {
       extractRef = Math.round(state.fan1Speed);
       supplyRef = Math.round(state.fan2Speed);
 
-      this.log(`Captured airflow reference at level ${state.fanLevel}: `
+      this.log(`Captured airflow reference at level ${NOMINAL_LEVEL}: `
         + `${extractRef} rpm extract, ${supplyRef} rpm supply`);
-      this.setSettings({
-        airflow_rpm_extract_ref: extractRef,
-        airflow_rpm_supply_ref: supplyRef,
-      }).catch((err) => this.error(`Could not store airflow reference: ${err.message}`));
+      Promise.all([
+        this.setStoreValue('rpmExtractRef', extractRef),
+        this.setStoreValue('rpmSupplyRef', supplyRef),
+      ]).catch((err) => this.error(`Could not store airflow reference: ${err.message}`));
     }
 
-    const extract = estimateAirflow(state.fan1Speed, extractRef, s.report_flow_standard);
-    const supply = estimateAirflow(state.fan2Speed, supplyRef, s.report_supply_standard);
-
-    return { extract, supply, power: estimatePower(extract, this.powerCurve()) };
+    return {
+      extract: estimateAirflow(state.fan1Speed, extractRef, nominal),
+      supply: estimateAirflow(state.fan2Speed, supplyRef, nominal),
+      power: estimatePower(estimateAirflow(state.fan1Speed, extractRef, nominal), this.powerCurve()),
+    };
   }
 
   /** Rounds without turning an absent reading into a hard zero. */
@@ -481,10 +497,17 @@ class DanthermHCVDevice extends Homey.Device {
   async onSettings({ newSettings, changedKeys }) {
     const failed = this.unit ? await this.applyConfigChanges(changedKeys, newSettings) : [];
 
-    const reconnect = ['host', 'port', 'airflow_enabled', 'report_flow_standard',
-      'report_supply_standard', 'report_watt_standard', 'report_flow_min',
-      'report_watt_min', 'report_flow_boost', 'report_watt_boost',
-    ].some((k) => changedKeys.includes(k));
+    const report = changedKeys.filter((k) => k.startsWith('report_'));
+
+    // A re-typed flow figure describes a different operating point, so the
+    // speeds captured against the old one no longer belong to it.
+    if (report.includes('report_flow_standard')) {
+      await this.setStoreValue('rpmExtractRef', null);
+      await this.setStoreValue('rpmSupplyRef', null);
+    }
+
+    const reconnect = report.length
+      || ['host', 'port', 'airflow_enabled'].some((k) => changedKeys.includes(k));
 
     if (changedKeys.includes('polling_interval')) {
       this.startPolling();
