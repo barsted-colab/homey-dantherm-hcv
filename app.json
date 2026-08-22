@@ -1218,6 +1218,40 @@
               "max": 59
             }
           ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Handing the unit back",
+            "nl": "Het toestel teruggeven",
+            "da": "Giv anlægget tilbage",
+            "de": "Das Gerät zurückgeben",
+            "no": "Gi anlegget tilbake",
+            "sv": "Lämna tillbaka aggregatet"
+          },
+          "children": [
+            {
+              "id": "return_to_normal",
+              "type": "checkbox",
+              "label": {
+                "en": "Back to normal operation",
+                "nl": "Terug naar normale werking",
+                "da": "Tilbage til normal drift",
+                "de": "Zurück zum Normalbetrieb",
+                "no": "Tilbake til normal drift",
+                "sv": "Tillbaka till normal drift"
+              },
+              "value": false,
+              "hint": {
+                "en": "Tick this and save to let go of everything the app is holding: the free cooling boost stops and is switched off so it cannot take over again, a manual bypass is released, and the unit goes back to automatic. The box clears itself once it is done. Nothing on the unit is erased — the commissioning, the bypass temperatures and the filter life are left exactly as they are. There is a Flow card for the same thing.",
+                "nl": "Vink dit aan en sla op om alles los te laten wat de app vasthoudt: de boost van de vrije koeling stopt en gaat uit zodat hij het niet opnieuw overneemt, een handmatige bypass wordt losgelaten en het toestel gaat terug naar automatisch. Het vinkje wist zichzelf zodra het klaar is. Er wordt niets gewist — de inregelinstellingen, bypasstemperaturen en filterlevensduur blijven precies zoals ze zijn. Er is een Flow-kaart voor hetzelfde.",
+                "da": "Sæt flueben og gem for at slippe alt hvad appen holder på: boosten ved fri køling stopper og slås fra, så den ikke tager over igen, en manuel bypass slippes, og anlægget går tilbage i automatik. Fluebenet fjerner sig selv når det er gjort. Intet på anlægget slettes — indreguleringen, bypass-temperaturerne og filterlevetiden står præcis som de gør. Der findes et Flow-kort til det samme.",
+                "de": "Hier ankreuzen und speichern, um alles loszulassen, was die App hält: der Boost der freien Kühlung endet und wird abgeschaltet, damit er nicht erneut übernimmt, ein manueller Bypass wird freigegeben, und das Gerät geht zurück auf Automatik. Das Häkchen entfernt sich selbst, sobald es erledigt ist. Es wird nichts gelöscht — Einregulierung, Bypass-Temperaturen und Filterstandzeit bleiben genau so, wie sie sind. Für dasselbe gibt es eine Flow-Karte.",
+                "no": "Kryss av og lagre for å slippe alt appen holder på: boosten ved frikjøling stopper og slås av så den ikke tar over igjen, en manuell bypass slippes, og anlegget går tilbake i automatikk. Avkryssingen fjerner seg selv når det er gjort. Ingenting slettes — innreguleringen, bypass-temperaturene og filterlevetiden står nøyaktig som de gjør. Det finnes et Flow-kort til det samme.",
+                "sv": "Kryssa i och spara för att släppa allt appen håller på: boosten vid frikyla stoppar och stängs av så att den inte tar över igen, en manuell bypass släpps, och aggregatet går tillbaka till automatik. Kryssrutan rensar sig själv när det är klart. Ingenting raderas — injusteringen, bypass-temperaturerna och filterlivslängden står precis som de gör. Det finns ett Flow-kort för samma sak."
+              }
+            }
+          ]
         }
       ]
     }
