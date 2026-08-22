@@ -16,11 +16,13 @@ const net = require('net');
 
 const ModbusTCP = require('../lib/modbus-tcp');
 const {
-  DanthermDevice, REG, COMPONENT, encodeFloat32,
+  DanthermDevice, REG, COMPONENT, ACTIVE_MODE, encodeFloat32, encodeUInt32,
 } = require('../lib/dantherm');
 
 /** Minimal Modbus TCP server backed by a flat register array. */
-function startFakeUnit({ splitFrames = false, exception = null, failAddresses = [] } = {}) {
+function startFakeUnit({
+  splitFrames = false, exception = null, failAddresses = [], onWrite = null,
+} = {}) {
   const registers = new Array(1024).fill(0);
   const writes = [];
   const sockets = new Set();
@@ -69,12 +71,15 @@ function startFakeUnit({ splitFrames = false, exception = null, failAddresses = 
       if (fc === 0x10) {
         const count = frame.readUInt16BE(10);
         const values = [];
-        for (let i = 0; i < count; i++) {
-          const value = frame.readUInt16BE(13 + i * 2);
-          registers[address + i] = value;
-          values.push(value);
-        }
+        for (let i = 0; i < count; i++) values.push(frame.readUInt16BE(13 + i * 2));
         writes.push({ address, values });
+
+        // Some registers do not store what they are given. ACTIVE_MODE toggles,
+        // and a fake that simply stored would let the bug this models slip
+        // straight through, so a test can take the write over.
+        if (!onWrite || !onWrite(address, values, registers)) {
+          values.forEach((value, i) => { registers[address + i] = value; });
+        }
         const echo = Buffer.alloc(5);
         echo.writeUInt8(0x10, 0);
         echo.writeUInt16BE(address, 1);
@@ -433,15 +438,86 @@ test('week program accepts 0-10 and rejects anything else', async (t) => {
   await assert.rejects(() => device.setWeekProgram(11), /must be 0-10/);
 });
 
-test('away and night mode write the documented command values', async (t) => {
-  const unit = await startFakeUnit();
-  t.after(() => unit.close());
+// --- ACTIVE_MODE commands -----------------------------------------------------
 
-  const device = await connectDevice(t, unit);
+/**
+ * The controller treats start and end as one instruction: both flip the bit,
+ * and the 0x8000 that reads like "end" changes nothing. A fake that stored what
+ * it was handed would let the old take-the-names-at-face-value code pass every
+ * one of these, so this one flips, the way the hardware does.
+ */
+const toggling = (address, values, registers) => {
+  if (address !== REG.ACTIVE_MODE) return false;
+  const command = (values[1] << 16) | values[0];
+  const current = registers[REG.ACTIVE_MODE] | (registers[REG.ACTIVE_MODE + 1] << 16);
+  seedUInt(registers, REG.ACTIVE_MODE, current ^ (command & 0x7fff));
+  return true;
+};
+
+async function commandUnit(t, { onWrite = toggling } = {}) {
+  const unit = await startFakeUnit({ onWrite });
+  t.after(() => unit.close());
+  seedUInt(unit.registers, REG.ACTIVE_MODE, ACTIVE_MODE.AUTOMATIC);
+
+  const device = new DanthermDevice({ host: '127.0.0.1', port: unit.port, commandRetryMs: 10 });
+  await device.connect();
+  t.after(() => device.disconnect());
+
+  const sent = () => unit.writes.filter((w) => w.address === REG.ACTIVE_MODE).length;
+  return { unit, device, sent };
+}
+
+test('a function already off is not switched off again', async (t) => {
+  const { device, sent } = await commandUnit(t);
+
+  await device.setManualBypass(false);
+  assert.strictEqual(sent(), 0,
+    'the register toggles, so sending "off" to something already off turns it on');
+});
+
+test('a function that does need switching is switched, once', async (t) => {
+  const { device, sent } = await commandUnit(t);
+
+  await device.setManualBypass(true);
+  assert.strictEqual(sent(), 1);
+
+  await device.setManualBypass(true);
+  assert.strictEqual(sent(), 1, 'asking again for what is already true costs nothing');
+});
+
+test('away and night go the same way as the bypass', async (t) => {
+  const { device, sent } = await commandUnit(t);
+
+  await device.setAwayMode(false);
+  await device.setNightMode(false);
+  assert.strictEqual(sent(), 0, 'neither was on, so neither should have been touched');
+
+  await device.setAwayMode(true);
+  await device.setNightMode(true);
+  assert.strictEqual(sent(), 2);
+});
+
+test('the documented command values are still the ones sent', async (t) => {
+  // Their names are misleading, not their numbers: 0x8010 does end away mode —
+  // it just ends it by flipping the bit, which is only the same thing as long
+  // as somebody checked the bit first.
+  const { device, unit } = await commandUnit(t);
+
   await device.setAwayMode(true);
   await device.setAwayMode(false);
   await device.setNightMode(true);
   await device.setNightMode(false);
 
-  assert.deepStrictEqual(unit.writes.map((w) => w.values[0]), [0x0010, 0x8010, 0x0020, 0x8020]);
+  assert.deepStrictEqual(
+    unit.writes.filter((w) => w.address === REG.ACTIVE_MODE).map((w) => w.values[0]),
+    [0x0010, 0x8010, 0x0020, 0x8020],
+  );
+});
+
+test('a command the unit keeps swallowing is reported, not assumed', async (t) => {
+  // What a real unit does while the bypass damper is travelling: acknowledges
+  // the write, returns no error, acts on nothing.
+  const { device } = await commandUnit(t, { onWrite: (address) => address === REG.ACTIVE_MODE });
+
+  await assert.rejects(() => device.setManualBypass(true), /kept ignoring/);
 });

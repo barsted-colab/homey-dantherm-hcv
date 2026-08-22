@@ -109,6 +109,44 @@ the level back on arrival. Engaging needs setpoint + 0,3 K and a full degree of
 outdoor advantage; releasing waits for the setpoint itself. The gap is what
 keeps the fans from hunting either side of the mark.
 
+### The command register is a toggle, whatever the names say
+
+`ACTIVE_MODE` (168) is a bitmask of what is currently running, and the
+documented command pairs — `START_AWAY` / `END_AWAY`, `SELECT_MANUAL_BYPASS` /
+`DESELECT_MANUAL_BYPASS` — read as though one turns a function on and the other
+turns it off. They do not. Both flip the bit, and the 0x8000 that appears to
+distinguish them makes no difference at all.
+
+Probed on a HCV 400 P2, firmware 3.14:
+
+    0x0080 against a set bit    → cleared
+    0x8080 against a clear bit  → set
+    0x8080 against a set bit    → cleared
+
+Taken at face value, a Flow that turns manual bypass *off* turns it *on*
+whenever it was already off — and reports success. Every command now reads the
+bit first and writes only where it would change something, which is correct
+whether the register toggles or assigns. That distinction matters for a map
+worked out by experiment rather than from a specification.
+
+Commands are also dropped outright while the bypass damper is travelling: the
+controller acknowledges the write, returns no error, and acts on nothing. A
+deselect sent four seconds into a swing left the bit set; the identical write
+once the damper had settled cleared it immediately. So the result is read back
+and the attempt repeated a bounded number of times before giving up out loud.
+
+### The bypass position register cannot be written over
+
+Register 198 reports the damper position, and it accepts FC16 writes without
+complaint — which is not the same as obeying them. Writing 255 (open) while the
+controller wanted it closed read back as 0 within three seconds; the controller
+rewrites it continuously from its own state machine. It is a mirror, not a
+handle.
+
+The only lever is the command register above, and it offers exactly one
+direction: force the damper open, or hand control back. There is no command to
+force it shut.
+
 ### When it is warmer outside than in
 
 Then the bypass must shut, and the exchanger earns its keep in the other
