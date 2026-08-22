@@ -3,6 +3,7 @@
 const Homey = require('homey');
 const {
   DanthermDevice, CONFIG, estimateAirflow, estimatePower, fitPowerCurve, supplyImbalance,
+  coolingDecision,
 } = require('../../lib/dantherm');
 const { discover } = require('../../lib/discovery');
 
@@ -25,6 +26,17 @@ const NOMINAL_LEVEL = 3;
  * is the middle of the band rather than any particular unit's figure.
  */
 const TYPICAL_IMBALANCE = 0.94;
+
+/**
+ * Summer mode keeps its own copies of the bypass thresholds. Two numbers that
+ * mean the same thing invite exactly one outcome — the forgotten one quietly
+ * overruling the one you set — so the settings screen shows one of each and
+ * both copies are kept in step.
+ */
+const BYPASS_MIRRORS = {
+  bypass_min_temp: 'bypass_min_temp_summer',
+  bypass_max_temp: 'bypass_max_temp_summer',
+};
 
 class DanthermHCVDevice extends Homey.Device {
 
@@ -158,12 +170,41 @@ class DanthermHCVDevice extends Homey.Device {
 
     try {
       const config = await this.unit.readConfig();
+      // Summer's mirrored copies are not on the settings screen, and neither is
+      // anything a future version drops, so only mirror back what is shown.
+      const shown = this.getSettings();
       const known = Object.fromEntries(
-        Object.entries(config).filter(([, value]) => value !== null),
+        Object.entries(config).filter(([key, value]) => value !== null && key in shown),
       );
       if (Object.keys(known).length) await this.setSettings(known);
+      await this.alignBypassMirrors(config);
     } catch (err) {
       this.error(`Could not read configuration: ${err.message}`);
+    }
+  }
+
+  /**
+   * Brings summer's copies of the bypass thresholds into line with the ones on
+   * the settings screen.
+   *
+   * Done on every connect rather than only when the user edits something. A
+   * unit commissioned with a summer minimum of 17 °C will refuse to free-cool
+   * on a 15 °C afternoon no matter what the screen says, and the owner has no
+   * field to look at that would explain why. Waiting for an edit that may never
+   * come would leave that trap armed.
+   */
+  async alignBypassMirrors(config) {
+    for (const [source, mirror] of Object.entries(BYPASS_MIRRORS)) {
+      const want = config[source];
+      if (want === null || want === undefined) continue;
+      if (config[mirror] === want) continue;
+
+      try {
+        const written = await this.unit.writeConfig(mirror, want);
+        this.log(`Aligned ${mirror} with ${source}: ${config[mirror]} -> ${written}`);
+      } catch (err) {
+        this.error(`Could not align ${mirror}: ${err.message}`);
+      }
     }
   }
 
@@ -187,6 +228,10 @@ class DanthermHCVDevice extends Homey.Device {
       try {
         const written = await this.unit.writeConfig(key, requested);
         if (written !== requested) corrections[key] = written;
+
+        // The mirror has its own accepted range, so it clamps on its own terms
+        // and its result is deliberately not reported back to the screen.
+        if (BYPASS_MIRRORS[key]) await this.unit.writeConfig(BYPASS_MIRRORS[key], requested);
       } catch (err) {
         this.error(`Could not write ${key}: ${err.message}`);
         failed.push(key);
@@ -226,6 +271,11 @@ class DanthermHCVDevice extends Homey.Device {
 
       const state = await this.unit.readState();
       await this.applyState(state);
+
+      // Kept off the failure path: not being able to nudge the fans is not the
+      // same as having lost the unit.
+      await this.applyCooling(state)
+        .catch((err) => this.error(`Cooling control failed: ${err.message}`));
 
       this.consecutiveFailures = 0;
       if (!this.getAvailable()) await this.setAvailable();
@@ -366,6 +416,69 @@ class DanthermHCVDevice extends Homey.Device {
         await fire('filter_needs_replacement');
       }
     }
+  }
+
+  /**
+   * Leans on the fans while there is free cooling worth having.
+   *
+   * The unit decides for itself whether the bypass opens, and once it is open
+   * the cool air comes in at whatever rate the fans happen to be running. It
+   * has no notion of wanting the house cooler faster. This supplies that: run
+   * up while the house is above the setpoint and the air outside is genuinely
+   * colder, and hand the level back on arrival.
+   *
+   * The level is borrowed, not taken. Whatever it was is remembered and
+   * restored — and if anything else moves it in the meantime, that is treated
+   * as someone overriding us on purpose and the boost is abandoned rather than
+   * fought over.
+   */
+  async applyCooling(state) {
+    const s = this.getSettings();
+    const from = this.getStoreValue('coolBoostFrom');
+    let boosting = from !== null && from !== undefined;
+
+    if (boosting && state.fanLevel !== s.cool_boost_level) {
+      this.log(`Cooling boost released: level is ${state.fanLevel}, not the `
+        + `${s.cool_boost_level} we set — something else has it`);
+      await this.setStoreValue('coolBoostFrom', null);
+      boosting = false;
+    }
+
+    if (!s.cool_boost_enabled) {
+      if (boosting) await this.endCoolBoost(from, state);
+      return;
+    }
+
+    const decision = coolingDecision({
+      indoor: state.extractTemp,
+      outdoor: state.outdoorTemp,
+      setpoint: s.bypass_max_temp,
+      bypassOpen: ['opened', 'opening'].includes(state.bypassState),
+      mode: state.mode,
+      boosting,
+    });
+
+    if (decision === 'boost') {
+      // Already moving more air than we would ask for — leave it alone.
+      if (state.fanLevel >= s.cool_boost_level) return;
+
+      await this.setStoreValue('coolBoostFrom', state.fanLevel);
+      this.log(`Free cooling worth having: ${state.extractTemp.toFixed(1)} inside, `
+        + `${state.outdoorTemp.toFixed(1)} outside — level ${state.fanLevel} `
+        + `to ${s.cool_boost_level}`);
+      await this.setFanLevel(s.cool_boost_level);
+    } else if (decision === 'release') {
+      await this.endCoolBoost(from, state);
+    }
+  }
+
+  /** Gives the fan level back to whoever had it before the boost. */
+  async endCoolBoost(from, state) {
+    await this.setStoreValue('coolBoostFrom', null);
+    if (from === state.fanLevel) return;
+
+    this.log(`Cooling finished — level ${state.fanLevel} back to ${from}`);
+    await this.setFanLevel(from);
   }
 
   /**

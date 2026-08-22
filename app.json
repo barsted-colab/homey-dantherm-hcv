@@ -733,24 +733,56 @@
         {
           "type": "group",
           "label": {
-            "en": "Bypass and free cooling",
-            "nl": "Bypass en vrije koeling",
-            "da": "Bypass og fri køling",
-            "de": "Bypass und freie Kühlung",
-            "no": "Bypass og frikjøling",
-            "sv": "Bypass och frikyla"
+            "en": "Cooling",
+            "nl": "Koeling",
+            "da": "Køling",
+            "de": "Kühlung",
+            "no": "Kjøling",
+            "sv": "Kylning"
           },
           "children": [
+            {
+              "id": "bypass_max_temp",
+              "type": "number",
+              "label": {
+                "en": "Cool down to",
+                "nl": "Koelen tot",
+                "da": "Køl ned til",
+                "de": "Kühlen bis",
+                "no": "Kjøl ned til",
+                "sv": "Kyl ned till"
+              },
+              "value": 23,
+              "min": 21,
+              "max": 27,
+              "step": 0.5,
+              "units": {
+                "en": "°C",
+                "nl": "°C",
+                "da": "°C",
+                "de": "°C",
+                "no": "°C",
+                "sv": "°C"
+              },
+              "hint": {
+                "en": "When the house is warmer than this and the air outside is cooler, the unit opens the bypass and lets the outside air in unheated. Requires firmware 2.70 or newer.",
+                "nl": "Is het huis warmer dan dit en is de buitenlucht koeler, dan opent het toestel de bypass en laat het de buitenlucht ongeconditioneerd binnen. Vereist firmware 2.70 of nieuwer.",
+                "da": "Er huset varmere end det her, og er luften udenfor køligere, åbner anlægget bypass og lukker udeluften ind uopvarmet. Kræver firmware 2.70 eller nyere.",
+                "de": "Ist das Haus wärmer als dieser Wert und die Außenluft kühler, öffnet das Gerät den Bypass und lässt die Außenluft unbehandelt ein. Erfordert Firmware 2.70 oder neuer.",
+                "no": "Er huset varmere enn dette, og er luften ute kjøligere, åpner enheten bypassen og slipper uteluften inn uoppvarmet. Krever fastvare 2.70 eller nyere.",
+                "sv": "Är huset varmare än så här och är luften ute svalare öppnar enheten bypassen och släpper in uteluften ouppvärmd. Kräver fastvara 2.70 eller senare."
+              }
+            },
             {
               "id": "bypass_min_temp",
               "type": "number",
               "label": {
-                "en": "Bypass minimum temperature",
-                "nl": "Minimumtemperatuur bypass",
-                "da": "Bypass minimumstemperatur",
-                "de": "Bypass-Minimaltemperatur",
-                "no": "Bypass minimumstemperatur",
-                "sv": "Bypass minimitemperatur"
+                "en": "Coldest outdoor air to use",
+                "nl": "Koudste buitenlucht die gebruikt mag worden",
+                "da": "Koldeste udeluft der må bruges",
+                "de": "Kälteste nutzbare Außenluft",
+                "no": "Kaldeste uteluft som kan brukes",
+                "sv": "Kallaste uteluft som får användas"
               },
               "value": 12,
               "min": 12,
@@ -765,108 +797,56 @@
                 "sv": "°C"
               },
               "hint": {
-                "en": "Outdoor temperature below which the bypass stays closed. Requires firmware 2.70 or newer.",
-                "nl": "Buitentemperatuur waaronder de bypass gesloten blijft. Vereist firmware 2.70 of nieuwer.",
-                "da": "Udetemperatur hvorunder bypass forbliver lukket. Kræver firmware 2.70 eller nyere.",
-                "de": "Außentemperatur, unterhalb derer der Bypass geschlossen bleibt. Erfordert Firmware 2.70 oder neuer.",
-                "no": "Utetemperatur som bypassen holder seg lukket under. Krever fastvare 2.70 eller nyere.",
-                "sv": "Utetemperatur under vilken bypassen förblir stängd. Kräver fastvara 2.70 eller senare."
+                "en": "Below this outdoor temperature the bypass stays shut and the exchanger keeps warming the incoming air. This is what stops free cooling in winter, so there is no separate winter setting. Set it low for the most cooling, higher if cool air from the vents bothers you.",
+                "nl": "Onder deze buitentemperatuur blijft de bypass dicht en blijft de wisselaar de inkomende lucht opwarmen. Dit is wat vrije koeling in de winter tegenhoudt, dus een aparte winterinstelling is er niet. Laag instellen geeft de meeste koeling, hoger als koele lucht uit de roosters u stoort.",
+                "da": "Under denne udetemperatur holder bypass sig lukket, og veksleren bliver ved med at varme indblæsningen. Det er den her, der stopper fri køling om vinteren, så der er ikke en særskilt vinterindstilling. Sæt den lavt for mest mulig køling, højere hvis kølig luft fra ventilerne generer dig.",
+                "de": "Unterhalb dieser Außentemperatur bleibt der Bypass geschlossen und der Wärmetauscher wärmt die einströmende Luft weiter vor. Das ist es, was die freie Kühlung im Winter verhindert; eine eigene Wintereinstellung gibt es daher nicht. Niedrig eingestellt kühlt am meisten, höher, wenn kühle Luft aus den Ventilen stört.",
+                "no": "Under denne utetemperaturen holder bypassen seg lukket, og veksleren fortsetter å varme tilluften. Det er dette som stopper frikjøling om vinteren, så det finnes ingen egen vinterinnstilling. Sett den lavt for mest mulig kjøling, høyere hvis kjølig luft fra ventilene plager deg.",
+                "sv": "Under den här utetemperaturen förblir bypassen stängd och växlaren fortsätter värma tilluften. Det är detta som stoppar frikyla på vintern, så någon separat vinterinställning finns inte. Ställ den lågt för mest kyla, högre om sval luft från donen stör dig."
               }
             },
             {
-              "id": "bypass_max_temp",
-              "type": "number",
+              "id": "cool_boost_enabled",
+              "type": "checkbox",
               "label": {
-                "en": "Bypass maximum temperature",
-                "nl": "Maximumtemperatuur bypass",
-                "da": "Bypass maksimumstemperatur",
-                "de": "Bypass-Maximaltemperatur",
-                "no": "Bypass maksimumstemperatur",
-                "sv": "Bypass maxtemperatur"
+                "en": "Ventilate harder while cooling",
+                "nl": "Harder ventileren tijdens het koelen",
+                "da": "Ventilér hårdere mens der køles",
+                "de": "Beim Kühlen stärker lüften",
+                "no": "Ventiler hardere mens det kjøles",
+                "sv": "Ventilera hårdare medan det kyls"
               },
-              "value": 24,
-              "min": 21,
-              "max": 27,
-              "step": 0.5,
-              "units": {
-                "en": "°C",
-                "nl": "°C",
-                "da": "°C",
-                "de": "°C",
-                "no": "°C",
-                "sv": "°C"
-              },
+              "value": false,
               "hint": {
-                "en": "Room temperature above which free cooling opens the bypass. Requires firmware 2.70 or newer.",
-                "nl": "Ruimtetemperatuur waarboven vrije koeling de bypass opent. Vereist firmware 2.70 of nieuwer.",
-                "da": "Rumtemperatur hvorover fri køling åbner bypass. Kræver firmware 2.70 eller nyere.",
-                "de": "Raumtemperatur, oberhalb derer die freie Kühlung den Bypass öffnet. Erfordert Firmware 2.70 oder neuer.",
-                "no": "Romtemperatur som frikjøling åpner bypassen over. Krever fastvare 2.70 eller nyere.",
-                "sv": "Rumstemperatur över vilken frikylan öppnar bypassen. Kräver fastvara 2.70 eller senare."
+                "en": "The unit decides on its own whether the bypass opens, but it will not ventilate harder just because there is cold air outside worth having. With this on, the app runs the fans up while the house is above the setpoint and the air outside is genuinely cooler, and hands the level back once it arrives. Off by default, since it takes over the fan level you chose.",
+                "nl": "Het toestel bepaalt zelf of de bypass opengaat, maar het gaat niet harder ventileren alleen omdat er koude buitenlucht is die de moeite waard is. Staat dit aan, dan zet de app de ventilatoren hoger zolang het huis boven de streefwaarde zit en de buitenlucht duidelijk koeler is, en geeft de stand terug zodra die bereikt is. Standaard uit, want het neemt de door u gekozen stand over.",
+                "da": "Anlægget bestemmer selv om bypass åbner, men det ventilerer ikke hårdere bare fordi der står kold luft udenfor der er værd at hente. Med den her slået til kører appen ventilatorerne op mens huset er over sætpunktet og luften udenfor er mærkbart køligere, og giver trinnet tilbage når det er nået. Slået fra som udgangspunkt, for den overtager det trin du selv har valgt.",
+                "de": "Das Gerät entscheidet selbst, ob der Bypass öffnet, lüftet aber nicht stärker, nur weil draußen kühle Luft zu holen wäre. Ist dies aktiv, fährt die App die Ventilatoren hoch, solange das Haus über dem Sollwert liegt und die Außenluft spürbar kühler ist, und gibt die Stufe zurück, sobald er erreicht ist. Standardmäßig aus, da es die von Ihnen gewählte Stufe übernimmt.",
+                "no": "Enheten avgjør selv om bypassen åpner, men den ventilerer ikke hardere bare fordi det står kald luft ute som er verdt å hente. Med denne på kjører appen viftene opp mens huset er over settpunktet og luften ute er merkbart kjøligere, og gir trinnet tilbake når det er nådd. Av som utgangspunkt, siden den overtar trinnet du selv har valgt.",
+                "sv": "Enheten avgör själv om bypassen öppnar, men den ventilerar inte hårdare bara för att det står sval luft ute som är värd att hämta. Med denna på kör appen upp fläktarna medan huset är över börvärdet och luften ute är märkbart svalare, och lämnar tillbaka steget när det nåtts. Av som standard, eftersom den tar över det steg du själv valt."
               }
             },
             {
-              "id": "bypass_min_temp_summer",
+              "id": "cool_boost_level",
               "type": "number",
               "label": {
-                "en": "Summer bypass minimum",
-                "nl": "Zomerbypass minimum",
-                "da": "Sommer bypass minimum",
-                "de": "Sommerbypass Minimum",
-                "no": "Sommerbypass minimum",
-                "sv": "Sommarbypass minimum"
+                "en": "Level to cool at",
+                "nl": "Stand tijdens koelen",
+                "da": "Trin der køles på",
+                "de": "Stufe beim Kühlen",
+                "no": "Trinn det kjøles på",
+                "sv": "Steg vid kylning"
               },
-              "value": 12,
-              "min": 12,
-              "max": 17,
-              "step": 0.5,
-              "units": {
-                "en": "°C",
-                "nl": "°C",
-                "da": "°C",
-                "de": "°C",
-                "no": "°C",
-                "sv": "°C"
-              },
+              "value": 3,
+              "min": 1,
+              "max": 4,
               "hint": {
-                "en": "Only used in summer mode. Requires firmware 3.08 or newer.",
-                "nl": "Alleen gebruikt in de zomermodus. Vereist firmware 3.08 of nieuwer.",
-                "da": "Bruges kun i sommerdrift. Kræver firmware 3.08 eller nyere.",
-                "de": "Wird nur im Sommerbetrieb verwendet. Erfordert Firmware 3.08 oder neuer.",
-                "no": "Brukes bare i sommermodus. Krever fastvare 3.08 eller nyere.",
-                "sv": "Används endast i sommarläge. Kräver fastvara 3.08 eller senare."
-              }
-            },
-            {
-              "id": "bypass_max_temp_summer",
-              "type": "number",
-              "label": {
-                "en": "Summer bypass maximum",
-                "nl": "Zomerbypass maximum",
-                "da": "Sommer bypass maksimum",
-                "de": "Sommerbypass Maximum",
-                "no": "Sommerbypass maksimum",
-                "sv": "Sommarbypass maximum"
-              },
-              "value": 24,
-              "min": 21,
-              "max": 30,
-              "step": 0.5,
-              "units": {
-                "en": "°C",
-                "nl": "°C",
-                "da": "°C",
-                "de": "°C",
-                "no": "°C",
-                "sv": "°C"
-              },
-              "hint": {
-                "en": "Only used in summer mode. Requires firmware 3.08 or newer.",
-                "nl": "Alleen gebruikt in de zomermodus. Vereist firmware 3.08 of nieuwer.",
-                "da": "Bruges kun i sommerdrift. Kræver firmware 3.08 eller nyere.",
-                "de": "Wird nur im Sommerbetrieb verwendet. Erfordert Firmware 3.08 oder neuer.",
-                "no": "Brukes bare i sommermodus. Krever fastvare 3.08 eller nyere.",
-                "sv": "Används endast i sommarläge. Kräver fastvara 3.08 eller senare."
+                "en": "Level 4 moves the most air and makes the most noise.",
+                "nl": "Stand 4 verplaatst de meeste lucht en maakt het meeste geluid.",
+                "da": "Trin 4 flytter mest luft og støjer mest.",
+                "de": "Stufe 4 bewegt die meiste Luft und ist am lautesten.",
+                "no": "Trinn 4 flytter mest luft og støyer mest.",
+                "sv": "Steg 4 flyttar mest luft och låter mest."
               }
             },
             {

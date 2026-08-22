@@ -60,6 +60,60 @@ the `id` field, which Compose would otherwise derive from the folder name.
 Widgets require `"compatibility": ">=12.3.0"`, which is why the app no longer
 declares `>=5.0.0`.
 
+### Cooling, in the terms someone actually thinks in
+
+The controller exposes four bypass thresholds: a minimum and maximum for normal
+operation, and a second pair used only in summer mode. Their names describe the
+damper rather than the intent, and nothing on the screen says which one is
+currently in charge.
+
+The failure this produces is quiet. On the reference installation the house sat
+at 25,7 °C with 15,0 °C outside — ten degrees of cooling standing against the
+wall — and the bypass closed, because the summer minimum had been commissioned
+at 17 °C. Nothing was broken and nothing was reported. A field named "summer
+bypass minimum" does not tell its owner that it is the reason the house stays
+warm.
+
+So the screen now asks two questions instead of four:
+
+    Cool down to                  23 °C   → bypass_max_temp
+    Coldest outdoor air to use    12 °C   → bypass_min_temp
+
+Summer mode's copies are mirrored from these, on every connect rather than only
+when something is edited — a unit commissioned with different values would
+otherwise keep its trap armed until an edit that may never come.
+
+There is deliberately no winter setpoint. The outdoor minimum already is the
+winter protection: below it the bypass stays shut, so free cooling cannot run
+off with the heat you are paying for. A second number would only be another way
+to say the same thing, and two settings that mean one thing is how the original
+four became unreadable.
+
+### Boosting the free cooling
+
+The unit decides whether the bypass opens. It has no notion of wanting the house
+cooler sooner, so once the damper is open the cold air arrives at whatever rate
+the fans happen to be running.
+
+With `Ventilate harder while cooling` on, the app runs the fans up while the
+house is above the setpoint and the outside air is genuinely colder, then hands
+the level back on arrival. Engaging needs setpoint + 0,3 K and a full degree of
+outdoor advantage; releasing waits for the setpoint itself. The gap is what
+keeps the fans from hunting either side of the mark.
+
+It stays out of the way where it should. Nothing happens while the bypass is
+shut, since the exchanger then tempers the incoming air back towards room
+temperature and running harder would move more air while cooling nothing. Away,
+night and fireplace were each chosen for a reason that outranks a degree of
+comfort, and Dantherm's own summer mode stops the supply fan outright, so there
+is no incoming air to speed up.
+
+The level is borrowed rather than taken: whatever it was is remembered and
+restored, and if a Flow or the wall panel moves it in the meantime, that is
+treated as someone overriding on purpose and the boost is abandoned rather than
+fought over. Losing a temperature reading hands the level back too — going blind
+is not a reason to hold someone's fans at speed.
+
 ### Airflow and power, from your own commissioning report
 
 The controller reports fan speed in rpm. It does not measure volume, and it has
