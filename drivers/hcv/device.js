@@ -465,7 +465,10 @@ class DanthermHCVDevice extends Homey.Device {
       // Already moving more air than we would ask for — leave it alone.
       if (state.fanLevel >= s.cool_boost_level) return;
 
+      // The mode goes with it: a fan level is only obeyed in manual, so
+      // borrowing the level means borrowing the mode too.
       await this.setStoreValue('coolBoostFrom', state.fanLevel);
+      await this.setStoreValue('coolBoostMode', state.mode);
       this.log(`Free cooling worth having: ${state.extractTemp.toFixed(1)} inside, `
         + `${state.outdoorTemp.toFixed(1)} outside — level ${state.fanLevel} `
         + `to ${s.cool_boost_level}`);
@@ -545,12 +548,25 @@ class DanthermHCVDevice extends Homey.Device {
 
   /** Gives the fan level back to whoever had it before the boost. */
   async endCoolBoost(from, state) {
+    const mode = this.getStoreValue('coolBoostMode');
     await this.setStoreValue('coolBoostFrom', null);
+    await this.setStoreValue('coolBoostMode', null);
     this.fireCooling('cooling_stopped');
-    if (from === state.fanLevel) return;
 
-    this.log(`Cooling finished — level ${state.fanLevel} back to ${from}`);
-    await this.setFanLevel(from);
+    if (from !== state.fanLevel) {
+      this.log(`Cooling finished — level ${state.fanLevel} back to ${from}`);
+      await this.setFanLevel(from);
+    }
+
+    // After the level, never before. Setting a fan level forces the unit into
+    // manual — it will not honour one otherwise — so restoring the mode first
+    // would only have it knocked straight back out again. Without this the unit
+    // is left in manual for good, and whoever was relying on automatic loses
+    // humidity-driven ventilation without being told.
+    if (mode && mode !== state.mode && mode !== 'manual') {
+      this.log(`Cooling finished — mode back to ${mode}`);
+      await this.setMode(mode);
+    }
   }
 
   /**
