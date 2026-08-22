@@ -1,33 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960" width="960" height="960">
-  <!-- Dantherm HCV: heat-recovery ventilation unit, three-quarter view. -->
-  <path d="M250 340 L418 248 H738 L570 340 Z" fill="currentColor" fill-opacity=".45"/>
-  <path d="M570 340 L738 248 V738 L570 830 Z" fill="currentColor" fill-opacity=".72"/>
-  <path d="M250 340 H570 V830 H250 Z" fill="currentColor"/>
-
-  <g>
-    <path d="M411.52 271.92 v-30 a46 25.19047619047619 0 0 1 92 0 v30 a46 25.19047619047619 0 0 1 -92 0 Z" fill="currentColor" fill-opacity=".62"/>
-    <ellipse cx="457.52" cy="241.92000000000002" rx="46" ry="25.2" fill="currentColor" fill-opacity=".82"/>
-    <ellipse cx="457.52" cy="241.92000000000002" rx="28" ry="15.1" fill="currentColor"/>
+  <!-- Dantherm HCV heat-recovery ventilation unit, three-quarter view.
+       One colour throughout: faces are separated by opacity, and every detail
+       is punched out with evenodd rather than filled white, so the drawing
+       still reads when Homey paints the icon light instead of dark. -->
+  <g fill="currentColor">
+    <path d="M250 340 L418 248 H738 L570 340 Z" fill-opacity=".42"/>
+    <path d="M570 340 L738 248 V738 L570 830 Z" fill-opacity=".7"/>
+    <path d="M250 340 H570 V830 H250 Z M302 386 h106 a12 12 0 0 1 12 12 v14 a12 12 0 0 1 -12 12 h-106 a12 12 0 0 1 -12 -12 v-14 a12 12 0 0 1 12 -12 Z M300 466 h202 a10 10 0 0 1 10 10 v10 a10 10 0 0 1 -10 10 h-202 a10 10 0 0 1 -10 -10 v-10 a10 10 0 0 1 10 -10 Z M300 518 h202 a10 10 0 0 1 10 10 v10 a10 10 0 0 1 -10 10 h-202 a10 10 0 0 1 -10 -10 v-10 a10 10 0 0 1 10 -10 Z M253 586 h314 a3 3 0 0 1 3 3 v1 a3 3 0 0 1 -3 3 h-314 a3 3 0 0 1 -3 -3 v-1 a3 3 0 0 1 3 -3 Z" fill-rule="evenodd"/>
+    <path d="M412 272 v-30 a46 25.2 0 0 1 92 0 v30 a46 25.2 0 0 1 -92 0 Z" fill-opacity=".62"/>
+    <path d="M555 274 v-30 a46 25.2 0 0 1 92 0 v30 a46 25.2 0 0 1 -92 0 Z" fill-opacity=".62"/>
+    <path d="M339 315 v-30 a46 25.2 0 0 1 92 0 v30 a46 25.2 0 0 1 -92 0 Z" fill-opacity=".62"/>
+    <path d="M483 317 v-30 a46 25.2 0 0 1 92 0 v30 a46 25.2 0 0 1 -92 0 Z" fill-opacity=".62"/>
+    <path d="M411.5 241.9 a46.0 25.2 0 1 0 92.0 0 a46.0 25.2 0 1 0 -92.0 0 Z M429.0 241.9 a28.5 15.6 0 1 0 57.0 0 a28.5 15.6 0 1 0 -57.0 0 Z" fill-rule="evenodd" fill-opacity=".9"/>
+    <path d="M555.4 243.8 a46.0 25.2 0 1 0 92.0 0 a46.0 25.2 0 1 0 -92.0 0 Z M572.8 243.8 a28.5 15.6 0 1 0 57.0 0 a28.5 15.6 0 1 0 -57.0 0 Z" fill-rule="evenodd" fill-opacity=".9"/>
+    <path d="M339.0 285.2 a46.0 25.2 0 1 0 92.0 0 a46.0 25.2 0 1 0 -92.0 0 Z M356.4 285.2 a28.5 15.6 0 1 0 57.0 0 a28.5 15.6 0 1 0 -57.0 0 Z" fill-rule="evenodd" fill-opacity=".9"/>
+    <path d="M482.8 287.0 a46.0 25.2 0 1 0 92.0 0 a46.0 25.2 0 1 0 -92.0 0 Z M500.3 287.0 a28.5 15.6 0 1 0 57.0 0 a28.5 15.6 0 1 0 -57.0 0 Z" fill-rule="evenodd" fill-opacity=".9"/>
   </g>
-  <g>
-    <path d="M555.36 273.76 v-30 a46 25.19047619047619 0 0 1 92 0 v30 a46 25.19047619047619 0 0 1 -92 0 Z" fill="currentColor" fill-opacity=".62"/>
-    <ellipse cx="601.36" cy="243.76" rx="46" ry="25.2" fill="currentColor" fill-opacity=".82"/>
-    <ellipse cx="601.36" cy="243.76" rx="28" ry="15.1" fill="currentColor"/>
-  </g>
-  <g>
-    <path d="M338.96000000000004 315.15999999999997 v-30 a46 25.19047619047619 0 0 1 92 0 v30 a46 25.19047619047619 0 0 1 -92 0 Z" fill="currentColor" fill-opacity=".62"/>
-    <ellipse cx="384.96000000000004" cy="285.15999999999997" rx="46" ry="25.2" fill="currentColor" fill-opacity=".82"/>
-    <ellipse cx="384.96000000000004" cy="285.15999999999997" rx="28" ry="15.1" fill="currentColor"/>
-  </g>
-  <g>
-    <path d="M482.79999999999995 317.0 v-30 a46 25.19047619047619 0 0 1 92 0 v30 a46 25.19047619047619 0 0 1 -92 0 Z" fill="currentColor" fill-opacity=".62"/>
-    <ellipse cx="528.8" cy="287.0" rx="46" ry="25.2" fill="currentColor" fill-opacity=".82"/>
-    <ellipse cx="528.8" cy="287.0" rx="28" ry="15.1" fill="currentColor"/>
-  </g>
-
-  <!-- Control panel and the two filter drawer handles on the front. -->
-  <rect x="290" y="386" width="130" height="38" rx="12" fill="#fff" fill-opacity=".82"/>
-  <rect x="290" y="466" width="222" height="30" rx="10" fill="#fff" fill-opacity=".38"/>
-  <rect x="290" y="518" width="222" height="30" rx="10" fill="#fff" fill-opacity=".38"/>
-  <path d="M250 588 H570" stroke="#fff" stroke-opacity=".28" stroke-width="6"/>
 </svg>
