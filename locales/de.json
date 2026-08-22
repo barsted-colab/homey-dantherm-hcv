@@ -1,0 +1,42 @@
+{
+  "error": {
+    "no_ip": "Keine IP-Adresse konfiguriert. Öffnen Sie die Geräteeinstellungen und geben Sie die IP-Adresse des Geräts ein.",
+    "not_connected": "Keine Verbindung zum Lüftungsgerät.",
+    "command_failed": "Das Lüftungsgerät hat den Befehl nicht angenommen.",
+    "setting_rejected": "Das Gerät hat diese Einstellungen abgelehnt: __keys__"
+  },
+  "widget": {
+    "outdoor": "Außenluft",
+    "supply": "Zuluft",
+    "extract": "Abluft",
+    "exhaust": "Fortluft",
+    "recovery": "Rückgewinnung",
+    "bypass": "Bypass",
+    "alarm": "Alarm",
+    "days_short": "T",
+    "no_device": "Wählen Sie ein Lüftungsgerät in den Widget-Einstellungen",
+    "unavailable": "Gerät antwortet nicht",
+    "mode": {
+      "standby": "Standby",
+      "automatic": "Automatik",
+      "manual": "Manuell",
+      "week_program": "Wochenprogramm",
+      "away": "Abwesend",
+      "summer": "Sommer",
+      "fireplace": "Kamin",
+      "night": "Nacht"
+    },
+    "level": "Stufe",
+    "mode_label": "Betriebsart",
+    "humidity": "Feuchte",
+    "power": "Leistung",
+    "recovered": "Zurückgewonnen",
+    "filter": "Filter",
+    "days": "Tage",
+    "air_quality": "Luftqualität",
+    "open": "Offen",
+    "closed": "Geschlossen",
+    "bypass_open": "Bypass offen",
+    "recovery_short": "Rückgew."
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "error": {
+    "no_ip": "Ingen IP-adresse er satt. Åpne enhetsinnstillingene og skriv inn enhetens IP-adresse.",
+    "not_connected": "Ingen forbindelse til ventilasjonsanlegget.",
+    "command_failed": "Ventilasjonsanlegget godtok ikke kommandoen.",
+    "setting_rejected": "Enheten avviste disse innstillingene: __keys__"
+  },
+  "widget": {
+    "outdoor": "Uteluft",
+    "supply": "Tilluft",
+    "extract": "Avtrekk",
+    "exhaust": "Avkast",
+    "recovery": "gjenvinning",
+    "bypass": "bypass",
+    "alarm": "Alarm",
+    "days_short": "d",
+    "no_device": "Velg et ventilasjonsanlegg i widgetinnstillingene",
+    "unavailable": "Anlegget svarer ikke",
+    "mode": {
+      "standby": "Standby",
+      "automatic": "Automatisk",
+      "manual": "Manuell",
+      "week_program": "Ukeprogram",
+      "away": "Borte",
+      "summer": "Sommer",
+      "fireplace": "Peis",
+      "night": "Natt"
+    },
+    "level": "Trinn",
+    "mode_label": "Driftsmodus",
+    "humidity": "Fukt",
+    "power": "Effekt",
+    "recovered": "Gjenvunnet",
+    "filter": "Filter",
+    "days": "dager",
+    "air_quality": "Luftkvalitet",
+    "open": "Åpen",
+    "closed": "Lukket",
+    "bypass_open": "Bypass åpen",
+    "recovery_short": "gjenv."
+  }
+}

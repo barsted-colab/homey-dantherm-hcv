@@ -1,0 +1,42 @@
+{
+  "error": {
+    "no_ip": "Ingen IP-adress är angiven. Öppna enhetsinställningarna och ange enhetens IP-adress.",
+    "not_connected": "Ingen anslutning till ventilationsaggregatet.",
+    "command_failed": "Ventilationsaggregatet accepterade inte kommandot.",
+    "setting_rejected": "Enheten avvisade dessa inställningar: __keys__"
+  },
+  "widget": {
+    "outdoor": "Uteluft",
+    "supply": "Tilluft",
+    "extract": "Frånluft",
+    "exhaust": "Avluft",
+    "recovery": "återvinning",
+    "bypass": "bypass",
+    "alarm": "Larm",
+    "days_short": "d",
+    "no_device": "Välj ett ventilationsaggregat i widgetinställningarna",
+    "unavailable": "Aggregatet svarar inte",
+    "mode": {
+      "standby": "Standby",
+      "automatic": "Automatiskt",
+      "manual": "Manuellt",
+      "week_program": "Veckoprogram",
+      "away": "Borta",
+      "summer": "Sommar",
+      "fireplace": "Braskamin",
+      "night": "Natt"
+    },
+    "level": "Steg",
+    "mode_label": "Driftläge",
+    "humidity": "Fukt",
+    "power": "Effekt",
+    "recovered": "Återvunnet",
+    "filter": "Filter",
+    "days": "dagar",
+    "air_quality": "Luftkvalitet",
+    "open": "Öppet",
+    "closed": "Stängt",
+    "bypass_open": "Bypass öppen",
+    "recovery_short": "återv."
+  }
+}

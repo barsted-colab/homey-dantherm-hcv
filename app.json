@@ -8,11 +8,19 @@
   ],
   "name": {
     "en": "Dantherm HCV",
-    "da": "Dantherm HCV"
+    "nl": "Dantherm HCV",
+    "da": "Dantherm HCV",
+    "de": "Dantherm HCV",
+    "no": "Dantherm HCV",
+    "sv": "Dantherm HCV"
   },
   "description": {
     "en": "Fresh air on autopilot — temperatures, humidity, bypass and fan levels in every Flow",
-    "da": "Frisk luft på autopilot — temperaturer, fugt, bypass og ventilationstrin i alle dine Flows"
+    "nl": "Frisse lucht op de automatische piloot — temperaturen, luchtvochtigheid, bypass en ventilatiestanden in elke Flow",
+    "da": "Frisk luft på autopilot — temperaturer, fugt, bypass og ventilationstrin i alle dine Flows",
+    "de": "Frische Luft auf Autopilot — Temperaturen, Feuchte, Bypass und Lüfterstufen in jedem Flow",
+    "no": "Frisk luft på autopilot — temperaturer, luftfuktighet, bypass og viftetrinn i alle Flows",
+    "sv": "Frisk luft på autopilot — temperaturer, luftfuktighet, bypass och fläktsteg i alla Flows"
   },
   "tags": {
     "en": [
@@ -76,7 +84,11 @@
       "type": "enum",
       "title": {
         "en": "Operating mode",
-        "da": "Driftstilstand"
+        "nl": "Bedrijfsmodus",
+        "da": "Driftstilstand",
+        "de": "Betriebsart",
+        "no": "Driftsmodus",
+        "sv": "Driftläge"
       },
       "getable": true,
       "setable": true,
@@ -87,56 +99,88 @@
           "id": "standby",
           "title": {
             "en": "Standby",
-            "da": "Standby"
+            "nl": "Stand-by",
+            "da": "Standby",
+            "de": "Standby",
+            "no": "Standby",
+            "sv": "Standby"
           }
         },
         {
           "id": "automatic",
           "title": {
             "en": "Automatic",
-            "da": "Automatisk"
+            "nl": "Automatisch",
+            "da": "Automatisk",
+            "de": "Automatik",
+            "no": "Automatisk",
+            "sv": "Automatiskt"
           }
         },
         {
           "id": "manual",
           "title": {
             "en": "Manual",
-            "da": "Manuel"
+            "nl": "Handmatig",
+            "da": "Manuel",
+            "de": "Manuell",
+            "no": "Manuell",
+            "sv": "Manuellt"
           }
         },
         {
           "id": "week_program",
           "title": {
             "en": "Week program",
-            "da": "Ugeprogram"
+            "nl": "Weekprogramma",
+            "da": "Ugeprogram",
+            "de": "Wochenprogramm",
+            "no": "Ukeprogram",
+            "sv": "Veckoprogram"
           }
         },
         {
           "id": "away",
           "title": {
             "en": "Away",
-            "da": "Ferie"
+            "nl": "Afwezig",
+            "da": "Ferie",
+            "de": "Abwesend",
+            "no": "Borte",
+            "sv": "Borta"
           }
         },
         {
           "id": "summer",
           "title": {
             "en": "Summer",
-            "da": "Sommer"
+            "nl": "Zomer",
+            "da": "Sommer",
+            "de": "Sommer",
+            "no": "Sommer",
+            "sv": "Sommar"
           }
         },
         {
           "id": "fireplace",
           "title": {
             "en": "Fireplace",
-            "da": "Pejs"
+            "nl": "Openhaard",
+            "da": "Pejs",
+            "de": "Kamin",
+            "no": "Peis",
+            "sv": "Braskamin"
           }
         },
         {
           "id": "night",
           "title": {
             "en": "Night",
-            "da": "Natsænkning"
+            "nl": "Nacht",
+            "da": "Natsænkning",
+            "de": "Nacht",
+            "no": "Natt",
+            "sv": "Natt"
           }
         }
       ]
@@ -145,7 +189,11 @@
       "type": "enum",
       "title": {
         "en": "Fan level",
-        "da": "Ventilationstrin"
+        "nl": "Ventilatiestand",
+        "da": "Ventilationstrin",
+        "de": "Lüfterstufe",
+        "no": "Viftetrinn",
+        "sv": "Fläktsteg"
       },
       "getable": true,
       "setable": true,
@@ -156,35 +204,55 @@
           "id": "0",
           "title": {
             "en": "Off",
-            "da": "Slukket"
+            "nl": "Uit",
+            "da": "Slukket",
+            "de": "Aus",
+            "no": "Av",
+            "sv": "Av"
           }
         },
         {
           "id": "1",
           "title": {
             "en": "Level 1",
-            "da": "Trin 1"
+            "nl": "Stand 1",
+            "da": "Trin 1",
+            "de": "Stufe 1",
+            "no": "Trinn 1",
+            "sv": "Steg 1"
           }
         },
         {
           "id": "2",
           "title": {
             "en": "Level 2",
-            "da": "Trin 2"
+            "nl": "Stand 2",
+            "da": "Trin 2",
+            "de": "Stufe 2",
+            "no": "Trinn 2",
+            "sv": "Steg 2"
           }
         },
         {
           "id": "3",
           "title": {
             "en": "Level 3",
-            "da": "Trin 3"
+            "nl": "Stand 3",
+            "da": "Trin 3",
+            "de": "Stufe 3",
+            "no": "Trinn 3",
+            "sv": "Steg 3"
           }
         },
         {
           "id": "4",
           "title": {
             "en": "Level 4",
-            "da": "Trin 4"
+            "nl": "Stand 4",
+            "da": "Trin 4",
+            "de": "Stufe 4",
+            "no": "Trinn 4",
+            "sv": "Steg 4"
           }
         }
       ]
@@ -193,7 +261,11 @@
       "type": "enum",
       "title": {
         "en": "Bypass damper",
-        "da": "Bypass-spjæld"
+        "nl": "Bypassklep",
+        "da": "Bypass-spjæld",
+        "de": "Bypassklappe",
+        "no": "Bypasspjeld",
+        "sv": "Bypasspjäll"
       },
       "getable": true,
       "setable": false,
@@ -204,42 +276,66 @@
           "id": "closed",
           "title": {
             "en": "Closed",
-            "da": "Lukket"
+            "nl": "Gesloten",
+            "da": "Lukket",
+            "de": "Geschlossen",
+            "no": "Lukket",
+            "sv": "Stängt"
           }
         },
         {
           "id": "in_progress",
           "title": {
             "en": "In progress",
-            "da": "I gang"
+            "nl": "Bezig",
+            "da": "I gang",
+            "de": "In Bewegung",
+            "no": "Under bevegelse",
+            "sv": "Under rörelse"
           }
         },
         {
           "id": "closing",
           "title": {
             "en": "Closing",
-            "da": "Lukker"
+            "nl": "Sluiten",
+            "da": "Lukker",
+            "de": "Schließt",
+            "no": "Lukker",
+            "sv": "Stänger"
           }
         },
         {
           "id": "opening",
           "title": {
             "en": "Opening",
-            "da": "Åbner"
+            "nl": "Openen",
+            "da": "Åbner",
+            "de": "Öffnet",
+            "no": "Åpner",
+            "sv": "Öppnar"
           }
         },
         {
           "id": "opened",
           "title": {
             "en": "Open",
-            "da": "Åben"
+            "nl": "Open",
+            "da": "Åben",
+            "de": "Offen",
+            "no": "Åpen",
+            "sv": "Öppet"
           }
         },
         {
           "id": "unknown",
           "title": {
             "en": "Unknown",
-            "da": "Ukendt"
+            "nl": "Onbekend",
+            "da": "Ukendt",
+            "de": "Unbekannt",
+            "no": "Ukjent",
+            "sv": "Okänt"
           }
         }
       ]
@@ -248,13 +344,21 @@
       "type": "number",
       "title": {
         "en": "Filter remaining",
-        "da": "Filter tilbage"
+        "nl": "Filter resterend",
+        "da": "Filter tilbage",
+        "de": "Filter Restlaufzeit",
+        "no": "Filter gjenstående",
+        "sv": "Filter återstående"
       },
       "getable": true,
       "setable": false,
       "units": {
         "en": "days",
-        "da": "dage"
+        "nl": "dagen",
+        "da": "dage",
+        "de": "Tage",
+        "no": "dager",
+        "sv": "dagar"
       },
       "decimals": 0,
       "uiComponent": "sensor",
@@ -265,13 +369,21 @@
       "type": "number",
       "title": {
         "en": "Fan speed",
-        "da": "Ventilatorhastighed"
+        "nl": "Ventilatortoerental",
+        "da": "Ventilatorhastighed",
+        "de": "Lüfterdrehzahl",
+        "no": "Vifteturtall",
+        "sv": "Fläktvarvtal"
       },
       "getable": true,
       "setable": false,
       "units": {
         "en": "rpm",
-        "da": "o/min"
+        "nl": "tpm",
+        "da": "o/min",
+        "de": "U/min",
+        "no": "o/min",
+        "sv": "varv/min"
       },
       "decimals": 0,
       "uiComponent": "sensor",
@@ -282,13 +394,21 @@
       "type": "number",
       "title": {
         "en": "Airflow",
-        "da": "Luftmængde"
+        "nl": "Luchtdebiet",
+        "da": "Luftmængde",
+        "de": "Volumenstrom",
+        "no": "Luftmengde",
+        "sv": "Luftflöde"
       },
       "getable": true,
       "setable": false,
       "units": {
         "en": "m³/h",
-        "da": "m³/h"
+        "nl": "m³/h",
+        "da": "m³/h",
+        "de": "m³/h",
+        "no": "m³/h",
+        "sv": "m³/h"
       },
       "decimals": 0,
       "uiComponent": "sensor",
@@ -299,13 +419,21 @@
       "type": "number",
       "title": {
         "en": "Air quality",
-        "da": "Luftkvalitet"
+        "nl": "Luchtkwaliteit",
+        "da": "Luftkvalitet",
+        "de": "Luftqualität",
+        "no": "Luftkvalitet",
+        "sv": "Luftkvalitet"
       },
       "getable": true,
       "setable": false,
       "units": {
         "en": "ppm",
-        "da": "ppm"
+        "nl": "ppm",
+        "da": "ppm",
+        "de": "ppm",
+        "no": "ppm",
+        "sv": "ppm"
       },
       "decimals": 0,
       "uiComponent": "sensor",
@@ -318,7 +446,11 @@
       "id": "hcv",
       "name": {
         "en": "Dantherm HCV",
-        "da": "Dantherm HCV"
+        "nl": "Dantherm HCV",
+        "da": "Dantherm HCV",
+        "de": "Dantherm HCV",
+        "no": "Dantherm HCV",
+        "sv": "Dantherm HCV"
       },
       "class": "fan",
       "capabilities": [
@@ -345,75 +477,119 @@
         "measure_temperature.outdoor": {
           "title": {
             "en": "Outdoor (T1)",
-            "da": "Udeluft (T1)"
+            "nl": "Buitenlucht (T1)",
+            "da": "Udeluft (T1)",
+            "de": "Außenluft (T1)",
+            "no": "Uteluft (T1)",
+            "sv": "Uteluft (T1)"
           },
           "insights": true
         },
         "measure_temperature.supply": {
           "title": {
             "en": "Supply (T2)",
-            "da": "Tilluft (T2)"
+            "nl": "Toevoerlucht (T2)",
+            "da": "Tilluft (T2)",
+            "de": "Zuluft (T2)",
+            "no": "Tilluft (T2)",
+            "sv": "Tilluft (T2)"
           },
           "insights": true
         },
         "measure_temperature.extract": {
           "title": {
             "en": "Extract (T3)",
-            "da": "Fraluft (T3)"
+            "nl": "Afvoerlucht (T3)",
+            "da": "Fraluft (T3)",
+            "de": "Abluft (T3)",
+            "no": "Avtrekk (T3)",
+            "sv": "Frånluft (T3)"
           },
           "insights": true
         },
         "measure_temperature.exhaust": {
           "title": {
             "en": "Exhaust (T4)",
-            "da": "Afkast (T4)"
+            "nl": "Uitblaaslucht (T4)",
+            "da": "Afkast (T4)",
+            "de": "Fortluft (T4)",
+            "no": "Avkast (T4)",
+            "sv": "Avluft (T4)"
           },
           "insights": true
         },
         "measure_temperature.room": {
           "title": {
             "en": "Room",
-            "da": "Rum"
+            "nl": "Ruimte",
+            "da": "Rum",
+            "de": "Raum",
+            "no": "Rom",
+            "sv": "Rum"
           },
           "insights": true
         },
         "measure_rpm.fan1": {
           "title": {
             "en": "Extract fan",
-            "da": "Udsugningsventilator"
+            "nl": "Afvoerventilator",
+            "da": "Udsugningsventilator",
+            "de": "Abluftventilator",
+            "no": "Avtrekksvifte",
+            "sv": "Frånluftsfläkt"
           }
         },
         "measure_rpm.fan2": {
           "title": {
             "en": "Supply fan",
-            "da": "Indblæsningsventilator"
+            "nl": "Toevoerventilator",
+            "da": "Indblæsningsventilator",
+            "de": "Zuluftventilator",
+            "no": "Tilluftsvifte",
+            "sv": "Tilluftsfläkt"
           }
         },
         "measure_airflow.extract": {
           "title": {
             "en": "Extract airflow",
-            "da": "Udsugning"
+            "nl": "Afvoerdebiet",
+            "da": "Udsugning",
+            "de": "Abluftvolumenstrom",
+            "no": "Avtrekksmengde",
+            "sv": "Frånluftsflöde"
           },
           "insights": true
         },
         "measure_airflow.supply": {
           "title": {
             "en": "Supply airflow",
-            "da": "Indblæsning"
+            "nl": "Toevoerdebiet",
+            "da": "Indblæsning",
+            "de": "Zuluftvolumenstrom",
+            "no": "Tilluftsmengde",
+            "sv": "Tilluftsflöde"
           },
           "insights": true
         },
         "measure_power": {
           "title": {
             "en": "Power (estimated)",
-            "da": "Effekt (estimeret)"
+            "nl": "Vermogen (geschat)",
+            "da": "Effekt (estimeret)",
+            "de": "Leistung (geschätzt)",
+            "no": "Effekt (estimert)",
+            "sv": "Effekt (uppskattad)"
           },
           "insights": true
         },
         "alarm_generic": {
           "title": {
             "en": "Alarm",
-            "da": "Alarm"
+            "nl": "Alarm",
+            "da": "Alarm",
+            "de": "Alarm",
+            "no": "Alarm",
+            "sv": "Larm"
           }
         }
       },
@@ -449,7 +625,11 @@
           "type": "group",
           "label": {
             "en": "Connection",
-            "da": "Forbindelse"
+            "nl": "Verbinding",
+            "da": "Forbindelse",
+            "de": "Verbindung",
+            "no": "Tilkobling",
+            "sv": "Anslutning"
           },
           "children": [
             {
@@ -457,12 +637,20 @@
               "type": "text",
               "label": {
                 "en": "IP address",
-                "da": "IP-adresse"
+                "nl": "IP-adres",
+                "da": "IP-adresse",
+                "de": "IP-Adresse",
+                "no": "IP-adresse",
+                "sv": "IP-adress"
               },
               "value": "",
               "hint": {
                 "en": "The local IP address of the unit. Updated automatically if it changes.",
-                "da": "Anlæggets lokale IP-adresse. Opdateres automatisk hvis den ændrer sig."
+                "nl": "Het lokale IP-adres van het toestel. Wordt automatisch bijgewerkt als het verandert.",
+                "da": "Anlæggets lokale IP-adresse. Opdateres automatisk hvis den ændrer sig.",
+                "de": "Die lokale IP-Adresse des Geräts. Wird automatisch aktualisiert, wenn sie sich ändert.",
+                "no": "Enhetens lokale IP-adresse. Oppdateres automatisk hvis den endres.",
+                "sv": "Enhetens lokala IP-adress. Uppdateras automatiskt om den ändras."
               }
             },
             {
@@ -470,14 +658,22 @@
               "type": "number",
               "label": {
                 "en": "Modbus TCP port",
-                "da": "Modbus TCP-port"
+                "nl": "Modbus TCP-poort",
+                "da": "Modbus TCP-port",
+                "de": "Modbus-TCP-Port",
+                "no": "Modbus TCP-port",
+                "sv": "Modbus TCP-port"
               },
               "value": 502,
               "min": 1,
               "max": 65535,
               "hint": {
                 "en": "Default is 502.",
-                "da": "Standard er 502."
+                "nl": "Standaard is 502.",
+                "da": "Standard er 502.",
+                "de": "Standard ist 502.",
+                "no": "Standard er 502.",
+                "sv": "Standard är 502."
               }
             },
             {
@@ -485,18 +681,30 @@
               "type": "number",
               "label": {
                 "en": "Polling interval",
-                "da": "Poll-interval"
+                "nl": "Uitleesinterval",
+                "da": "Poll-interval",
+                "de": "Abfrageintervall",
+                "no": "Avlesningsintervall",
+                "sv": "Avläsningsintervall"
               },
               "value": 30,
               "min": 10,
               "max": 300,
               "units": {
                 "en": "seconds",
-                "da": "sekunder"
+                "nl": "seconden",
+                "da": "sekunder",
+                "de": "Sekunden",
+                "no": "sekunder",
+                "sv": "sekunder"
               },
               "hint": {
                 "en": "How often to read values from the unit.",
-                "da": "Hvor ofte der læses værdier fra anlægget."
+                "nl": "Hoe vaak waarden van het toestel worden gelezen.",
+                "da": "Hvor ofte der læses værdier fra anlægget.",
+                "de": "Wie oft Werte vom Gerät gelesen werden.",
+                "no": "Hvor ofte verdier leses fra enheten.",
+                "sv": "Hur ofta värden läses från enheten."
               }
             },
             {
@@ -504,12 +712,20 @@
               "type": "checkbox",
               "label": {
                 "en": "Recover from IP changes",
-                "da": "Genfind ved IP-skift"
+                "nl": "Herstellen na IP-wijziging",
+                "da": "Genfind ved IP-skift",
+                "de": "Nach IP-Änderung wiederfinden",
+                "no": "Gjenopprett etter IP-endring",
+                "sv": "Återfinn efter IP-ändring"
               },
               "value": true,
               "hint": {
                 "en": "If the unit stops responding, search the network for it by serial number and update the address.",
-                "da": "Hvis anlægget ikke svarer, søges der efter det på netværket ud fra serienummeret, og adressen opdateres."
+                "nl": "Als het toestel niet meer reageert, wordt het netwerk op serienummer doorzocht en het adres bijgewerkt.",
+                "da": "Hvis anlægget ikke svarer, søges der efter det på netværket ud fra serienummeret, og adressen opdateres.",
+                "de": "Reagiert das Gerät nicht mehr, wird das Netzwerk anhand der Seriennummer durchsucht und die Adresse aktualisiert.",
+                "no": "Hvis enheten slutter å svare, søkes nettverket gjennom etter serienummeret og adressen oppdateres.",
+                "sv": "Om enheten slutar svara genomsöks nätverket efter serienumret och adressen uppdateras."
               }
             }
           ]
@@ -518,7 +734,11 @@
           "type": "group",
           "label": {
             "en": "Bypass and free cooling",
-            "da": "Bypass og fri køling"
+            "nl": "Bypass en vrije koeling",
+            "da": "Bypass og fri køling",
+            "de": "Bypass und freie Kühlung",
+            "no": "Bypass og frikjøling",
+            "sv": "Bypass och frikyla"
           },
           "children": [
             {
@@ -526,7 +746,11 @@
               "type": "number",
               "label": {
                 "en": "Bypass minimum temperature",
-                "da": "Bypass minimumstemperatur"
+                "nl": "Minimumtemperatuur bypass",
+                "da": "Bypass minimumstemperatur",
+                "de": "Bypass-Minimaltemperatur",
+                "no": "Bypass minimumstemperatur",
+                "sv": "Bypass minimitemperatur"
               },
               "value": 12,
               "min": 12,
@@ -534,11 +758,19 @@
               "step": 0.5,
               "units": {
                 "en": "°C",
-                "da": "°C"
+                "nl": "°C",
+                "da": "°C",
+                "de": "°C",
+                "no": "°C",
+                "sv": "°C"
               },
               "hint": {
                 "en": "Outdoor temperature below which the bypass stays closed. Requires firmware 2.70 or newer.",
-                "da": "Udetemperatur hvorunder bypass forbliver lukket. Kræver firmware 2.70 eller nyere."
+                "nl": "Buitentemperatuur waaronder de bypass gesloten blijft. Vereist firmware 2.70 of nieuwer.",
+                "da": "Udetemperatur hvorunder bypass forbliver lukket. Kræver firmware 2.70 eller nyere.",
+                "de": "Außentemperatur, unterhalb derer der Bypass geschlossen bleibt. Erfordert Firmware 2.70 oder neuer.",
+                "no": "Utetemperatur som bypassen holder seg lukket under. Krever fastvare 2.70 eller nyere.",
+                "sv": "Utetemperatur under vilken bypassen förblir stängd. Kräver fastvara 2.70 eller senare."
               }
             },
             {
@@ -546,7 +778,11 @@
               "type": "number",
               "label": {
                 "en": "Bypass maximum temperature",
-                "da": "Bypass maksimumstemperatur"
+                "nl": "Maximumtemperatuur bypass",
+                "da": "Bypass maksimumstemperatur",
+                "de": "Bypass-Maximaltemperatur",
+                "no": "Bypass maksimumstemperatur",
+                "sv": "Bypass maxtemperatur"
               },
               "value": 24,
               "min": 21,
@@ -554,11 +790,19 @@
               "step": 0.5,
               "units": {
                 "en": "°C",
-                "da": "°C"
+                "nl": "°C",
+                "da": "°C",
+                "de": "°C",
+                "no": "°C",
+                "sv": "°C"
               },
               "hint": {
                 "en": "Room temperature above which free cooling opens the bypass. Requires firmware 2.70 or newer.",
-                "da": "Rumtemperatur hvorover fri køling åbner bypass. Kræver firmware 2.70 eller nyere."
+                "nl": "Ruimtetemperatuur waarboven vrije koeling de bypass opent. Vereist firmware 2.70 of nieuwer.",
+                "da": "Rumtemperatur hvorover fri køling åbner bypass. Kræver firmware 2.70 eller nyere.",
+                "de": "Raumtemperatur, oberhalb derer die freie Kühlung den Bypass öffnet. Erfordert Firmware 2.70 oder neuer.",
+                "no": "Romtemperatur som frikjøling åpner bypassen over. Krever fastvare 2.70 eller nyere.",
+                "sv": "Rumstemperatur över vilken frikylan öppnar bypassen. Kräver fastvara 2.70 eller senare."
               }
             },
             {
@@ -566,7 +810,11 @@
               "type": "number",
               "label": {
                 "en": "Summer bypass minimum",
-                "da": "Sommer bypass minimum"
+                "nl": "Zomerbypass minimum",
+                "da": "Sommer bypass minimum",
+                "de": "Sommerbypass Minimum",
+                "no": "Sommerbypass minimum",
+                "sv": "Sommarbypass minimum"
               },
               "value": 12,
               "min": 12,
@@ -574,11 +822,19 @@
               "step": 0.5,
               "units": {
                 "en": "°C",
-                "da": "°C"
+                "nl": "°C",
+                "da": "°C",
+                "de": "°C",
+                "no": "°C",
+                "sv": "°C"
               },
               "hint": {
                 "en": "Only used in summer mode. Requires firmware 3.08 or newer.",
-                "da": "Bruges kun i sommerdrift. Kræver firmware 3.08 eller nyere."
+                "nl": "Alleen gebruikt in de zomermodus. Vereist firmware 3.08 of nieuwer.",
+                "da": "Bruges kun i sommerdrift. Kræver firmware 3.08 eller nyere.",
+                "de": "Wird nur im Sommerbetrieb verwendet. Erfordert Firmware 3.08 oder neuer.",
+                "no": "Brukes bare i sommermodus. Krever fastvare 3.08 eller nyere.",
+                "sv": "Används endast i sommarläge. Kräver fastvara 3.08 eller senare."
               }
             },
             {
@@ -586,7 +842,11 @@
               "type": "number",
               "label": {
                 "en": "Summer bypass maximum",
-                "da": "Sommer bypass maksimum"
+                "nl": "Zomerbypass maximum",
+                "da": "Sommer bypass maksimum",
+                "de": "Sommerbypass Maximum",
+                "no": "Sommerbypass maksimum",
+                "sv": "Sommarbypass maximum"
               },
               "value": 24,
               "min": 21,
@@ -594,11 +854,19 @@
               "step": 0.5,
               "units": {
                 "en": "°C",
-                "da": "°C"
+                "nl": "°C",
+                "da": "°C",
+                "de": "°C",
+                "no": "°C",
+                "sv": "°C"
               },
               "hint": {
                 "en": "Only used in summer mode. Requires firmware 3.08 or newer.",
-                "da": "Bruges kun i sommerdrift. Kræver firmware 3.08 eller nyere."
+                "nl": "Alleen gebruikt in de zomermodus. Vereist firmware 3.08 of nieuwer.",
+                "da": "Bruges kun i sommerdrift. Kræver firmware 3.08 eller nyere.",
+                "de": "Wird nur im Sommerbetrieb verwendet. Erfordert Firmware 3.08 oder neuer.",
+                "no": "Brukes bare i sommermodus. Krever fastvare 3.08 eller nyere.",
+                "sv": "Används endast i sommarläge. Kräver fastvara 3.08 eller senare."
               }
             },
             {
@@ -606,7 +874,11 @@
               "type": "number",
               "label": {
                 "en": "Manual bypass duration",
-                "da": "Manuel bypass varighed"
+                "nl": "Duur handmatige bypass",
+                "da": "Manuel bypass varighed",
+                "de": "Dauer manueller Bypass",
+                "no": "Varighet manuell bypass",
+                "sv": "Varaktighet manuell bypass"
               },
               "value": 180,
               "min": 60,
@@ -614,11 +886,19 @@
               "step": 15,
               "units": {
                 "en": "minutes",
-                "da": "minutter"
+                "nl": "minuten",
+                "da": "minutter",
+                "de": "Minuten",
+                "no": "minutter",
+                "sv": "minuter"
               },
               "hint": {
                 "en": "How long manual bypass stays selected before the unit reverts.",
-                "da": "Hvor længe manuel bypass forbliver valgt, før anlægget skifter tilbage."
+                "nl": "Hoe lang de handmatige bypass ingeschakeld blijft voordat het toestel terugschakelt.",
+                "da": "Hvor længe manuel bypass forbliver valgt, før anlægget skifter tilbage.",
+                "de": "Wie lange der manuelle Bypass aktiv bleibt, bevor das Gerät zurückschaltet.",
+                "no": "Hvor lenge manuell bypass forblir aktiv før enheten går tilbake.",
+                "sv": "Hur länge manuell bypass förblir aktiv innan enheten går tillbaka."
               }
             }
           ]
@@ -627,7 +907,11 @@
           "type": "group",
           "label": {
             "en": "Humidity and filter",
-            "da": "Fugt og filter"
+            "nl": "Luchtvochtigheid en filter",
+            "da": "Fugt og filter",
+            "de": "Feuchte und Filter",
+            "no": "Luftfuktighet og filter",
+            "sv": "Luftfuktighet och filter"
           },
           "children": [
             {
@@ -635,18 +919,30 @@
               "type": "number",
               "label": {
                 "en": "Humidity setpoint",
-                "da": "Fugtighedssætpunkt"
+                "nl": "Streefwaarde luchtvochtigheid",
+                "da": "Fugtighedssætpunkt",
+                "de": "Feuchte-Sollwert",
+                "no": "Settpunkt luftfuktighet",
+                "sv": "Börvärde luftfuktighet"
               },
               "value": 45,
               "min": 35,
               "max": 65,
               "units": {
                 "en": "%",
-                "da": "%"
+                "nl": "%",
+                "da": "%",
+                "de": "%",
+                "no": "%",
+                "sv": "%"
               },
               "hint": {
                 "en": "Humidity above which the unit increases ventilation. Requires firmware 2.70 or newer.",
-                "da": "Fugtighed hvorover anlægget øger ventilationen. Kræver firmware 2.70 eller nyere."
+                "nl": "Luchtvochtigheid waarboven het toestel meer gaat ventileren. Vereist firmware 2.70 of nieuwer.",
+                "da": "Fugtighed hvorover anlægget øger ventilationen. Kræver firmware 2.70 eller nyere.",
+                "de": "Feuchte, oberhalb derer das Gerät die Lüftung erhöht. Erfordert Firmware 2.70 oder neuer.",
+                "no": "Luftfuktighet som enheten øker ventilasjonen over. Krever fastvare 2.70 eller nyere.",
+                "sv": "Luftfuktighet över vilken enheten ökar ventilationen. Kräver fastvara 2.70 eller senare."
               }
             },
             {
@@ -654,18 +950,30 @@
               "type": "number",
               "label": {
                 "en": "Filter lifetime",
-                "da": "Filterlevetid"
+                "nl": "Filterlevensduur",
+                "da": "Filterlevetid",
+                "de": "Filterstandzeit",
+                "no": "Filterlevetid",
+                "sv": "Filterlivslängd"
               },
               "value": 180,
               "min": 0,
               "max": 360,
               "units": {
                 "en": "days",
-                "da": "dage"
+                "nl": "dagen",
+                "da": "dage",
+                "de": "Tage",
+                "no": "dager",
+                "sv": "dagar"
               },
               "hint": {
                 "en": "Days between filter changes. Reset the timer from a Flow after replacing the filter.",
-                "da": "Dage mellem filterskift. Nulstil timeren fra et Flow når filteret er skiftet."
+                "nl": "Aantal dagen tussen filterwissels. Reset de teller vanuit een Flow nadat het filter is vervangen.",
+                "da": "Dage mellem filterskift. Nulstil timeren fra et Flow når filteret er skiftet.",
+                "de": "Tage zwischen Filterwechseln. Den Zähler nach dem Filterwechsel über einen Flow zurücksetzen.",
+                "no": "Antall dager mellom filterskift. Nullstill telleren fra en Flow etter at filteret er byttet.",
+                "sv": "Antal dagar mellan filterbyten. Nollställ räknaren från ett Flow efter filterbytet."
               }
             }
           ]
@@ -674,7 +982,11 @@
           "type": "group",
           "label": {
             "en": "Airflow and power (from your commissioning report)",
-            "da": "Luftmængde og effekt (fra din indreguleringsrapport)"
+            "nl": "Luchtdebiet en vermogen (uit uw inregelrapport)",
+            "da": "Luftmængde og effekt (fra din indreguleringsrapport)",
+            "de": "Volumenstrom und Leistung (aus Ihrem Einregulierungsprotokoll)",
+            "no": "Luftmengde og effekt (fra innreguleringsrapporten)",
+            "sv": "Luftflöde och effekt (från din injusteringsrapport)"
           },
           "children": [
             {
@@ -682,12 +994,20 @@
               "type": "checkbox",
               "label": {
                 "en": "Estimate airflow and power",
-                "da": "Estimér luftmængde og effekt"
+                "nl": "Luchtdebiet en vermogen schatten",
+                "da": "Estimér luftmængde og effekt",
+                "de": "Volumenstrom und Leistung schätzen",
+                "no": "Estimer luftmengde og effekt",
+                "sv": "Uppskatta luftflöde och effekt"
               },
               "value": false,
               "hint": {
                 "en": "The unit measures fan speed, not volume or power. Copy the six figures from the table on your commissioning report and the app works out both. Airflow needs the Standard row; power needs any two rows. Leave this off if you do not have the report — the figures differ for every installation.",
-                "da": "Anlægget måler omdrejninger, ikke volumen eller effekt. Skriv de seks tal af fra tabellen i din indreguleringsrapport, så regner appen begge dele ud. Luftmængde kræver Standard-rækken; effekt kræver to vilkårlige rækker. Lad den være slået fra hvis du ikke har rapporten — tallene er forskellige for hver installation."
+                "nl": "Het toestel meet het toerental, niet het debiet of het vermogen. Neem de zes getallen over uit de tabel op uw inregelrapport, dan rekent de app beide uit. Het luchtdebiet heeft de rij Standaard nodig; het vermogen twee willekeurige rijen. Laat dit uit staan als u het rapport niet hebt — de getallen verschillen per installatie.",
+                "da": "Anlægget måler omdrejninger, ikke volumen eller effekt. Skriv de seks tal af fra tabellen i din indreguleringsrapport, så regner appen begge dele ud. Luftmængde kræver Standard-rækken; effekt kræver to vilkårlige rækker. Lad den være slået fra hvis du ikke har rapporten — tallene er forskellige for hver installation.",
+                "de": "Das Gerät misst die Drehzahl, nicht den Volumenstrom oder die Leistung. Übertragen Sie die sechs Werte aus der Tabelle Ihres Einregulierungsprotokolls, dann berechnet die App beides. Der Volumenstrom benötigt die Zeile Standard, die Leistung zwei beliebige Zeilen. Lassen Sie dies aus, wenn Ihnen das Protokoll fehlt — die Werte unterscheiden sich je Anlage.",
+                "no": "Enheten måler turtall, ikke luftmengde eller effekt. Skriv av de seks tallene fra tabellen i innreguleringsrapporten, så regner appen ut begge deler. Luftmengden krever Standard-raden; effekten krever to vilkårlige rader. La den stå av hvis du ikke har rapporten — tallene er forskjellige for hvert anlegg.",
+                "sv": "Enheten mäter varvtal, inte luftflöde eller effekt. Skriv av de sex talen från tabellen i din injusteringsrapport, så räknar appen ut båda. Luftflödet kräver raden Standard; effekten kräver två godtyckliga rader. Lämna detta avstängt om du inte har rapporten — talen skiljer sig åt för varje anläggning."
               }
             },
             {
@@ -695,14 +1015,22 @@
               "type": "number",
               "label": {
                 "en": "Minimum · airflow",
-                "da": "Minimum · luftmængde"
+                "nl": "Minimum · luchtdebiet",
+                "da": "Minimum · luftmængde",
+                "de": "Minimum · Volumenstrom",
+                "no": "Minimum · luftmengde",
+                "sv": "Minimum · luftflöde"
               },
               "value": 0,
               "min": 0,
               "max": 2000,
               "units": {
                 "en": "m³/h",
-                "da": "m³/h"
+                "nl": "m³/h",
+                "da": "m³/h",
+                "de": "m³/h",
+                "no": "m³/h",
+                "sv": "m³/h"
               }
             },
             {
@@ -710,18 +1038,30 @@
               "type": "number",
               "label": {
                 "en": "Minimum · power",
-                "da": "Minimum · effekt"
+                "nl": "Minimum · vermogen",
+                "da": "Minimum · effekt",
+                "de": "Minimum · Leistung",
+                "no": "Minimum · effekt",
+                "sv": "Minimum · effekt"
               },
               "value": 0,
               "min": 0,
               "max": 3000,
               "units": {
                 "en": "W",
-                "da": "W"
+                "nl": "W",
+                "da": "W",
+                "de": "W",
+                "no": "W",
+                "sv": "W"
               },
               "hint": {
                 "en": "Two rows of watts are what let the app separate the standing draw from the fan power. With only one, no power is shown.",
-                "da": "To watt-rækker er det der lader appen skille grundforbruget fra ventilatoreffekten. Med kun én vises ingen effekt."
+                "nl": "Met twee rijen watt kan de app het rustverbruik scheiden van het ventilatorvermogen. Met één rij wordt geen vermogen getoond.",
+                "da": "To watt-rækker er det der lader appen skille grundforbruget fra ventilatoreffekten. Med kun én vises ingen effekt.",
+                "de": "Erst zwei Wattzeilen erlauben es der App, die Grundlast von der Ventilatorleistung zu trennen. Mit nur einer wird keine Leistung angezeigt.",
+                "no": "To watt-rader er det som lar appen skille grunnforbruket fra vifteeffekten. Med bare én vises ingen effekt.",
+                "sv": "Två watt-rader är det som låter appen skilja grundförbrukningen från fläkteffekten. Med bara en visas ingen effekt."
               }
             },
             {
@@ -729,18 +1069,30 @@
               "type": "number",
               "label": {
                 "en": "Standard · airflow",
-                "da": "Standard · luftmængde"
+                "nl": "Standaard · luchtdebiet",
+                "da": "Standard · luftmængde",
+                "de": "Standard · Volumenstrom",
+                "no": "Standard · luftmengde",
+                "sv": "Standard · luftflöde"
               },
               "value": 0,
               "min": 0,
               "max": 2000,
               "units": {
                 "en": "m³/h",
-                "da": "m³/h"
+                "nl": "m³/h",
+                "da": "m³/h",
+                "de": "m³/h",
+                "no": "m³/h",
+                "sv": "m³/h"
               },
               "hint": {
                 "en": "The airflow reading is anchored to this one figure. Without it no flow is shown.",
-                "da": "Luftmængden forankres til netop dette tal. Uden det vises ingen luftmængde."
+                "nl": "Het luchtdebiet wordt aan dit ene getal verankerd. Zonder dit getal wordt geen debiet getoond.",
+                "da": "Luftmængden forankres til netop dette tal. Uden det vises ingen luftmængde.",
+                "de": "Der Volumenstrom wird an diesem einen Wert verankert. Ohne ihn wird kein Volumenstrom angezeigt.",
+                "no": "Luftmengden forankres til nettopp dette tallet. Uten det vises ingen luftmengde.",
+                "sv": "Luftflödet förankras till just detta tal. Utan det visas inget flöde."
               }
             },
             {
@@ -748,14 +1100,22 @@
               "type": "number",
               "label": {
                 "en": "Standard · power",
-                "da": "Standard · effekt"
+                "nl": "Standaard · vermogen",
+                "da": "Standard · effekt",
+                "de": "Standard · Leistung",
+                "no": "Standard · effekt",
+                "sv": "Standard · effekt"
               },
               "value": 0,
               "min": 0,
               "max": 3000,
               "units": {
                 "en": "W",
-                "da": "W"
+                "nl": "W",
+                "da": "W",
+                "de": "W",
+                "no": "W",
+                "sv": "W"
               }
             },
             {
@@ -763,14 +1123,22 @@
               "type": "number",
               "label": {
                 "en": "Forced · airflow",
-                "da": "Forceret · luftmængde"
+                "nl": "Hoogstand · luchtdebiet",
+                "da": "Forceret · luftmængde",
+                "de": "Intensiv · Volumenstrom",
+                "no": "Forsert · luftmengde",
+                "sv": "Forcerat · luftflöde"
               },
               "value": 0,
               "min": 0,
               "max": 2000,
               "units": {
                 "en": "m³/h",
-                "da": "m³/h"
+                "nl": "m³/h",
+                "da": "m³/h",
+                "de": "m³/h",
+                "no": "m³/h",
+                "sv": "m³/h"
               }
             },
             {
@@ -778,14 +1146,22 @@
               "type": "number",
               "label": {
                 "en": "Forced · power",
-                "da": "Forceret · effekt"
+                "nl": "Hoogstand · vermogen",
+                "da": "Forceret · effekt",
+                "de": "Intensiv · Leistung",
+                "no": "Forsert · effekt",
+                "sv": "Forcerat · effekt"
               },
               "value": 0,
               "min": 0,
               "max": 3000,
               "units": {
                 "en": "W",
-                "da": "W"
+                "nl": "W",
+                "da": "W",
+                "de": "W",
+                "no": "W",
+                "sv": "W"
               }
             }
           ]
@@ -794,7 +1170,11 @@
           "type": "group",
           "label": {
             "en": "Night mode",
-            "da": "Natsænkning"
+            "nl": "Nachtmodus",
+            "da": "Natsænkning",
+            "de": "Nachtmodus",
+            "no": "Nattmodus",
+            "sv": "Nattläge"
           },
           "children": [
             {
@@ -802,7 +1182,11 @@
               "type": "number",
               "label": {
                 "en": "Start hour",
-                "da": "Starttime"
+                "nl": "Beginuur",
+                "da": "Starttime",
+                "de": "Startstunde",
+                "no": "Starttime",
+                "sv": "Starttimme"
               },
               "value": 22,
               "min": 0,
@@ -813,7 +1197,11 @@
               "type": "number",
               "label": {
                 "en": "Start minute",
-                "da": "Startminut"
+                "nl": "Beginminuut",
+                "da": "Startminut",
+                "de": "Startminute",
+                "no": "Startminutt",
+                "sv": "Startminut"
               },
               "value": 0,
               "min": 0,
@@ -824,7 +1212,11 @@
               "type": "number",
               "label": {
                 "en": "End hour",
-                "da": "Sluttime"
+                "nl": "Einduur",
+                "da": "Sluttime",
+                "de": "Endstunde",
+                "no": "Sluttime",
+                "sv": "Sluttimme"
               },
               "value": 6,
               "min": 0,
@@ -835,7 +1227,11 @@
               "type": "number",
               "label": {
                 "en": "End minute",
-                "da": "Slutminut"
+                "nl": "Eindminuut",
+                "da": "Slutminut",
+                "de": "Endminute",
+                "no": "Sluttminutt",
+                "sv": "Slutminut"
               },
               "value": 0,
               "min": 0,
@@ -851,7 +1247,11 @@
       "id": "status",
       "name": {
         "en": "Ventilation status",
-        "da": "Ventilationsstatus"
+        "nl": "Ventilatiestatus",
+        "da": "Ventilationsstatus",
+        "de": "Lüftungsstatus",
+        "no": "Ventilasjonsstatus",
+        "sv": "Ventilationsstatus"
       },
       "height": 424,
       "transparent": false,
@@ -865,12 +1265,20 @@
           "type": "checkbox",
           "title": {
             "en": "Show heat recovery efficiency",
-            "da": "Vis genvindingsgrad"
+            "nl": "Rendement warmteterugwinning tonen",
+            "da": "Vis genvindingsgrad",
+            "de": "Wärmerückgewinnungsgrad anzeigen",
+            "no": "Vis virkningsgrad for varmegjenvinning",
+            "sv": "Visa verkningsgrad för värmeåtervinning"
           },
           "value": true,
           "hint": {
             "en": "Calculated from the supply, extract and outdoor temperatures. Not shown while the bypass is open, since the exchanger is bypassed then.",
-            "da": "Beregnes ud fra tilluft, fraluft og udeluft. Vises ikke mens bypass er åben, da veksleren er koblet fra."
+            "nl": "Berekend uit de toevoer-, afvoer- en buitentemperatuur. Wordt niet getoond zolang de bypass open staat, omdat de wisselaar dan wordt omzeild.",
+            "da": "Beregnes ud fra tilluft, fraluft og udeluft. Vises ikke mens bypass er åben, da veksleren er koblet fra.",
+            "de": "Berechnet aus Zuluft-, Abluft- und Außentemperatur. Wird nicht angezeigt, solange der Bypass offen ist, da der Wärmetauscher dann umgangen wird.",
+            "no": "Beregnet ut fra tilluft-, avtrekks- og utetemperaturen. Vises ikke mens bypassen er åpen, siden veksleren da er utenfor kretsen.",
+            "sv": "Beräknas utifrån tillufts-, frånlufts- och utetemperaturen. Visas inte medan bypassen är öppen, eftersom växlaren då förbikopplas."
           }
         },
         {
@@ -878,7 +1286,11 @@
           "type": "checkbox",
           "title": {
             "en": "Allow changing the fan level",
-            "da": "Tillad ændring af ventilationstrin"
+            "nl": "Ventilatiestand mogen wijzigen",
+            "da": "Tillad ændring af ventilationstrin",
+            "de": "Ändern der Lüfterstufe erlauben",
+            "no": "Tillat endring av viftetrinn",
+            "sv": "Tillåt ändring av fläktsteg"
           },
           "value": true
         },
@@ -887,14 +1299,22 @@
           "type": "number",
           "title": {
             "en": "Refresh interval",
-            "da": "Opdateringsinterval"
+            "nl": "Verversingsinterval",
+            "da": "Opdateringsinterval",
+            "de": "Aktualisierungsintervall",
+            "no": "Oppdateringsintervall",
+            "sv": "Uppdateringsintervall"
           },
           "value": 15,
           "min": 5,
           "max": 120,
           "units": {
             "en": "seconds",
-            "da": "sekunder"
+            "nl": "seconden",
+            "da": "sekunder",
+            "de": "Sekunden",
+            "no": "sekunder",
+            "sv": "sekunder"
           }
         }
       ],
@@ -921,7 +1341,11 @@
       "id": "compact",
       "name": {
         "en": "Ventilation compact",
-        "da": "Ventilation kompakt"
+        "nl": "Ventilatie compact",
+        "da": "Ventilation kompakt",
+        "de": "Lüftung kompakt",
+        "no": "Ventilasjon kompakt",
+        "sv": "Ventilation kompakt"
       },
       "height": 232,
       "transparent": false,
@@ -935,7 +1359,11 @@
           "type": "checkbox",
           "title": {
             "en": "Allow changing the fan level",
-            "da": "Tillad ændring af ventilationstrin"
+            "nl": "Ventilatiestand mogen wijzigen",
+            "da": "Tillad ændring af ventilationstrin",
+            "de": "Ändern der Lüfterstufe erlauben",
+            "no": "Tillat endring av viftetrinn",
+            "sv": "Tillåt ändring av fläktsteg"
           },
           "value": true
         },
@@ -944,14 +1372,22 @@
           "type": "number",
           "title": {
             "en": "Refresh interval",
-            "da": "Opdateringsinterval"
+            "nl": "Verversingsinterval",
+            "da": "Opdateringsinterval",
+            "de": "Aktualisierungsintervall",
+            "no": "Oppdateringsintervall",
+            "sv": "Uppdateringsintervall"
           },
           "value": 15,
           "min": 5,
           "max": 120,
           "units": {
             "en": "seconds",
-            "da": "sekunder"
+            "nl": "seconden",
+            "da": "sekunder",
+            "de": "Sekunden",
+            "no": "sekunder",
+            "sv": "sekunder"
           }
         }
       ],
@@ -977,7 +1413,11 @@
         "id": "bypass_changed",
         "title": {
           "en": "Bypass damper changed",
-          "da": "Bypass-spjæld ændret"
+          "nl": "Bypassklep gewijzigd",
+          "da": "Bypass-spjæld ændret",
+          "de": "Bypassklappe geändert",
+          "no": "Bypasspjeld endret",
+          "sv": "Bypasspjäll ändrat"
         },
         "args": [
           {
@@ -992,7 +1432,11 @@
             "type": "string",
             "title": {
               "en": "State",
-              "da": "Tilstand"
+              "nl": "Status",
+              "da": "Tilstand",
+              "de": "Zustand",
+              "no": "Tilstand",
+              "sv": "Tillstånd"
             }
           }
         ]
@@ -1001,7 +1445,11 @@
         "id": "alarm_raised",
         "title": {
           "en": "An alarm occurred",
-          "da": "Der opstod en alarm"
+          "nl": "Er is een alarm opgetreden",
+          "da": "Der opstod en alarm",
+          "de": "Ein Alarm ist aufgetreten",
+          "no": "Det oppsto en alarm",
+          "sv": "Ett larm inträffade"
         },
         "args": [
           {
@@ -1016,7 +1464,11 @@
             "type": "number",
             "title": {
               "en": "Alarm code",
-              "da": "Alarmkode"
+              "nl": "Alarmcode",
+              "da": "Alarmkode",
+              "de": "Alarmcode",
+              "no": "Alarmkode",
+              "sv": "Larmkod"
             }
           }
         ]
@@ -1025,7 +1477,11 @@
         "id": "filter_needs_replacement",
         "title": {
           "en": "Filter needs replacement",
-          "da": "Filter skal skiftes"
+          "nl": "Filter moet vervangen worden",
+          "da": "Filter skal skiftes",
+          "de": "Filter muss gewechselt werden",
+          "no": "Filteret må byttes",
+          "sv": "Filtret behöver bytas"
         },
         "args": [
           {
@@ -1039,7 +1495,11 @@
         "id": "mode_changed",
         "title": {
           "en": "Operating mode changed",
-          "da": "Driftstilstand ændret"
+          "nl": "Bedrijfsmodus gewijzigd",
+          "da": "Driftstilstand ændret",
+          "de": "Betriebsart geändert",
+          "no": "Driftsmodus endret",
+          "sv": "Driftläge ändrat"
         },
         "args": [
           {
@@ -1054,7 +1514,11 @@
             "type": "string",
             "title": {
               "en": "Mode",
-              "da": "Tilstand"
+              "nl": "Modus",
+              "da": "Tilstand",
+              "de": "Betriebsart",
+              "no": "Modus",
+              "sv": "Läge"
             }
           }
         ]
@@ -1063,7 +1527,11 @@
         "id": "fan_level_changed",
         "title": {
           "en": "Fan level changed",
-          "da": "Ventilationstrin ændret"
+          "nl": "Ventilatiestand gewijzigd",
+          "da": "Ventilationstrin ændret",
+          "de": "Lüfterstufe geändert",
+          "no": "Viftetrinn endret",
+          "sv": "Fläktsteg ändrat"
         },
         "args": [
           {
@@ -1078,7 +1546,11 @@
             "type": "number",
             "title": {
               "en": "Level",
-              "da": "Trin"
+              "nl": "Stand",
+              "da": "Trin",
+              "de": "Stufe",
+              "no": "Trinn",
+              "sv": "Steg"
             }
           }
         ]
@@ -1089,11 +1561,19 @@
         "id": "mode_is",
         "title": {
           "en": "Operating mode !{{is|is not}}",
-          "da": "Driftstilstand !{{er|er ikke}}"
+          "nl": "Bedrijfsmodus !{{is|is niet}}",
+          "da": "Driftstilstand !{{er|er ikke}}",
+          "de": "Betriebsart !{{ist|ist nicht}}",
+          "no": "Driftsmodus !{{er|er ikke}}",
+          "sv": "Driftläge !{{är|är inte}}"
         },
         "titleFormatted": {
           "en": "Operating mode !{{is|is not}} [[mode]]",
-          "da": "Driftstilstand !{{er|er ikke}} [[mode]]"
+          "nl": "Bedrijfsmodus !{{is|is niet}} [[mode]]",
+          "da": "Driftstilstand !{{er|er ikke}} [[mode]]",
+          "de": "Betriebsart !{{ist|ist nicht}} [[mode]]",
+          "no": "Driftsmodus !{{er|er ikke}} [[mode]]",
+          "sv": "Driftläge !{{är|är inte}} [[mode]]"
         },
         "args": [
           {
@@ -1109,56 +1589,88 @@
                 "id": "standby",
                 "title": {
                   "en": "Standby",
-                  "da": "Standby"
+                  "nl": "Stand-by",
+                  "da": "Standby",
+                  "de": "Standby",
+                  "no": "Standby",
+                  "sv": "Standby"
                 }
               },
               {
                 "id": "automatic",
                 "title": {
                   "en": "Automatic",
-                  "da": "Automatisk"
+                  "nl": "Automatisch",
+                  "da": "Automatisk",
+                  "de": "Automatik",
+                  "no": "Automatisk",
+                  "sv": "Automatiskt"
                 }
               },
               {
                 "id": "manual",
                 "title": {
                   "en": "Manual",
-                  "da": "Manuel"
+                  "nl": "Handmatig",
+                  "da": "Manuel",
+                  "de": "Manuell",
+                  "no": "Manuell",
+                  "sv": "Manuellt"
                 }
               },
               {
                 "id": "week_program",
                 "title": {
                   "en": "Week program",
-                  "da": "Ugeprogram"
+                  "nl": "Weekprogramma",
+                  "da": "Ugeprogram",
+                  "de": "Wochenprogramm",
+                  "no": "Ukeprogram",
+                  "sv": "Veckoprogram"
                 }
               },
               {
                 "id": "away",
                 "title": {
                   "en": "Away",
-                  "da": "Ferie"
+                  "nl": "Afwezig",
+                  "da": "Ferie",
+                  "de": "Abwesend",
+                  "no": "Borte",
+                  "sv": "Borta"
                 }
               },
               {
                 "id": "summer",
                 "title": {
                   "en": "Summer",
-                  "da": "Sommer"
+                  "nl": "Zomer",
+                  "da": "Sommer",
+                  "de": "Sommer",
+                  "no": "Sommer",
+                  "sv": "Sommar"
                 }
               },
               {
                 "id": "fireplace",
                 "title": {
                   "en": "Fireplace",
-                  "da": "Pejs"
+                  "nl": "Openhaard",
+                  "da": "Pejs",
+                  "de": "Kamin",
+                  "no": "Peis",
+                  "sv": "Braskamin"
                 }
               },
               {
                 "id": "night",
                 "title": {
                   "en": "Night",
-                  "da": "Natsænkning"
+                  "nl": "Nacht",
+                  "da": "Natsænkning",
+                  "de": "Nacht",
+                  "no": "Natt",
+                  "sv": "Natt"
                 }
               }
             ]
@@ -1169,7 +1681,11 @@
         "id": "bypass_is_open",
         "title": {
           "en": "Bypass !{{is|is not}} open",
-          "da": "Bypass !{{er|er ikke}} åben"
+          "nl": "Bypass !{{is|is niet}} open",
+          "da": "Bypass !{{er|er ikke}} åben",
+          "de": "Bypass !{{ist|ist nicht}} offen",
+          "no": "Bypass !{{er|er ikke}} åpen",
+          "sv": "Bypass !{{är|är inte}} öppen"
         },
         "args": [
           {
@@ -1183,11 +1699,19 @@
         "id": "fan_level_is",
         "title": {
           "en": "Fan level !{{is|is not}}",
-          "da": "Ventilationstrin !{{er|er ikke}}"
+          "nl": "Ventilatiestand !{{is|is niet}}",
+          "da": "Ventilationstrin !{{er|er ikke}}",
+          "de": "Lüfterstufe !{{ist|ist nicht}}",
+          "no": "Viftetrinn !{{er|er ikke}}",
+          "sv": "Fläktsteg !{{är|är inte}}"
         },
         "titleFormatted": {
           "en": "Fan level !{{is|is not}} [[level]]",
-          "da": "Ventilationstrin !{{er|er ikke}} [[level]]"
+          "nl": "Ventilatiestand !{{is|is niet}} [[level]]",
+          "da": "Ventilationstrin !{{er|er ikke}} [[level]]",
+          "de": "Lüfterstufe !{{ist|ist nicht}} [[level]]",
+          "no": "Viftetrinn !{{er|er ikke}} [[level]]",
+          "sv": "Fläktsteg !{{är|är inte}} [[level]]"
         },
         "args": [
           {
@@ -1203,35 +1727,55 @@
                 "id": "0",
                 "title": {
                   "en": "Off",
-                  "da": "Slukket"
+                  "nl": "Uit",
+                  "da": "Slukket",
+                  "de": "Aus",
+                  "no": "Av",
+                  "sv": "Av"
                 }
               },
               {
                 "id": "1",
                 "title": {
                   "en": "Level 1",
-                  "da": "Trin 1"
+                  "nl": "Stand 1",
+                  "da": "Trin 1",
+                  "de": "Stufe 1",
+                  "no": "Trinn 1",
+                  "sv": "Steg 1"
                 }
               },
               {
                 "id": "2",
                 "title": {
                   "en": "Level 2",
-                  "da": "Trin 2"
+                  "nl": "Stand 2",
+                  "da": "Trin 2",
+                  "de": "Stufe 2",
+                  "no": "Trinn 2",
+                  "sv": "Steg 2"
                 }
               },
               {
                 "id": "3",
                 "title": {
                   "en": "Level 3",
-                  "da": "Trin 3"
+                  "nl": "Stand 3",
+                  "da": "Trin 3",
+                  "de": "Stufe 3",
+                  "no": "Trinn 3",
+                  "sv": "Steg 3"
                 }
               },
               {
                 "id": "4",
                 "title": {
                   "en": "Level 4",
-                  "da": "Trin 4"
+                  "nl": "Stand 4",
+                  "da": "Trin 4",
+                  "de": "Stufe 4",
+                  "no": "Trinn 4",
+                  "sv": "Steg 4"
                 }
               }
             ]
@@ -1242,11 +1786,19 @@
         "id": "filter_days_below",
         "title": {
           "en": "Filter days remaining !{{is|is not}} below",
-          "da": "Filterdage tilbage !{{er|er ikke}} under"
+          "nl": "Resterende filterdagen !{{is|is niet}} minder dan",
+          "da": "Filterdage tilbage !{{er|er ikke}} under",
+          "de": "Filter-Resttage !{{sind|sind nicht}} unter",
+          "no": "Gjenstående filterdager !{{er|er ikke}} under",
+          "sv": "Återstående filterdagar !{{är|är inte}} under"
         },
         "titleFormatted": {
           "en": "Filter days remaining !{{is|is not}} below [[days]]",
-          "da": "Filterdage tilbage !{{er|er ikke}} under [[days]]"
+          "nl": "Resterende filterdagen !{{is|is niet}} minder dan [[days]]",
+          "da": "Filterdage tilbage !{{er|er ikke}} under [[days]]",
+          "de": "Filter-Resttage !{{sind|sind nicht}} unter [[days]]",
+          "no": "Gjenstående filterdager !{{er|er ikke}} under [[days]]",
+          "sv": "Återstående filterdagar !{{är|är inte}} under [[days]]"
         },
         "args": [
           {
@@ -1262,7 +1814,11 @@
             "step": 1,
             "placeholder": {
               "en": "14",
-              "da": "14"
+              "nl": "14",
+              "da": "14",
+              "de": "14",
+              "no": "14",
+              "sv": "14"
             }
           }
         ]
@@ -1273,11 +1829,19 @@
         "id": "set_mode",
         "title": {
           "en": "Set operating mode",
-          "da": "Sæt driftstilstand"
+          "nl": "Bedrijfsmodus instellen",
+          "da": "Sæt driftstilstand",
+          "de": "Betriebsart einstellen",
+          "no": "Sett driftsmodus",
+          "sv": "Ställ in driftläge"
         },
         "titleFormatted": {
           "en": "Set operating mode to [[mode]]",
-          "da": "Sæt driftstilstand til [[mode]]"
+          "nl": "Bedrijfsmodus instellen op [[mode]]",
+          "da": "Sæt driftstilstand til [[mode]]",
+          "de": "Betriebsart auf [[mode]] einstellen",
+          "no": "Sett driftsmodus til [[mode]]",
+          "sv": "Ställ in driftläge till [[mode]]"
         },
         "args": [
           {
@@ -1293,49 +1857,77 @@
                 "id": "standby",
                 "title": {
                   "en": "Standby",
-                  "da": "Standby"
+                  "nl": "Stand-by",
+                  "da": "Standby",
+                  "de": "Standby",
+                  "no": "Standby",
+                  "sv": "Standby"
                 }
               },
               {
                 "id": "automatic",
                 "title": {
                   "en": "Automatic",
-                  "da": "Automatisk"
+                  "nl": "Automatisch",
+                  "da": "Automatisk",
+                  "de": "Automatik",
+                  "no": "Automatisk",
+                  "sv": "Automatiskt"
                 }
               },
               {
                 "id": "manual",
                 "title": {
                   "en": "Manual",
-                  "da": "Manuel"
+                  "nl": "Handmatig",
+                  "da": "Manuel",
+                  "de": "Manuell",
+                  "no": "Manuell",
+                  "sv": "Manuellt"
                 }
               },
               {
                 "id": "week_program",
                 "title": {
                   "en": "Week program",
-                  "da": "Ugeprogram"
+                  "nl": "Weekprogramma",
+                  "da": "Ugeprogram",
+                  "de": "Wochenprogramm",
+                  "no": "Ukeprogram",
+                  "sv": "Veckoprogram"
                 }
               },
               {
                 "id": "away",
                 "title": {
                   "en": "Away",
-                  "da": "Ferie"
+                  "nl": "Afwezig",
+                  "da": "Ferie",
+                  "de": "Abwesend",
+                  "no": "Borte",
+                  "sv": "Borta"
                 }
               },
               {
                 "id": "summer",
                 "title": {
                   "en": "Summer",
-                  "da": "Sommer"
+                  "nl": "Zomer",
+                  "da": "Sommer",
+                  "de": "Sommer",
+                  "no": "Sommer",
+                  "sv": "Sommar"
                 }
               },
               {
                 "id": "fireplace",
                 "title": {
                   "en": "Fireplace",
-                  "da": "Pejs"
+                  "nl": "Openhaard",
+                  "da": "Pejs",
+                  "de": "Kamin",
+                  "no": "Peis",
+                  "sv": "Braskamin"
                 }
               }
             ]
@@ -1346,11 +1938,19 @@
         "id": "set_fan_level",
         "title": {
           "en": "Set fan level",
-          "da": "Sæt ventilationstrin"
+          "nl": "Ventilatiestand instellen",
+          "da": "Sæt ventilationstrin",
+          "de": "Lüfterstufe einstellen",
+          "no": "Sett viftetrinn",
+          "sv": "Ställ in fläktsteg"
         },
         "titleFormatted": {
           "en": "Set fan level to [[level]]",
-          "da": "Sæt ventilationstrin til [[level]]"
+          "nl": "Ventilatiestand instellen op [[level]]",
+          "da": "Sæt ventilationstrin til [[level]]",
+          "de": "Lüfterstufe auf [[level]] einstellen",
+          "no": "Sett viftetrinn til [[level]]",
+          "sv": "Ställ in fläktsteg till [[level]]"
         },
         "args": [
           {
@@ -1366,35 +1966,55 @@
                 "id": "0",
                 "title": {
                   "en": "Off",
-                  "da": "Slukket"
+                  "nl": "Uit",
+                  "da": "Slukket",
+                  "de": "Aus",
+                  "no": "Av",
+                  "sv": "Av"
                 }
               },
               {
                 "id": "1",
                 "title": {
                   "en": "Level 1",
-                  "da": "Trin 1"
+                  "nl": "Stand 1",
+                  "da": "Trin 1",
+                  "de": "Stufe 1",
+                  "no": "Trinn 1",
+                  "sv": "Steg 1"
                 }
               },
               {
                 "id": "2",
                 "title": {
                   "en": "Level 2",
-                  "da": "Trin 2"
+                  "nl": "Stand 2",
+                  "da": "Trin 2",
+                  "de": "Stufe 2",
+                  "no": "Trinn 2",
+                  "sv": "Steg 2"
                 }
               },
               {
                 "id": "3",
                 "title": {
                   "en": "Level 3",
-                  "da": "Trin 3"
+                  "nl": "Stand 3",
+                  "da": "Trin 3",
+                  "de": "Stufe 3",
+                  "no": "Trinn 3",
+                  "sv": "Steg 3"
                 }
               },
               {
                 "id": "4",
                 "title": {
                   "en": "Level 4",
-                  "da": "Trin 4"
+                  "nl": "Stand 4",
+                  "da": "Trin 4",
+                  "de": "Stufe 4",
+                  "no": "Trinn 4",
+                  "sv": "Steg 4"
                 }
               }
             ]
@@ -1405,11 +2025,19 @@
         "id": "set_bypass",
         "title": {
           "en": "Set manual bypass",
-          "da": "Sæt manuel bypass"
+          "nl": "Handmatige bypass instellen",
+          "da": "Sæt manuel bypass",
+          "de": "Manuellen Bypass einstellen",
+          "no": "Sett manuell bypass",
+          "sv": "Ställ in manuell bypass"
         },
         "titleFormatted": {
           "en": "[[state]] manual bypass",
-          "da": "[[state]] manuel bypass"
+          "nl": "[[state]] handmatige bypass",
+          "da": "[[state]] manuel bypass",
+          "de": "Manuellen Bypass [[state]]",
+          "no": "[[state]] manuell bypass",
+          "sv": "[[state]] manuell bypass"
         },
         "args": [
           {
@@ -1425,14 +2053,22 @@
                 "id": "on",
                 "title": {
                   "en": "Select",
-                  "da": "Vælg"
+                  "nl": "Inschakelen",
+                  "da": "Vælg",
+                  "de": "aktivieren",
+                  "no": "Aktiver",
+                  "sv": "Aktivera"
                 }
               },
               {
                 "id": "off",
                 "title": {
                   "en": "Deselect",
-                  "da": "Fravælg"
+                  "nl": "Uitschakelen",
+                  "da": "Fravælg",
+                  "de": "deaktivieren",
+                  "no": "Deaktiver",
+                  "sv": "Inaktivera"
                 }
               }
             ]
@@ -1443,7 +2079,11 @@
         "id": "reset_filter",
         "title": {
           "en": "Reset filter timer",
-          "da": "Nulstil filtertimer"
+          "nl": "Filterteller resetten",
+          "da": "Nulstil filtertimer",
+          "de": "Filterzähler zurücksetzen",
+          "no": "Nullstill filterteller",
+          "sv": "Nollställ filterräknare"
         },
         "args": [
           {
@@ -1457,7 +2097,11 @@
         "id": "reset_alarm",
         "title": {
           "en": "Reset alarm",
-          "da": "Nulstil alarm"
+          "nl": "Alarm resetten",
+          "da": "Nulstil alarm",
+          "de": "Alarm zurücksetzen",
+          "no": "Nullstill alarm",
+          "sv": "Återställ larm"
         },
         "args": [
           {
@@ -1471,11 +2115,19 @@
         "id": "set_away_mode",
         "title": {
           "en": "Away mode",
-          "da": "Ferietilstand"
+          "nl": "Afwezigheidsmodus",
+          "da": "Ferietilstand",
+          "de": "Abwesenheitsmodus",
+          "no": "Feriemodus",
+          "sv": "Bortaläge"
         },
         "titleFormatted": {
           "en": "Turn away mode [[state]]",
-          "da": "Sæt ferietilstand [[state]]"
+          "nl": "Schakel afwezigheidsmodus [[state]]",
+          "da": "Sæt ferietilstand [[state]]",
+          "de": "Abwesenheitsmodus [[state]]",
+          "no": "Slå feriemodus [[state]]",
+          "sv": "Slå bortaläge [[state]]"
         },
         "args": [
           {
@@ -1491,14 +2143,22 @@
                 "id": "on",
                 "title": {
                   "en": "on",
-                  "da": "til"
+                  "nl": "aan",
+                  "da": "til",
+                  "de": "einschalten",
+                  "no": "på",
+                  "sv": "på"
                 }
               },
               {
                 "id": "off",
                 "title": {
                   "en": "off",
-                  "da": "fra"
+                  "nl": "uit",
+                  "da": "fra",
+                  "de": "ausschalten",
+                  "no": "av",
+                  "sv": "av"
                 }
               }
             ]
@@ -1509,11 +2169,19 @@
         "id": "set_night_mode",
         "title": {
           "en": "Night mode",
-          "da": "Natsænkning"
+          "nl": "Nachtmodus",
+          "da": "Natsænkning",
+          "de": "Nachtmodus",
+          "no": "Nattmodus",
+          "sv": "Nattläge"
         },
         "titleFormatted": {
           "en": "Turn night mode [[state]]",
-          "da": "Sæt natsænkning [[state]]"
+          "nl": "Schakel nachtmodus [[state]]",
+          "da": "Sæt natsænkning [[state]]",
+          "de": "Nachtmodus [[state]]",
+          "no": "Slå nattmodus [[state]]",
+          "sv": "Slå nattläge [[state]]"
         },
         "args": [
           {
@@ -1529,14 +2197,22 @@
                 "id": "on",
                 "title": {
                   "en": "on",
-                  "da": "til"
+                  "nl": "aan",
+                  "da": "til",
+                  "de": "einschalten",
+                  "no": "på",
+                  "sv": "på"
                 }
               },
               {
                 "id": "off",
                 "title": {
                   "en": "off",
-                  "da": "fra"
+                  "nl": "uit",
+                  "da": "fra",
+                  "de": "ausschalten",
+                  "no": "av",
+                  "sv": "av"
                 }
               }
             ]
@@ -1547,11 +2223,19 @@
         "id": "set_week_program",
         "title": {
           "en": "Select week program",
-          "da": "Vælg ugeprogram"
+          "nl": "Weekprogramma kiezen",
+          "da": "Vælg ugeprogram",
+          "de": "Wochenprogramm wählen",
+          "no": "Velg ukeprogram",
+          "sv": "Välj veckoprogram"
         },
         "titleFormatted": {
           "en": "Select week program [[program]]",
-          "da": "Vælg ugeprogram [[program]]"
+          "nl": "Weekprogramma [[program]] kiezen",
+          "da": "Vælg ugeprogram [[program]]",
+          "de": "Wochenprogramm [[program]] wählen",
+          "no": "Velg ukeprogram [[program]]",
+          "sv": "Välj veckoprogram [[program]]"
         },
         "args": [
           {
@@ -1567,7 +2251,11 @@
             "step": 1,
             "placeholder": {
               "en": "1",
-              "da": "1"
+              "nl": "1",
+              "da": "1",
+              "de": "1",
+              "no": "1",
+              "sv": "1"
             }
           }
         ]
@@ -1576,15 +2264,27 @@
         "id": "set_bypass_temperatures",
         "title": {
           "en": "Set bypass temperatures",
-          "da": "Sæt bypass-temperaturer"
+          "nl": "Bypasstemperaturen instellen",
+          "da": "Sæt bypass-temperaturer",
+          "de": "Bypass-Temperaturen einstellen",
+          "no": "Sett bypass-temperaturer",
+          "sv": "Ställ in bypass-temperaturer"
         },
         "titleFormatted": {
           "en": "Set [[season]] bypass to open between [[min]] and [[max]] °C",
-          "da": "Sæt [[season]] bypass til at åbne mellem [[min]] og [[max]] °C"
+          "nl": "Bypass [[season]] laten openen tussen [[min]] en [[max]] °C",
+          "da": "Sæt [[season]] bypass til at åbne mellem [[min]] og [[max]] °C",
+          "de": "Bypass [[season]] zwischen [[min]] und [[max]] °C öffnen lassen",
+          "no": "Sett bypass [[season]] til å åpne mellom [[min]] og [[max]] °C",
+          "sv": "Ställ in bypass [[season]] att öppna mellan [[min]] och [[max]] °C"
         },
         "hint": {
           "en": "Overrides the free cooling thresholds, so a Flow can widen them on a hot day and narrow them again afterwards.",
-          "da": "Overstyrer grænserne for fri køling, så et Flow kan udvide dem på en varm dag og snævre dem ind igen bagefter."
+          "nl": "Overschrijft de drempels voor vrije koeling, zodat een Flow ze op een warme dag kan verruimen en daarna weer kan versmallen.",
+          "da": "Overstyrer grænserne for fri køling, så et Flow kan udvide dem på en varm dag og snævre dem ind igen bagefter.",
+          "de": "Überschreibt die Schwellen der freien Kühlung, sodass ein Flow sie an einem heißen Tag erweitern und danach wieder verengen kann.",
+          "no": "Overstyrer grensene for frikjøling, slik at en Flow kan utvide dem på en varm dag og snevre dem inn igjen etterpå.",
+          "sv": "Åsidosätter tröskelvärdena för frikyla, så att ett Flow kan vidga dem en varm dag och smalna av dem igen efteråt."
         },
         "args": [
           {
@@ -1600,7 +2300,11 @@
             "step": 0.5,
             "placeholder": {
               "en": "12",
-              "da": "12"
+              "nl": "12",
+              "da": "12",
+              "de": "12",
+              "no": "12",
+              "sv": "12"
             }
           },
           {
@@ -1611,7 +2315,11 @@
             "step": 0.5,
             "placeholder": {
               "en": "24",
-              "da": "24"
+              "nl": "24",
+              "da": "24",
+              "de": "24",
+              "no": "24",
+              "sv": "24"
             }
           },
           {
@@ -1622,14 +2330,22 @@
                 "id": "normal",
                 "title": {
                   "en": "Normal",
-                  "da": "Normal"
+                  "nl": "Normaal",
+                  "da": "Normal",
+                  "de": "Normal",
+                  "no": "Normal",
+                  "sv": "Normal"
                 }
               },
               {
                 "id": "summer",
                 "title": {
                   "en": "Summer mode",
-                  "da": "Sommerdrift"
+                  "nl": "Zomermodus",
+                  "da": "Sommerdrift",
+                  "de": "Sommerbetrieb",
+                  "no": "Sommermodus",
+                  "sv": "Sommarläge"
                 }
               }
             ]

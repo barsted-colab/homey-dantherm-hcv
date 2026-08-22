@@ -1,0 +1,42 @@
+{
+  "error": {
+    "no_ip": "Geen IP-adres ingesteld. Open de apparaatinstellingen en voer het IP-adres van het toestel in.",
+    "not_connected": "Geen verbinding met de ventilatie-unit.",
+    "command_failed": "De ventilatie-unit heeft de opdracht niet geaccepteerd.",
+    "setting_rejected": "Het toestel heeft deze instellingen geweigerd: __keys__"
+  },
+  "widget": {
+    "outdoor": "Buitenlucht",
+    "supply": "Toevoerlucht",
+    "extract": "Afvoerlucht",
+    "exhaust": "Uitblaaslucht",
+    "recovery": "terugwinning",
+    "bypass": "bypass",
+    "alarm": "Alarm",
+    "days_short": "d",
+    "no_device": "Kies een ventilatie-unit in de widget-instellingen",
+    "unavailable": "Toestel reageert niet",
+    "mode": {
+      "standby": "Stand-by",
+      "automatic": "Automatisch",
+      "manual": "Handmatig",
+      "week_program": "Weekprogramma",
+      "away": "Afwezig",
+      "summer": "Zomer",
+      "fireplace": "Openhaard",
+      "night": "Nacht"
+    },
+    "level": "Stand",
+    "mode_label": "Bedrijfsmodus",
+    "humidity": "Vocht",
+    "power": "Vermogen",
+    "recovered": "Teruggewonnen",
+    "filter": "Filter",
+    "days": "dagen",
+    "air_quality": "Luchtkwaliteit",
+    "open": "Open",
+    "closed": "Gesloten",
+    "bypass_open": "Bypass open",
+    "recovery_short": "terugw."
+  }
+}
