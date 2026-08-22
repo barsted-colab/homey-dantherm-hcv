@@ -104,3 +104,18 @@ test('no estimate without airflow', () => {
   assert.strictEqual(recoveredHeat(null, 19.4, -3.5), null);
   assert.strictEqual(recoveredHeat(216, null, -3.5), null);
 });
+
+test('power stays sane outside the range a report covers', () => {
+  // Extrapolation is allowed — blanking the tile at boost would be worse than
+  // an estimate that reads a little low — but it must not misbehave.
+  const at = (flow) => estimatePower(flow, EXTRACT_NOMINAL, 40, 15);
+
+  const curve = [0, 50, 108, 189, 216, 250, 300, 400].map(at);
+  for (let i = 1; i < curve.length; i++) {
+    assert.ok(curve[i] > curve[i - 1], `not monotonic at index ${i}: ${curve}`);
+  }
+  assert.ok(curve.every((w) => w >= 15), 'never below the standing draw');
+  // Far above nominal it must still be a number a person would recognise as
+  // power rather than an overflow.
+  assert.ok(at(400) < 500, `implausible at 400 m³/h: ${at(400)} W`);
+});
