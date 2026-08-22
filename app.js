@@ -36,14 +36,11 @@ class DanthermApp extends Homey.App {
     flow.getConditionCard('is_cooling')
       .registerRunListener(async ({ device }) => device.isCooling());
 
-    flow.getActionCard('set_cool_boost')
-      .registerRunListener(async ({ device, state }) => device.setCoolBoost(state === 'on'));
+    flow.getActionCard('set_control_mode')
+      .registerRunListener(async ({ device, mode }) => device.setControlMode(mode));
 
     flow.getActionCard('set_cool_setpoint')
       .registerRunListener(async ({ device, temperature }) => device.setCoolSetpoint(temperature));
-
-    flow.getActionCard('return_to_normal')
-      .registerRunListener(async ({ device }) => device.returnToNormal());
 
     flow.getActionCard('set_mode')
       .registerRunListener(async ({ device, mode }) => device.setMode(mode));

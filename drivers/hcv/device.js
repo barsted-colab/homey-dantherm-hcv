@@ -456,7 +456,7 @@ class DanthermHCVDevice extends Homey.Device {
       boosting = false;
     }
 
-    if (!s.cool_boost_enabled) {
+    if (s.control_mode !== 'app') {
       if (boosting) await this.endCoolBoost(from, state);
       return;
     }
@@ -536,55 +536,56 @@ class DanthermHCVDevice extends Homey.Device {
   }
 
   /**
-   * Hands the unit back to itself.
+   * Who runs the unit: itself, or this app.
    *
-   * Everything this app imposes is let go of in one step: the cooling boost
-   * stops and is switched off so it cannot take over again, a manual bypass is
-   * released, and the unit goes back to automatic. Written as one action
-   * because undoing them one at a time is how you end up with the last one
-   * still on.
-   *
-   * Deliberately not a factory reset. Nothing on the controller is erased —
-   * the commissioning, the bypass temperatures, the filter life all stay put.
-   * Those took an engineer an afternoon; this is about the app stepping back,
-   * not about throwing that away.
+   * Written as a state rather than a pair of actions, because that is what it
+   * is. An action that undoes an earlier action leaves you having to remember
+   * which one you pressed last; a setting you can look at tells you where you
+   * stand. It also collapses two settings that were saying the same thing
+   * twice — whether the boost was allowed, and whether the app should let go.
    */
-  async returnToNormal() {
-    const held = this.isCooling();
-    await this.setStoreValue('coolBoostFrom', null);
-    await this.setStoreValue('coolBoostMode', null);
+  async setControlMode(mode) {
+    await this.setSettings({ control_mode: mode });
+    await this.applyControlMode(mode);
+  }
+
+  async applyControlMode(mode) {
+    // Choosing a side, either way, outranks having stood down earlier.
     await this.setStoreValue('coolBoostBlocked', null);
-    if (held) this.fireCooling('cooling_stopped');
 
-    await this.setSettings({ cool_boost_enabled: false });
-
-    if (this.unit) {
-      await this.setManualBypass(false);
-      await this.setMode('automatic');
+    if (mode !== 'normal') {
+      this.log('Unit handed to Homey: the boost may take the fan level');
+      await this.poll();
+      return;
     }
-    this.log('Handed the unit back: boost off, bypass released, automatic mode');
+
+    await this.handBack();
+  }
+
+  /**
+   * Gives back everything the app is holding.
+   *
+   * Deliberately not a factory reset, and it erases nothing. The commissioning,
+   * the bypass temperatures and the filter life belong to the unit and are left
+   * exactly where an engineer put them. This is only the app taking its hands
+   * off: the borrowed fan level and operating mode go back, and a manual bypass
+   * is released so the damper is the controller's own decision again.
+   */
+  async handBack() {
+    if (!this.unit) return;
+
+    if (this.isCooling()) {
+      const from = this.getStoreValue('coolBoostFrom');
+      await this.endCoolBoost(from, await this.unit.readState());
+    }
+    await this.setManualBypass(false);
+    this.log('Unit handed back: fan level and mode returned, manual bypass released');
   }
 
   /** Whether the app is currently holding the fan level up for free cooling. */
   isCooling() {
     const from = this.getStoreValue('coolBoostFrom');
     return from !== null && from !== undefined;
-  }
-
-  /**
-   * Lets a Flow override the boost setting — off through the night, on for the
-   * afternoon. A poll follows immediately, so switching it off hands the fan
-   * level back now rather than at the next scheduled read.
-   */
-  async setCoolBoost(enabled) {
-    await this.setSettings({ cool_boost_enabled: enabled });
-
-    // Asking for it outright outranks having stood down earlier. Otherwise the
-    // card would report success and do nothing, which is the worst of both.
-    if (enabled) await this.setStoreValue('coolBoostBlocked', null);
-
-    this.log(`Free cooling boost turned ${enabled ? 'on' : 'off'} from a Flow`);
-    await this.poll();
   }
 
   /** Lets a Flow hold a different cooling temperature, and keeps summer in step. */

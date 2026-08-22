@@ -179,11 +179,22 @@ There is a condition for whether cooling is running, and triggers for when it
 starts and stops, so a Flow can close the blinds or say something about the
 windows.
 
-`Back to normal operation` lets go of all of it at once — boost stopped and
-switched off, manual bypass released, unit back on automatic. It is not a
-factory reset and deliberately erases nothing: the commissioning, the bypass
-temperatures and the filter life took an engineer an afternoon and stay exactly
-where they are. This is the app stepping back, not the unit being wiped.
+Whether any of that is allowed is one setting, `Who runs the unit`, with two
+positions: normal operation, where the unit runs itself and the app only reads
+it and carries out what it is asked; or Homey in control, where the app may
+also take the fan level to chase the cooling setpoint.
+
+A state rather than a pair of actions, because that is what it is. An action
+that undoes an earlier action leaves you working out which one you pressed last;
+a setting you can look at tells you where you stand. It also collapsed two
+settings that were saying the same thing twice — whether the boost was allowed,
+and whether the app should let go.
+
+Switching back to normal hands everything back at once: the borrowed fan level
+and operating mode, and a manual bypass, so the damper is the controller's own
+decision again. It is not a factory reset and erases nothing. The commissioning,
+the bypass temperatures and the filter life belong to the unit and stay exactly
+where an engineer put them.
 
 The level is borrowed rather than taken: whatever it was is remembered and
 restored, and if a Flow or the wall panel moves it in the meantime, that is
