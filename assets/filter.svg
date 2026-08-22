@@ -1,3 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-  <path fill="currentColor" d="M18 18h64a4 4 0 0 1 3 7L60 52v28a4 4 0 0 1-6 3l-10-6a4 4 0 0 1-2-3V52L15 25a4 4 0 0 1 3-7zm9 8 22 24v26l4 2V50l22-24z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960" width="960" height="960">
+  <g transform="scale(9.6)">
+    <path fill="currentColor" d="M18 18h64a4 4 0 0 1 3 7L60 52v28a4 4 0 0 1-6 3l-10-6a4 4 0 0 1-2-3V52L15 25a4 4 0 0 1 3-7zm9 8 22 24v26l4 2V50l22-24z"/>
+  </g>
 </svg>

@@ -1,4 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-  <path fill="currentColor" d="M10 26h40a9 9 0 1 0-9-9h-9a18 18 0 1 1 18 18H10zm0 22h56a9 9 0 1 1-9 9h-9a18 18 0 1 0 18-18H10zm0 22h30a8 8 0 1 1-8 8h-9a17 17 0 1 0 17-17H10z"/>
-  <path fill="currentColor" d="M74 30l14 9-14 9z" opacity=".55"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960" width="960" height="960">
+  <!-- Airflow: volume leaving a duct. -->
+  <ellipse cx="236" cy="480" rx="86" ry="270" fill="currentColor" fill-opacity=".28"/>
+  <ellipse cx="236" cy="480" rx="86" ry="270" fill="none" stroke="currentColor" stroke-width="40"/>
+  <g fill="none" stroke="currentColor" stroke-width="46" stroke-linecap="round">
+    <path d="M368 300h300"/>
+    <path d="M368 480h404"/>
+    <path d="M368 660h300"/>
+  </g>
+  <path d="M742 402l128 78-128 78z" fill="currentColor"/>
 </svg>
