@@ -1,6 +1,6 @@
 {
   "id": "dk.fredskilde.dantherm",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "compatibility": ">=12.3.0",
   "sdk": 3,
   "platforms": [
@@ -799,6 +799,27 @@
             "sv": "Kylning"
           },
           "children": [
+            {
+              "id": "free_cooling",
+              "type": "checkbox",
+              "label": {
+                "en": "Allow free cooling",
+                "nl": "Vrije koeling toestaan",
+                "da": "Tillad fri køling",
+                "de": "Freie Kühlung erlauben",
+                "no": "Tillat frikjøling",
+                "sv": "Tillåt frikyla"
+              },
+              "value": true,
+              "hint": {
+                "en": "Off means the bypass never opens, whatever the temperatures. Turning it off while the damper is open also closes it — which takes about a minute and a half and stops the fans briefly, because that is the only way the controller will close it. Useful in the shoulder seasons, when one warm room at the extract makes the unit cool every room in the house.",
+                "nl": "Uit betekent dat de bypass nooit opengaat, ongeacht de temperaturen. Uitzetten terwijl de klep open staat sluit hem ook — dat duurt ongeveer anderhalve minuut en stopt de ventilatoren even, omdat de regelaar hem alleen zo sluit. Handig in het tussenseizoen, wanneer één warme ruimte bij de afzuiging het toestel elke ruimte laat koelen.",
+                "da": "Fra betyder at bypass aldrig åbner, uanset temperaturerne. Slår du den fra mens spjældet står åbent, lukkes det også — det tager halvandet minut og stopper ventilatorerne et øjeblik, for det er den eneste måde controlleren lukker det på. Nyttig i overgangsmånederne, når ét varmt rum ved udsugningen får anlægget til at køle hele huset.",
+                "de": "Aus bedeutet, dass der Bypass nie öffnet, unabhängig von den Temperaturen. Ausschalten bei offener Klappe schließt sie auch — das dauert etwa anderthalb Minuten und stoppt die Ventilatoren kurz, weil der Regler sie nur so schließt. Nützlich in der Übergangszeit, wenn ein warmer Raum an der Abluft das Gerät jeden Raum kühlen lässt.",
+                "no": "Av betyr at bypassen aldri åpner, uansett temperaturer. Slår du den av mens spjeldet står åpent, lukkes det også — det tar halvannet minutt og stopper viftene et øyeblikk, for det er eneste måte regulatoren lukker det på. Nyttig i overgangsmånedene, når ett varmt rom ved avtrekket får anlegget til å kjøle hele huset.",
+                "sv": "Av betyder att bypassen aldrig öppnar, oavsett temperaturer. Stänger du av den medan spjället står öppet stängs det också — det tar en och en halv minut och stoppar fläktarna en stund, för det är enda sättet regulatorn stänger det på. Användbart under övergångsmånaderna, när ett varmt rum vid frånluften får aggregatet att kyla hela huset."
+              }
+            },
             {
               "id": "bypass_max_temp",
               "type": "number",
@@ -2547,6 +2568,94 @@
                 }
               }
             ]
+          }
+        ]
+      },
+      {
+        "id": "set_free_cooling",
+        "title": {
+          "en": "Free cooling",
+          "nl": "Vrije koeling",
+          "da": "Fri køling",
+          "de": "Freie Kühlung",
+          "no": "Frikjøling",
+          "sv": "Frikyla"
+        },
+        "titleFormatted": {
+          "en": "Turn free cooling [[state]]",
+          "nl": "Zet vrije koeling [[state]]",
+          "da": "Slå fri køling [[state]]",
+          "de": "Freie Kühlung [[state]]",
+          "no": "Slå frikjøling [[state]]",
+          "sv": "Slå frikyla [[state]]"
+        },
+        "hint": {
+          "en": "Off also closes an open damper. Lets a Flow decide from the room thermostats whether the house actually wants cooling, instead of the unit guessing from the one sensor in its extract duct.",
+          "nl": "Uit sluit ook een open klep. Laat een Flow op basis van de ruimtethermostaten beslissen of het huis echt koeling wil, in plaats van dat het toestel het raadt uit de ene sensor in het afvoerkanaal.",
+          "da": "Fra lukker også et åbent spjæld. Lader et Flow afgøre ud fra rumtermostaterne om huset faktisk vil køles, i stedet for at anlægget gætter ud fra den ene føler i udsugningskanalen.",
+          "de": "Aus schließt auch eine offene Klappe. Lässt einen Flow anhand der Raumthermostate entscheiden, ob das Haus wirklich Kühlung will, statt dass das Gerät es aus dem einen Fühler im Abluftkanal errät.",
+          "no": "Av lukker også et åpent spjeld. Lar en Flow avgjøre ut fra romtermostatene om huset faktisk vil kjøles, i stedet for at anlegget gjetter ut fra den ene føleren i avtrekkskanalen.",
+          "sv": "Av stänger också ett öppet spjäll. Låter ett Flow avgöra utifrån rumstermostaterna om huset faktiskt vill kylas, i stället för att aggregatet gissar utifrån den enda givaren i frånluftskanalen."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hcv"
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "on",
+                "title": {
+                  "en": "on",
+                  "nl": "aan",
+                  "da": "til",
+                  "de": "einschalten",
+                  "no": "på",
+                  "sv": "på"
+                }
+              },
+              {
+                "id": "off",
+                "title": {
+                  "en": "off",
+                  "nl": "uit",
+                  "da": "fra",
+                  "de": "ausschalten",
+                  "no": "av",
+                  "sv": "av"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "close_bypass",
+        "title": {
+          "en": "Close the bypass now",
+          "nl": "Bypass nu sluiten",
+          "da": "Luk bypass nu",
+          "de": "Bypass jetzt schließen",
+          "no": "Lukk bypass nå",
+          "sv": "Stäng bypass nu"
+        },
+        "hint": {
+          "en": "The controller has no close command, so this stops the unit for about a minute and a half and starts it again — the damper parks shut on the way. Only useful with free cooling turned off, or it opens straight back up.",
+          "nl": "De regelaar heeft geen sluitcommando, dus dit stopt het toestel ongeveer anderhalve minuut en start het weer — de klep gaat onderweg dicht. Alleen nuttig met vrije koeling uit, anders gaat hij meteen weer open.",
+          "da": "Controlleren har ingen luk-kommando, så det her stopper anlægget i halvandet minut og starter det igen — spjældet parkerer lukket undervejs. Kun nyttigt med fri køling slået fra, ellers åbner det straks igen.",
+          "de": "Der Regler hat keinen Schließbefehl, also stoppt dies das Gerät für etwa anderthalb Minuten und startet es neu — die Klappe parkt dabei geschlossen. Nur mit ausgeschalteter freier Kühlung sinnvoll, sonst öffnet sie sofort wieder.",
+          "no": "Regulatoren har ingen lukk-kommando, så dette stopper anlegget i halvannet minutt og starter det igjen — spjeldet parkerer lukket underveis. Bare nyttig med frikjøling av, ellers åpner det straks igjen.",
+          "sv": "Regulatorn har inget stängkommando, så detta stoppar aggregatet i en och en halv minut och startar det igen — spjället parkerar stängt på vägen. Bara användbart med frikyla av, annars öppnar det genast igen."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hcv"
           }
         ]
       }

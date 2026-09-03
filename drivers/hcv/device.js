@@ -33,6 +33,14 @@ const TYPICAL_IMBALANCE = 0.94;
  * overruling the one you set — so the settings screen shows one of each and
  * both copies are kept in step.
  */
+/**
+ * A ceiling the house never reaches. Writing it is how free cooling is turned
+ * off, because the register has no off. Zero looks like off and is the exact
+ * opposite: it makes "indoor above ceiling" always true, and the damper opens
+ * the moment it is colder outside. Found by doing it.
+ */
+const FREE_COOLING_OFF = 30;
+
 const BYPASS_MIRRORS = {
   bypass_min_temp: 'bypass_min_temp_summer',
   bypass_max_temp: 'bypass_max_temp_summer',
@@ -175,7 +183,9 @@ class DanthermHCVDevice extends Homey.Device {
       // anything a future version drops, so only mirror back what is shown.
       const shown = this.getSettings();
       const known = Object.fromEntries(
-        Object.entries(config).filter(([key, value]) => value !== null && key in shown),
+        Object.entries(config).filter(([key, value]) => value !== null && key in shown
+          // With cooling off the unit holds the ceiling, not the user's number.
+          && !(key === 'bypass_max_temp' && shown.free_cooling === false)),
       );
       if (Object.keys(known).length) await this.setSettings(known);
       await this.alignBypassMirrors(config);
@@ -195,6 +205,17 @@ class DanthermHCVDevice extends Homey.Device {
    * come would leave that trap armed.
    */
   async alignBypassMirrors(config) {
+    const settings = this.getSettings();
+    // Cooling switched off: make sure the unit actually holds the ceiling.
+    if (settings.free_cooling === false && config.bypass_max_temp !== FREE_COOLING_OFF) {
+      try {
+        await this.unit.writeConfig('bypass_max_temp', FREE_COOLING_OFF);
+        config.bypass_max_temp = FREE_COOLING_OFF;
+        this.log(`Free cooling is off; ceiling set to ${FREE_COOLING_OFF}`);
+      } catch (err) {
+        this.error(`Could not hold the ceiling: ${err.message}`);
+      }
+    }
     for (const [source, mirror] of Object.entries(BYPASS_MIRRORS)) {
       const want = config[source];
       if (want === null || want === undefined) continue;
@@ -215,12 +236,33 @@ class DanthermHCVDevice extends Homey.Device {
    * the settings screen is corrected afterwards — leaving a rejected number on
    * screen would be a lie about the unit's state.
    */
+  /** What the ceiling should be on the unit, given whether cooling is allowed. */
+  effectiveCeiling(settings) {
+    return settings.free_cooling === false ? FREE_COOLING_OFF : settings.bypass_max_temp;
+  }
+
   async applyConfigChanges(changedKeys, newSettings) {
     const corrections = {};
     const failed = [];
 
+    // Allowing or forbidding free cooling is a change to the ceiling, whichever
+    // key the user touched. And forbidding it while the damper stands open has
+    // to close the damper too — the ceiling only stops the next opening.
+    if (changedKeys.includes('free_cooling') || changedKeys.includes('bypass_max_temp')) {
+      try {
+        const ceiling = this.effectiveCeiling(newSettings);
+        await this.unit.writeConfig('bypass_max_temp', ceiling);
+        await this.unit.writeConfig(BYPASS_MIRRORS.bypass_max_temp, ceiling);
+        if (newSettings.free_cooling === false) this.closeBypassSoon();
+      } catch (err) {
+        this.error(`Could not set the bypass ceiling: ${err.message}`);
+        failed.push('bypass_max_temp');
+      }
+    }
+
     for (const key of changedKeys) {
       if (!(key in CONFIG)) continue;
+      if (key === 'bypass_max_temp') continue; // handled above
 
       // From newSettings, not getSetting — the latter still holds the previous
       // value while this handler is running, so the unit would be sent the
@@ -456,7 +498,7 @@ class DanthermHCVDevice extends Homey.Device {
       boosting = false;
     }
 
-    if (s.control_mode !== 'app') {
+    if (s.control_mode !== 'app' || s.free_cooling === false) {
       if (boosting) await this.endCoolBoost(from, state);
       return;
     }
@@ -600,6 +642,43 @@ class DanthermHCVDevice extends Homey.Device {
       this.log(`Cooling setpoint ${temperature} °C was clamped to ${written} °C by the unit`);
     }
     return written;
+  }
+
+  /**
+   * Closes the damper the only way there is, off the settings handler's own
+   * thread so the write that triggered it can finish first.
+   */
+  closeBypassSoon() {
+    this.homey.setTimeout(() => {
+      this.closeBypass().catch((err) => this.error(`Could not close the bypass: ${err.message}`));
+    }, 1500);
+  }
+
+  /**
+   * Allows or forbids free cooling, from a Flow. Forbidding it writes the
+   * ceiling and then closes the damper, and waits for that, so the Flow does
+   * not report done while the unit is still in standby.
+   */
+  async setFreeCooling(enabled) {
+    if (!this.unit) throw new Error(this.homey.__('error.not_connected'));
+    await this.setSettings({ free_cooling: enabled });
+
+    const ceiling = enabled ? this.getSetting('bypass_max_temp') : FREE_COOLING_OFF;
+    await this.unit.writeConfig('bypass_max_temp', ceiling);
+    await this.unit.writeConfig(BYPASS_MIRRORS.bypass_max_temp, ceiling);
+    this.log(`Free cooling ${enabled ? 'allowed' : 'forbidden'}; ceiling ${ceiling}`);
+
+    if (!enabled) await this.closeBypass();
+  }
+
+  async closeBypass() {
+    if (!this.unit) throw new Error(this.homey.__('error.not_connected'));
+    this.log('Closing the bypass via standby');
+    const closed = await this.unit.closeBypass({
+      onProgress: (step) => this.log(`  bypass: ${step}`),
+    });
+    this.log(closed ? 'Bypass closed, unit running again' : 'Bypass was already closed');
+    return closed;
   }
 
   /** Gives the fan level back to whoever had it before the boost. */
