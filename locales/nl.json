@@ -3,7 +3,8 @@
     "no_ip": "Geen IP-adres ingesteld. Open de apparaatinstellingen en voer het IP-adres van het toestel in.",
     "not_connected": "Geen verbinding met de ventilatie-unit.",
     "command_failed": "De ventilatie-unit heeft de opdracht niet geaccepteerd.",
-    "setting_rejected": "Het toestel heeft deze instellingen geweigerd: __keys__"
+    "setting_rejected": "Het toestel heeft deze instellingen geweigerd: __keys__",
+    "not_in_control": "Homey stuurt het toestel niet aan. Zet eerst \"Wie stuurt het toestel aan\" op Homey."
   },
   "widget": {
     "outdoor": "Buitenlucht",

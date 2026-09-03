@@ -184,8 +184,10 @@ class DanthermHCVDevice extends Homey.Device {
       const shown = this.getSettings();
       const known = Object.fromEntries(
         Object.entries(config).filter(([key, value]) => value !== null && key in shown
-          // With cooling off the unit holds the ceiling, not the user's number.
-          && !(key === 'bypass_max_temp' && shown.free_cooling === false)),
+          // With Homey forbidding cooling, the unit holds the ceiling, not the
+          // user's number, and the number must not be overwritten by it.
+          && !(key === 'bypass_max_temp' && shown.control_mode === 'app'
+            && shown.free_cooling === false)),
       );
       if (Object.keys(known).length) await this.setSettings(known);
       await this.alignBypassMirrors(config);
@@ -206,8 +208,10 @@ class DanthermHCVDevice extends Homey.Device {
    */
   async alignBypassMirrors(config) {
     const settings = this.getSettings();
-    // Cooling switched off: make sure the unit actually holds the ceiling.
-    if (settings.free_cooling === false && config.bypass_max_temp !== FREE_COOLING_OFF) {
+    // Homey forbids cooling: make sure the unit actually holds the ceiling.
+    // Under normal operation nothing is enforced — the unit's own value stands.
+    if (settings.control_mode === 'app' && settings.free_cooling === false
+      && config.bypass_max_temp !== FREE_COOLING_OFF) {
       try {
         await this.unit.writeConfig('bypass_max_temp', FREE_COOLING_OFF);
         config.bypass_max_temp = FREE_COOLING_OFF;
@@ -236,9 +240,23 @@ class DanthermHCVDevice extends Homey.Device {
    * the settings screen is corrected afterwards — leaving a rejected number on
    * screen would be a lie about the unit's state.
    */
-  /** What the ceiling should be on the unit, given whether cooling is allowed. */
+  /**
+   * What the ceiling should be on the unit.
+   *
+   * Only Homey-in-control may forbid free cooling. Under normal operation the
+   * unit runs its own way with the user's own number, and this app imposes
+   * nothing — that is what "normal" has to mean, or the switch is a lie.
+   */
   effectiveCeiling(settings) {
-    return settings.free_cooling === false ? FREE_COOLING_OFF : settings.bypass_max_temp;
+    const homeyControls = settings.control_mode === 'app';
+    return homeyControls && settings.free_cooling === false
+      ? FREE_COOLING_OFF
+      : settings.bypass_max_temp;
+  }
+
+  async writeCeiling(ceiling) {
+    await this.unit.writeConfig('bypass_max_temp', ceiling);
+    await this.unit.writeConfig(BYPASS_MIRRORS.bypass_max_temp, ceiling);
   }
 
   async applyConfigChanges(changedKeys, newSettings) {
@@ -250,10 +268,10 @@ class DanthermHCVDevice extends Homey.Device {
     // to close the damper too — the ceiling only stops the next opening.
     if (changedKeys.includes('free_cooling') || changedKeys.includes('bypass_max_temp')) {
       try {
-        const ceiling = this.effectiveCeiling(newSettings);
-        await this.unit.writeConfig('bypass_max_temp', ceiling);
-        await this.unit.writeConfig(BYPASS_MIRRORS.bypass_max_temp, ceiling);
-        if (newSettings.free_cooling === false) this.closeBypassSoon();
+        await this.writeCeiling(this.effectiveCeiling(newSettings));
+        if (newSettings.control_mode === 'app' && newSettings.free_cooling === false) {
+          this.closeBypassSoon();
+        }
       } catch (err) {
         this.error(`Could not set the bypass ceiling: ${err.message}`);
         failed.push('bypass_max_temp');
@@ -594,14 +612,26 @@ class DanthermHCVDevice extends Homey.Device {
   async applyControlMode(mode) {
     // Choosing a side, either way, outranks having stood down earlier.
     await this.setStoreValue('coolBoostBlocked', null);
+    const s = this.getSettings();
 
     if (mode !== 'normal') {
-      this.log('Unit handed to Homey: the boost may take the fan level');
+      // Homey takes over: apply its free-cooling choice now, not at the next
+      // connect, and close the damper if that choice forbids cooling.
+      if (this.unit) {
+        await this.writeCeiling(this.effectiveCeiling(s));
+        if (s.free_cooling === false) await this.closeBypass();
+      }
+      this.log('Unit handed to Homey');
       await this.poll();
       return;
     }
 
+    // Normal operation is the unit's own way, fully. Whatever Homey imposed —
+    // a borrowed fan level and mode, a manual bypass, a ceiling that forbade
+    // cooling — is given back here, so that "normal" means what it says.
     await this.handBack();
+    if (this.unit) await this.writeCeiling(s.bypass_max_temp);
+    this.log('Unit handed back: its own ceiling, mode and level');
   }
 
   /**
@@ -661,6 +691,11 @@ class DanthermHCVDevice extends Homey.Device {
    */
   async setFreeCooling(enabled) {
     if (!this.unit) throw new Error(this.homey.__('error.not_connected'));
+    // Under normal operation the unit runs itself and a Flow may not override
+    // that quietly. Saying so beats a card that reports success and does nothing.
+    if (this.getSetting('control_mode') !== 'app') {
+      throw new Error(this.homey.__('error.not_in_control'));
+    }
     await this.setSettings({ free_cooling: enabled });
 
     const ceiling = enabled ? this.getSetting('bypass_max_temp') : FREE_COOLING_OFF;

@@ -3,7 +3,8 @@
     "no_ip": "Keine IP-Adresse konfiguriert. Öffnen Sie die Geräteeinstellungen und geben Sie die IP-Adresse des Geräts ein.",
     "not_connected": "Keine Verbindung zum Lüftungsgerät.",
     "command_failed": "Das Lüftungsgerät hat den Befehl nicht angenommen.",
-    "setting_rejected": "Das Gerät hat diese Einstellungen abgelehnt: __keys__"
+    "setting_rejected": "Das Gerät hat diese Einstellungen abgelehnt: __keys__",
+    "not_in_control": "Homey steuert das Gerät nicht. Stellen Sie zuerst \"Wer steuert das Gerät\" auf Homey."
   },
   "widget": {
     "outdoor": "Außenluft",

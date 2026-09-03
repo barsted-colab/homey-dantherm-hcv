@@ -778,12 +778,33 @@
                 }
               ],
               "hint": {
-                "en": "On normal operation the unit runs itself: the app reads it and carries out what you ask, and takes nothing on its own. Hand it to Homey and the app may also raise the fan level by itself to pull free cooling in, on the temperatures below. Switching back to normal gives the fan level and operating mode straight back and releases a manual bypass. Nothing is erased either way — the commissioning, the bypass temperatures and the filter life are the unit\\u2019s own and stay put.",
-                "nl": "Bij normale werking stuurt het toestel zichzelf aan: de app leest het uit en voert uit wat u vraagt, en neemt uit zichzelf niets over. Geeft u het aan Homey, dan mag de app ook zelf de ventilatiestand verhogen om vrije koeling binnen te halen, volgens de temperaturen hieronder. Terugzetten op normaal geeft de stand en de bedrijfsmodus meteen terug en laat een handmatige bypass los. Er wordt hoe dan ook niets gewist — de inregelinstellingen, bypasstemperaturen en filterlevensduur zijn van het toestel en blijven staan.",
-                "da": "Ved normal drift styrer anlægget sig selv: appen læser det og udfører det du beder om, men tager ikke noget af sig selv. Giver du det til Homey, må appen også selv hæve ventilationstrinnet for at hente fri køling ind, efter temperaturerne nedenfor. Skifter du tilbage til normal, gives trin og driftstilstand tilbage med det samme, og en manuel bypass slippes. Intet slettes i nogen af tilfældene — indreguleringen, bypass-temperaturerne og filterlevetiden er anlæggets egne og bliver stående.",
-                "de": "Im Normalbetrieb steuert sich das Gerät selbst: die App liest es aus und führt aus, worum Sie bitten, übernimmt aber von sich aus nichts. Übergeben Sie es an Homey, darf die App auch selbst die Lüfterstufe anheben, um freie Kühlung hereinzuholen, nach den Temperaturen unten. Zurück auf Normalbetrieb gibt Stufe und Betriebsart sofort zurück und gibt einen manuellen Bypass frei. In beiden Fällen wird nichts gelöscht — Einregulierung, Bypass-Temperaturen und Filterstandzeit gehören dem Gerät und bleiben.",
-                "no": "Ved normal drift styrer anlegget seg selv: appen leser det og utfører det du ber om, men tar ikke noe av seg selv. Gir du det til Homey, kan appen også selv heve viftetrinnet for å hente frikjøling inn, etter temperaturene nedenfor. Bytter du tilbake til normal, gis trinn og driftsmodus tilbake med det samme, og en manuell bypass slippes. Ingenting slettes i noen av tilfellene — innreguleringen, bypass-temperaturene og filterlevetiden er anleggets egne og blir stående.",
-                "sv": "Vid normal drift styr aggregatet sig självt: appen läser av det och utför det du ber om, men tar inte något på eget initiativ. Lämnar du det till Homey får appen även höja fläktsteget själv för att hämta in frikyla, enligt temperaturerna nedan. Byter du tillbaka till normal lämnas steg och driftläge tillbaka direkt, och en manuell bypass släpps. Ingenting raderas i något av fallen — injusteringen, bypass-temperaturerna och filterlivslängden är aggregatets egna och står kvar."
+                "en": "Normal operation is the unit running itself, fully: its own bypass ceiling, its own fan level and mode, nothing imposed by this app. Hand it to Homey and the app may forbid free cooling and raise the fan level to chase the cooling setpoint. Switching back to normal gives everything back at once. Nothing on the unit is erased either way.",
+                "nl": "Normale werking is het toestel dat zichzelf volledig aanstuurt: eigen bypassgrens, eigen stand en modus, niets opgelegd door deze app. Geeft u het aan Homey, dan mag de app vrije koeling verbieden en de stand verhogen om de koeltemperatuur te halen. Terugzetten op normaal geeft alles in één keer terug. Er wordt hoe dan ook niets gewist.",
+                "da": "Normal drift er anlægget der styrer sig selv, helt: sit eget bypass-loft, sit eget trin og tilstand, intet pålagt af denne app. Giver du det til Homey, må appen forbyde fri køling og hæve trinnet for at nå køletemperaturen. Skifter du tilbage til normal, gives alt tilbage på én gang. Intet slettes i nogen af tilfældene.",
+                "de": "Normalbetrieb heißt, das Gerät steuert sich vollständig selbst: eigene Bypass-Grenze, eigene Stufe und Betriebsart, nichts von dieser App auferlegt. Übergeben Sie es an Homey, darf die App freie Kühlung verbieten und die Stufe anheben, um die Kühltemperatur zu erreichen. Zurück auf Normal gibt alles auf einmal zurück. Gelöscht wird in beiden Fällen nichts.",
+                "no": "Normal drift er anlegget som styrer seg selv, helt: eget bypass-tak, eget trinn og modus, ingenting pålagt av denne appen. Gir du det til Homey, kan appen forby frikjøling og heve trinnet for å nå kjøletemperaturen. Bytter du tilbake til normal, gis alt tilbake på én gang. Ingenting slettes i noen av tilfellene.",
+                "sv": "Normal drift är aggregatet som styr sig självt, helt: eget bypass-tak, eget steg och läge, inget pålagt av den här appen. Lämnar du det till Homey får appen förbjuda frikyla och höja steget för att nå kyltemperaturen. Byter du tillbaka till normal lämnas allt tillbaka på en gång. Inget raderas i något av fallen."
+              }
+            },
+            {
+              "id": "free_cooling",
+              "type": "checkbox",
+              "label": {
+                "en": "Allow free cooling",
+                "nl": "Vrije koeling toestaan",
+                "da": "Tillad fri køling",
+                "de": "Freie Kühlung erlauben",
+                "no": "Tillat frikjøling",
+                "sv": "Tillåt frikyla"
+              },
+              "value": true,
+              "hint": {
+                "en": "Only applies while Homey runs the unit. Off means the bypass never opens, whatever the temperatures — and turning it off while the damper is open closes it, which stops the fans for about a minute and a half because that is the only way the controller will close it. Under normal operation the unit decides for itself.",
+                "nl": "Geldt alleen zolang Homey het toestel aanstuurt. Uit betekent dat de bypass nooit opengaat, ongeacht de temperaturen — en uitzetten terwijl de klep open staat sluit hem, wat de ventilatoren ongeveer anderhalve minuut stopt, omdat de regelaar hem alleen zo sluit. Bij normale werking beslist het toestel zelf.",
+                "da": "Gælder kun mens Homey styrer anlægget. Fra betyder at bypass aldrig åbner, uanset temperaturerne — og slår du den fra mens spjældet står åbent, lukkes det, hvilket stopper ventilatorerne i halvandet minut, for det er den eneste måde controlleren lukker det på. Ved normal drift bestemmer anlægget selv.",
+                "de": "Gilt nur, solange Homey das Gerät steuert. Aus bedeutet, dass der Bypass nie öffnet, unabhängig von den Temperaturen — und Ausschalten bei offener Klappe schließt sie, was die Ventilatoren etwa anderthalb Minuten stoppt, weil der Regler sie nur so schließt. Im Normalbetrieb entscheidet das Gerät selbst.",
+                "no": "Gjelder bare mens Homey styrer anlegget. Av betyr at bypassen aldri åpner, uansett temperaturer — og slår du den av mens spjeldet står åpent, lukkes det, som stopper viftene i halvannet minutt, for det er eneste måte regulatoren lukker det på. Ved normal drift bestemmer anlegget selv.",
+                "sv": "Gäller bara medan Homey styr aggregatet. Av betyder att bypassen aldrig öppnar, oavsett temperaturer — och stänger du av den medan spjället står öppet stängs det, vilket stoppar fläktarna i en och en halv minut, för det är enda sättet regulatorn stänger det på. Vid normal drift bestämmer aggregatet självt."
               }
             }
           ]
@@ -799,27 +820,6 @@
             "sv": "Kylning"
           },
           "children": [
-            {
-              "id": "free_cooling",
-              "type": "checkbox",
-              "label": {
-                "en": "Allow free cooling",
-                "nl": "Vrije koeling toestaan",
-                "da": "Tillad fri køling",
-                "de": "Freie Kühlung erlauben",
-                "no": "Tillat frikjøling",
-                "sv": "Tillåt frikyla"
-              },
-              "value": true,
-              "hint": {
-                "en": "Off means the bypass never opens, whatever the temperatures. Turning it off while the damper is open also closes it — which takes about a minute and a half and stops the fans briefly, because that is the only way the controller will close it. Useful in the shoulder seasons, when one warm room at the extract makes the unit cool every room in the house.",
-                "nl": "Uit betekent dat de bypass nooit opengaat, ongeacht de temperaturen. Uitzetten terwijl de klep open staat sluit hem ook — dat duurt ongeveer anderhalve minuut en stopt de ventilatoren even, omdat de regelaar hem alleen zo sluit. Handig in het tussenseizoen, wanneer één warme ruimte bij de afzuiging het toestel elke ruimte laat koelen.",
-                "da": "Fra betyder at bypass aldrig åbner, uanset temperaturerne. Slår du den fra mens spjældet står åbent, lukkes det også — det tager halvandet minut og stopper ventilatorerne et øjeblik, for det er den eneste måde controlleren lukker det på. Nyttig i overgangsmånederne, når ét varmt rum ved udsugningen får anlægget til at køle hele huset.",
-                "de": "Aus bedeutet, dass der Bypass nie öffnet, unabhängig von den Temperaturen. Ausschalten bei offener Klappe schließt sie auch — das dauert etwa anderthalb Minuten und stoppt die Ventilatoren kurz, weil der Regler sie nur so schließt. Nützlich in der Übergangszeit, wenn ein warmer Raum an der Abluft das Gerät jeden Raum kühlen lässt.",
-                "no": "Av betyr at bypassen aldri åpner, uansett temperaturer. Slår du den av mens spjeldet står åpent, lukkes det også — det tar halvannet minutt og stopper viftene et øyeblikk, for det er eneste måte regulatoren lukker det på. Nyttig i overgangsmånedene, når ett varmt rom ved avtrekket får anlegget til å kjøle hele huset.",
-                "sv": "Av betyder att bypassen aldrig öppnar, oavsett temperaturer. Stänger du av den medan spjället står öppet stängs det också — det tar en och en halv minut och stoppar fläktarna en stund, för det är enda sättet regulatorn stänger det på. Användbart under övergångsmånaderna, när ett varmt rum vid frånluften får aggregatet att kyla hela huset."
-              }
-            },
             {
               "id": "bypass_max_temp",
               "type": "number",

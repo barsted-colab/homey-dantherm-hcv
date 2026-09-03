@@ -3,7 +3,8 @@
     "no_ip": "Ingen IP-adresse er satt. Åpne enhetsinnstillingene og skriv inn enhetens IP-adresse.",
     "not_connected": "Ingen forbindelse til ventilasjonsanlegget.",
     "command_failed": "Ventilasjonsanlegget godtok ikke kommandoen.",
-    "setting_rejected": "Enheten avviste disse innstillingene: __keys__"
+    "setting_rejected": "Enheten avviste disse innstillingene: __keys__",
+    "not_in_control": "Homey styrer ikke anlegget. Sett \"Hvem styrer anlegget\" til Homey først."
   },
   "widget": {
     "outdoor": "Uteluft",
